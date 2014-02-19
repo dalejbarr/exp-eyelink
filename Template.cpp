@@ -19,12 +19,14 @@ using pastestr::paste;
 #include "Experiment.hpp"
 #include "GamePad_SDL.hpp"
 #include "ScrollTrackGP_SDL.hpp"
+#include "Experiment.hpp"
 
 #ifndef WIN32
 #include "AlsaSoundIn.hpp"
 #endif
 
 InputDevPtrMMap Template::s_mmapInputDevPtr;
+Experiment * Template::g_pExperiment = NULL;
 
 //extern Uint32 ClockFn();
 
@@ -835,4 +837,31 @@ Trial * Template::GetCurTrial() {
   }
 
   return pCurTrial;
+}
+
+void Template::RepeatExperiment() {
+  g_pErr->DFI("Template::RepeatExperiment", m_strDebug.c_str(), 2);
+  if (Template::g_pExperiment!=NULL) {
+    g_pExperiment->RepeatExperiment();
+  } else {}
+
+  g_pErr->DFO("Template::RepeatExperiment", m_strDebug.c_str(), 2);
+}
+
+void Template::IncrementCounter(const char * pcCtr) {
+  g_pErr->DFI("Template::IncrementCounter", m_strDebug.c_str(), 2);
+  if (Template::g_pExperiment!=NULL) {
+    g_pExperiment->IncrementCounter(pcCtr);
+  } else {}
+
+  g_pErr->DFO("Template::IncrementCounter", m_strDebug.c_str(), 2);
+}
+
+void Template::ResetCounter(const char * pcCtr) {
+  g_pErr->DFI("Template::ResetCounter", m_strDebug.c_str(), 2);
+  if (Template::g_pExperiment!=NULL) {
+    g_pExperiment->ResetCounter(pcCtr);
+  } else {}
+
+  g_pErr->DFO("Template::ResetCounter", m_strDebug.c_str(), 2);
 }

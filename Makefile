@@ -6,6 +6,7 @@ OBJS = 	Experiment.o Template.o State.o \
 	StimulusWav.o StimulusTxt.o \
 	Event.o EventGrabAOI.o EventSwapAOI.o EventUpdateAOI.o \
 	EventUpdate.o EventRecord.o EventMsg.o StimulusShowAOI.o \
+	EventRepeatIf.o EventResetCounter.o EventIncrementCounter.o \
 	Watch.o WatchKey.o WatchMouse.o WatchDone.o \
 	WatchGamePadButton.o WatchGamePadMove.o \
 	AlsaSoundIn.o \
@@ -33,6 +34,7 @@ W32OBJS = \
 	$(W32L)/StimulusWav.o $(W32L)/StimulusTxt.o \
 	$(W32L)/Event.o $(W32L)/EventGrabAOI.o $(W32L)/EventSwapAOI.o $(W32L)/EventUpdateAOI.o \
 	$(W32L)/EventUpdate.o $(W32L)/EventRecord.o $(W32L)/EventMsg.o $(W32L)/StimulusShowAOI.o \
+	$(W32L)/EventRepeatIf.o $(W32L)/EventResetCounter.o $(W32L)/EventIncrementCounter.o \
 	$(W32L)/Watch.o $(W32L)/WatchKey.o $(W32L)/WatchMouse.o $(W32L)/WatchDone.o \
 	$(W32L)/WatchGamePadButton.o $(W32L).WatchGamePadMove.o \
 	$(W32L)/PASoundIn.o \

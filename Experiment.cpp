@@ -34,6 +34,7 @@ using pastestr::paste;
 #include "Display_SDL.hpp"
 #include "Audio_SDL.hpp"
 #include "InputDev.hpp"
+#include "Template.hpp"
 #include "sys/stat.h"
 
 using std::stringstream;
@@ -142,6 +143,9 @@ int Experiment::InitializeExp(const char * pcMode, bool bResume) {
   m_id = 1;
   m_idSubj = 0;
   vector<listordinfo> vlItems;
+  m_bResume = bResume;
+
+  Template::g_pExperiment = this;
 
   Trial::g_pExp = this;
 
@@ -205,7 +209,7 @@ int Experiment::InitializeExp(const char * pcMode, bool bResume) {
 
   CreateTrialObjects(vlItems);
 
-  m_itTrial = m_mapTrial.begin();
+  m_itTrial = m_mapTrial.begin();  // start at the beginning
 
   g_pErr->DFO("Experiment::InitializeExp", (const char *) NULL);
 }
@@ -739,7 +743,7 @@ int Experiment::Prepare(SDL_Surface * pDisplay /* = null */, bool bFullScreen /*
       g_pDisplay->CreateScreen(0, 0, sdlVid->current_w, sdlVid->current_h, 
 			       SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_FULLSCREEN );
     } else {
-      g_pDisplay->CreateScreen(0, 0, 2048, 768, 
+      g_pDisplay->CreateScreen(0, 0, 800, 600, 
 			       SDL_DOUBLEBUF | SDL_HWSURFACE);
     }
   } else {}
@@ -755,6 +759,8 @@ int Experiment::Prepare(SDL_Surface * pDisplay /* = null */, bool bFullScreen /*
   } else {}
 
   m_pCurTrial = NULL;
+
+  m_msExpBegin = ClockFn();
 
   g_pErr->DFO("Experiment::Prepare", 0L, 1);
 
@@ -1317,22 +1323,42 @@ string Experiment::GetFileName() {
   return ostr.str();
 }
 
-void Experiment::CreateTrialObjects(vector<listordinfo> vlItems) {
+void Experiment::CreateTrialObjects(vector<listordinfo> vlItems, int nBegin) {
   g_pErr->DFI("Experiment::CreateTrialObjects", (const char *) NULL);  
   map<long, ItemCellPtr>::iterator it;
 
   for (int k = 0; k < vlItems.size(); k++) {
     it = m_mapItemCell.find(vlItems[k].m_idItemCell);
     if (it == m_mapItemCell.end()) {
-      g_pErr->Report("Problem in SequenceItems()");
+      g_pErr->Report(pastestr::paste("sd", "", "Problem in SequenceItems(); missing ID ", vlItems[k].m_idItemCell));
     } else {}
-    m_mapTrial[(long) k+1] = TrialPtr(new Trial(k+1, vlItems[k].m_idBlock, vlItems[k].m_idPhase ,it->second));
+    m_mapTrial[(long) k+nBegin] = TrialPtr(new Trial(k+nBegin, vlItems[k].m_idBlock, vlItems[k].m_idPhase ,it->second));
   }
-
-  m_itTrial = m_mapTrial.begin();
 
   g_pErr->Debug(paste("sds", "", "There are ", m_mapTrial.size(), 
 		      " trials in all"));
 
   g_pErr->DFO("Experiment::CreateTrialObjects", (const char *) NULL);  
+}
+
+void Experiment::RepeatExperiment() {
+  // TODO repeat the experiment
+  // TODO add items to the end of the experiment
+  g_pErr->DFI("Experiment::RepeatExperiment", (const char *) NULL);
+  vector<listordinfo> vlItems;
+
+  vlItems = SequenceItems();
+  int nBegin = m_mapTrial.size();
+  CreateTrialObjects(vlItems, nBegin);
+  FillTrialsTodo(vlItems);
+
+  g_pErr->DFO("Experiment::RepeatExperiment", (const char *) NULL);
+}
+
+void Experiment::IncrementCounter(const char * pcCtr) {
+  // TODO: increment the counter named by pcCtr
+}
+
+void Experiment::ResetCounter(const char * pcCtr) {
+  // TODO: reset the counter named by pcCtr
 }

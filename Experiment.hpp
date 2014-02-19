@@ -97,6 +97,8 @@ class Experiment
 
 public:
   static unsigned int g_nSeed;
+  Uint32 m_msExpBegin;
+  bool m_bResume;
 
   //Experiment(int argc, char * argv[]);
   //Experiment(const char * expdb, const char * dbType, const char * pcMode = "auto");
@@ -144,11 +146,14 @@ public:
   inline long CurrentTrialID() { return m_pCurTrial->ID(); };
   string GetResponseDir();
   void CreateOrPurgeResponseDir(bool bResume = false);
-  void CreateTrialObjects(vector<listordinfo> vlItems);
+  void CreateTrialObjects(vector<listordinfo> vlItems, int nBegin=1);
   void FillTrialsTodo(vector<listordinfo> vlItems);
   void PurgeTrialsTodo();
   vector<listordinfo> LoadTrialsTodo();
   string GetFileName();
+  void RepeatExperiment();
+  void IncrementCounter(const char * pcCtr);
+  void ResetCounter(const char * pcCtr);
 
   int Loop();
 };

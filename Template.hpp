@@ -39,6 +39,7 @@ typedef pair<long, EventPtr> EventPair;
 
 class ItemCell;
 class Trial;
+class Experiment;
 
 class Template
 {
@@ -62,6 +63,7 @@ public:
   MsgMap m_msgMap;
   StateMap m_mapState;
   static InputDevPtrMMap s_mmapInputDevPtr;
+  static Experiment * g_pExperiment;
   int m_nStatus;
   vector<RespData> m_vRespData;
   // If I knew c++ properly, I wouldn't need the following lines
@@ -117,6 +119,9 @@ public:
   vector<EventTimePtr> GetEventTiming();
 
   Trial * GetCurTrial();
+  void RepeatExperiment();
+  void IncrementCounter(const char * pcCtr);
+  void ResetCounter(const char * pcCtr);
 };
 
 typedef boost::shared_ptr<Template> TemplatePtr;

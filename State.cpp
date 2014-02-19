@@ -26,6 +26,9 @@ using pastestr::paste;
 #include "EventAsync.hpp"
 #include "EventAsyncCtrl.hpp"
 #include "EventClear.hpp"
+#include "EventRepeatIf.hpp"
+#include "EventResetCounter.hpp"
+#include "EventIncrementCounter.hpp"
 
 //#include "EventGSC1Feedback.hpp"
 //#include "EventGSC1DrawGrid.hpp"
@@ -249,6 +252,15 @@ ORDER BY Msec ASC");
 	  InputDevPtr pDev = pTemplate->FindOrCreateInputDev(SBX_AUDIOREC_DEV);
 	  pEvent = EventPtr(new EventRecord(idEvent, msec, idCmd, mmArgs, pTemplate, pDev));
 	}
+	break;
+      case SBX_EVENT_INCREMENT_COUNTER :
+	pEvent = EventPtr(new EventIncrementCounter(idEvent, msec, idCmd, mmArgs, pTemplate));
+	break;
+      case SBX_EVENT_RESET_COUNTER :
+	pEvent = EventPtr(new EventResetCounter(idEvent, msec, idCmd, mmArgs, pTemplate));
+	break;
+      case SBX_EVENT_REPEATIF :
+	pEvent = EventPtr(new EventRepeatIf(idEvent, msec, idCmd, mmArgs, pTemplate));
 	break;
       default :
 	g_pErr->Report(pastestr::paste("sd", " ", "UNDEFINED EVENT!", idCmd));
