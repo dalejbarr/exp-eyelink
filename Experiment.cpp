@@ -1349,8 +1349,9 @@ void Experiment::RepeatExperiment() {
 
   vlItems = SequenceItems();
   int nBegin = m_mapTrial.size();
-  CreateTrialObjects(vlItems, nBegin);
-  FillTrialsTodo(vlItems);
+  // TODO
+  //CreateTrialObjects(vlItems, nBegin);
+  //FillTrialsTodo(vlItems);
 
   g_pErr->DFO("Experiment::RepeatExperiment", (const char *) NULL);
 }
@@ -1360,5 +1361,5 @@ void Experiment::IncrementCounter(const char * pcCtr) {
 }
 
 void Experiment::ResetCounter(const char * pcCtr) {
-  // TODO: reset the counter named by pcCtr
+   // TODO: reset the counter named by pcCtr
 }

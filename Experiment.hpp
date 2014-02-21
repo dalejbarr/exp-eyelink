@@ -71,6 +71,7 @@ using std::set;
 typedef map<long, TemplatePtr> TemplateMap;
 typedef map<long, ItemCellPtr> ItemCellMap;
 typedef map<long, TrialPtr> TrialMap;
+typedef map<string, long> CounterMap;
 
 class Experiment
 {
@@ -86,6 +87,7 @@ class Experiment
   TemplateMap m_mapTemplate;
   ItemCellMap m_mapItemCell;
   TrialMap m_mapTrial;
+  CounterMap m_mapCounter;
   TrialMap::iterator m_itTrial;
   Trial * m_pCurTrial;
   string m_strDriver;

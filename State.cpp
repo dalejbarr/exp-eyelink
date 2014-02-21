@@ -463,6 +463,7 @@ int State::Update() {
 	event.type = SDL_USEREVENT;
 	event.user = userevent;
 	SDL_PushEvent(&event);
+	nFinished = 1;
 	break;
       } else {}
     } else {}
