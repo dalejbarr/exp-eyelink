@@ -75,6 +75,7 @@ Experiment::Experiment() {
   InitReport();
   g_pErr->DFI("Experiment::Experiment", 0L, 1);
   m_pCurTrial = NULL;
+  m_bRefreshNeeded = false;
   g_pErr->DFO("Experiment::Experiment", 0L, 1);
 }
 
@@ -139,6 +140,7 @@ int Experiment::InitializeExp(const char * pcMode, bool bResume) {
 
   g_pErr->Debug(pastestr::paste("ss", "", "mode is ", pcMode));
 
+  m_bRefreshNeeded = false;
   m_pCurTrial = NULL;
   m_id = 1;
   m_idSubj = 0;
@@ -267,6 +269,9 @@ int Experiment::Cleanup() {
     delete g_prsResp;
     g_prsResp = NULL;
   } else {}
+
+  g_pErr->Debug(".Deleting Recordsets.");
+  m_mapCounter.clear();
 }
 
 int Experiment::LoadTemplates() {
@@ -833,6 +838,12 @@ int Experiment::PrepareNextTrial() {
   g_pErr->DFI("Experiment::PrepareNextTrial", 0L, 1);
   int nResult = EXP_TRIAL_READY;
   //trialtodo tt;
+  
+  /*
+  if (m_bRefreshNeeded) {
+    g_pErr->Report("############## refresh needed!!");
+  } else {}
+  */
 
   //do {
   m_pCurTrial = NextTrial();
@@ -1335,6 +1346,8 @@ void Experiment::CreateTrialObjects(vector<listordinfo> vlItems, int nBegin) {
     m_mapTrial[(long) k+nBegin] = TrialPtr(new Trial(k+nBegin, vlItems[k].m_idBlock, vlItems[k].m_idPhase ,it->second));
   }
 
+  m_itTrial = m_mapTrial.find(nBegin);
+
   g_pErr->Debug(paste("sds", "", "There are ", m_mapTrial.size(), 
 		      " trials in all"));
 
@@ -1348,18 +1361,45 @@ void Experiment::RepeatExperiment() {
   vector<listordinfo> vlItems;
 
   vlItems = SequenceItems();
-  int nBegin = m_mapTrial.size();
+  int nBegin = m_mapTrial.size() + 1;
+  m_bRefreshNeeded = true;
+
   // TODO
-  //CreateTrialObjects(vlItems, nBegin);
-  //FillTrialsTodo(vlItems);
+  CreateTrialObjects(vlItems, nBegin);
+  FillTrialsTodo(vlItems);
 
   g_pErr->DFO("Experiment::RepeatExperiment", (const char *) NULL);
 }
 
 void Experiment::IncrementCounter(const char * pcCtr) {
   // TODO: increment the counter named by pcCtr
+  //CounterMap::iterator it;
+  //string s(pcCtr);
+
+  g_pErr->Debug(pastestr::paste("ss", " ", "countername is", pcCtr));
+
+  if (m_mapCounter.find(pcCtr)==m_mapCounter.end()) {
+    m_mapCounter[pcCtr] = 1;
+    //m_mapCounter.insert(std::pair<string, long>(s, 0));
+    //it = m_mapCounter.find(pcCtr);
+  } else {
+    m_mapCounter[pcCtr] = m_mapCounter[pcCtr] + 1;
+  }
+
+  g_pErr->Debug(pastestr::paste("sssd", " ", "set counter", pcCtr, "to", m_mapCounter[pcCtr]));
 }
 
 void Experiment::ResetCounter(const char * pcCtr) {
    // TODO: reset the counter named by pcCtr
+  m_mapCounter[pcCtr] = 0;
+  g_pErr->Debug(pastestr::paste("sssd", " ", "*** reset counter", pcCtr, "to", m_mapCounter[pcCtr]));
+}
+
+long Experiment::GetCounter(const char * pcCtr) {
+  // TODO: error checking!
+  return m_mapCounter[pcCtr];
+}
+
+Uint32 Experiment::GetMSElapsed() {
+  return (ClockFn()-m_msExpBegin);
 }

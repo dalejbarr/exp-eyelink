@@ -122,6 +122,8 @@ public:
   void RepeatExperiment();
   void IncrementCounter(const char * pcCtr);
   void ResetCounter(const char * pcCtr);
+  long GetCounter(const char * pcCtr);
+  Uint32 GetMSElapsed();
 };
 
 typedef boost::shared_ptr<Template> TemplatePtr;

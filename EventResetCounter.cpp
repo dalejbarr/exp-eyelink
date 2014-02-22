@@ -27,17 +27,14 @@ EventResetCounter::EventResetCounter(long idEvent, long msec, long idCmd,
 }
 
 int EventResetCounter::Action() {
-  bool bCondition = true;
-
   g_pErr->DFI("EventResetCounter::Action", ID(), 3);
-  if (bCondition) {
-    if (m_pTemplate != NULL) {
-      m_pTemplate->RepeatExperiment();
-    } else {
-      g_pErr->Report("in EventResetCounter::Action: m_pTemplate was NULL!");
-    }
-  } else {}
-  g_pErr->DFO("EventResetCounter::Action", ID(), 3);
 
+  if (m_pTemplate != NULL) {
+    m_pTemplate->ResetCounter(m_strCounterID.c_str());
+  } else {
+    g_pErr->Report("in EventResetCounter::Action: m_pTemplate was NULL!");
+  }
+
+  g_pErr->DFO("EventResetCounter::Action", ID(), 3);
   return Event::Action();
 }

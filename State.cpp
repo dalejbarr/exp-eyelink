@@ -454,7 +454,7 @@ int State::Update() {
   while (1) {
     if (m_nTimeout) {
       if (msDiff >= m_nTimeout) {
-	g_pErr->Debug("state timeout");
+	//g_pErr->Report(pastestr::paste("sd", " ", "state timeout", m_id));
 	m_pCurEvent = m_mmapEvent.end(); // make sure no more events will be triggered
 	userevent.type = SDL_USEREVENT;
 	userevent.code = SBX_WATCH_TIMEOUT;

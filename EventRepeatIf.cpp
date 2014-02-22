@@ -32,6 +32,13 @@ EventRepeatIf::EventRepeatIf(long idEvent, long msec, long idCmd,
     m_strOperation = (pii.first)->second;
   } else {}
 
+  m_ui32Timeout = 0;
+  pii = mmArgs.equal_range("Timeout");
+  if (pii.first != pii.second) {
+    m_ui32Timeout = boost::lexical_cast<Uint32>((pii.first)->second.c_str());    
+    g_pErr->Debug(pastestr::paste("sd", " ", "timeout set to", (long) m_ui32Timeout));
+  } else {}
+
   g_pErr->Debug(pastestr::paste("sssd", " ",
 				"repeating if", m_strCounterID.c_str(), 
 				m_strOperation.c_str(),
@@ -41,9 +48,31 @@ EventRepeatIf::EventRepeatIf(long idEvent, long msec, long idCmd,
 }
 
 int EventRepeatIf::Action() {
-  bool bCondition = true;
+  bool bCondition = false;
 
   g_pErr->DFI("EventRepeatIf::Action", ID(), 3);
+
+  if (m_strOperation=="LT") {
+    bCondition = m_pTemplate->GetCounter(m_strCounterID.c_str()) < m_lTarget;
+  } else {
+    g_pErr->Report(pastestr::paste("sss", "", "EventRepeatIf operation '", m_strOperation.c_str(), "' undefined!"));
+  }
+
+  string strResult("not met");
+  if (bCondition) {
+    strResult = "met";
+  } else {}
+
+  g_pErr->Debug(pastestr::paste("sssds", " ", "Condition", m_strCounterID.c_str(), m_strOperation.c_str(), m_lTarget, strResult.c_str())); 
+
+  Uint32 ui32Elapsed = m_pTemplate->GetMSElapsed();
+  g_pErr->Debug(pastestr::paste("sd", "", "TIME ELAPSED: ", (long) ui32Elapsed));
+
+  if (ui32Elapsed > m_ui32Timeout) {
+    bCondition = false;
+    g_pErr->Debug("timing out of Repeat Experiment");
+  } else {}
+  
   if (bCondition) {
     if (m_pTemplate != NULL) {
       m_pTemplate->RepeatExperiment();

@@ -865,3 +865,19 @@ void Template::ResetCounter(const char * pcCtr) {
 
   g_pErr->DFO("Template::ResetCounter", m_strDebug.c_str(), 2);
 }
+
+long Template::GetCounter(const char * pcCtr) {
+  long res = 0;
+
+  if (Template::g_pExperiment!=NULL) {
+    res = Template::g_pExperiment->GetCounter(pcCtr);
+  } else {
+    g_pErr->Report("in Template::GetCounter; g_pExperiment undefined!");
+  }
+
+  return res;
+}
+
+Uint32 Template::GetMSElapsed() {
+  return Template::g_pExperiment->GetMSElapsed();
+}
