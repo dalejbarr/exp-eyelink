@@ -47,6 +47,7 @@ StimulusBmp::StimulusBmp(long id, Template * pTemplate,
     int r, g, b;
     istringstream iss((*pii.first).second);
     iss >> r >> g >> b;
+		g_pErr->Debug(pastestr::paste("sddd", " ", "set colorkey", (long) r, (long) g, (long) b));
     SetColorkey(r, g, b);      
     //g_pErr->Report(pastestr::paste("ddd", " ", (long) r, (long) g, (long) b));
     //m_nLayer = atoi((*ii).second.c_str());
@@ -316,6 +317,7 @@ int StimulusBmp::LoadBMP(string s1) {
   } else {}
 
   if (m_bColorKey) {
+		g_pErr->Debug(pastestr::paste("sddd", " ", "colorkey", (long) m_r, (long) m_g, (long) m_b));
     SDL_SetColorKey( m_pSurface, SDL_SRCCOLORKEY | SDL_RLEACCEL,
 		     SDL_MapRGB(StimulusBmp::m_pScreen->format, m_r, m_g, m_b) );
   } else {}

@@ -176,12 +176,16 @@ int run_trials() {
   //event.user.code = SBX_FINISHED;
 
   g_pExperiment->Prepare(window);
+
+  g_pErr->Debug("going to set up the tracker");
   do_tracker_setup();
   pump_delay(1000);
 
   //int i = g_pExperiment->PrepareNextTrial();
   //g_pErr->Debug(pastestr::paste("d", "", i));
   int nTrial = 1;
+
+  g_pErr->Debug("about to begin");
 
   while (g_pExperiment->PrepareNextTrial() == EXP_TRIAL_READY) {
 
@@ -281,7 +285,7 @@ int app_main(char * trackerip, DISPLAYINFO * disp)
   g_pExperiment->Prepare(window, false);
   //g_pExperiment->Prepare(NULL, window);
 
-  g_pExperiment->Message(pastestr::paste("sds", "", "Your session ID is ", g_pExperiment->SessionID()).c_str());
+  g_pExperiment->Message(pastestr::paste("sd", "", "Your session ID is ", (long) g_pExperiment->GetSessionID()).c_str());
   g_pExperiment->WaitKey();
   g_pDisplay->ClearScreen();
 

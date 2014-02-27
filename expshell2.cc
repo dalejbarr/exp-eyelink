@@ -42,7 +42,7 @@ int exp_init(int argc, char * argv[]) {
 
   if (g_bShowSession) {
     //string sMsg();
-    g_pExperiment->Message(pastestr::paste("sd", "", "Your session ID is ", g_pExperiment->SessionID()).c_str());
+    g_pExperiment->Message(pastestr::paste("sd", "", "Your session ID is ", g_pExperiment->GetSessionID()).c_str());
     g_pExperiment->WaitKey();
     g_pDisplay->ClearScreen();
   } else {

@@ -736,8 +736,13 @@ Trial * Experiment::NextTrial() {
 int Experiment::Prepare(SDL_Surface * pDisplay /* = null */, bool bFullScreen /* = 0 */) {
   g_pErr->DFI("Experiment::Prepare", 0L, 1);
 
+  g_pErr->Debug("here1");
   g_pDisplay = new Display_SDL(pDisplay);
+  g_pErr->Debug("here2");
+
   if (pDisplay == NULL) {
+    g_pErr->Debug("display not initialized");
+
     //g_pErr->Debug("here");
     const SDL_VideoInfo * sdlVid = NULL;
     sdlVid = SDL_GetVideoInfo();
@@ -748,20 +753,23 @@ int Experiment::Prepare(SDL_Surface * pDisplay /* = null */, bool bFullScreen /*
       g_pDisplay->CreateScreen(0, 0, sdlVid->current_w, sdlVid->current_h, 
 			       SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_FULLSCREEN );
     } else {
-      g_pDisplay->CreateScreen(0, 0, 800, 600, 
+      g_pDisplay->CreateScreen(0, 0, 1024, 768, 
 			       SDL_DOUBLEBUF | SDL_HWSURFACE);
     }
   } else {}
+  g_pErr->Debug("display initialized");
 
   if ( TTF_Init() < 0 ) {
     g_pErr->Report(pastestr::paste("ss", "", "Couldn't initialize TTF: %s", SDL_GetError()));
     SDL_Quit();
     return(2);
   } else {}
+  g_pErr->Debug("ttf initialized");
 
   if (g_pAudio == NULL) {
     g_pAudio = new Audio_SDL();
   } else {}
+  g_pErr->Debug("audio initialized");
 
   m_pCurTrial = NULL;
 
