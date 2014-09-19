@@ -20,6 +20,7 @@ using pastestr::paste;
 #include "GamePad_SDL.hpp"
 #include "ScrollTrackGP_SDL.hpp"
 #include "Experiment.hpp"
+#include "SoundInput.hpp"
 
 #ifndef WIN32
 #include "AlsaSoundIn.hpp"
@@ -810,7 +811,8 @@ InputDevPtr Template::FindOrCreateInputDev(unsigned long idDev, int nIndex /*=0*
       {
 #ifndef WIN32
 	g_pErr->Debug("creating audioinput device");
-	pDev = InputDevPtr(new AlsaSoundIn(SBX_AUDIOREC_DEV));
+	//pDev = InputDevPtr(new AlsaSoundIn(SBX_AUDIOREC_DEV));
+	pDev = InputDevPtr(new SoundInput(SBX_AUDIOREC_DEV));
 #endif
       }
       break;

@@ -25,6 +25,7 @@ int g_nMainResult = EXP_IN_PROGRESS;
 bool g_bResume = false;
 
 int exp_init(int argc, char * argv[]) {
+	std::cout << "initializing SDL" << std::endl;
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) == -1) {
     g_pErr->Report("Could not initialize Simple DirectMedia Layer.");
   } else {}

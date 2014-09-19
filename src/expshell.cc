@@ -16,7 +16,8 @@ int exp_init(int argc, char * argv[]) {
   //g_pExperiment->SequenceItems();
 
   //if (SDL_Init(SDL_INIT_TIMER|SDL_INIT_AUDIO|SDL_INIT_VIDEO|SDL_INIT_JOYSTICK) == -1) {
-  if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
+  if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER |
+							 SDL_INIT_EVENTS) == -1) {
     g_pErr->Report("Could not initialize Simple DirectMedia Layer.");
   } else {}
 

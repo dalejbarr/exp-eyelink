@@ -10,6 +10,7 @@ OBJS = 	Experiment.o Template.o State.o \
 	Watch.o WatchKey.o WatchMouse.o WatchDone.o \
 	WatchGamePadButton.o WatchGamePadMove.o \
 	AlsaSoundIn.o \
+	SoundInput.o RtAudio.o \
 	StartupInfo.o pastestr.o \
 	Operation.o \
 	Recordset.o RecordsetMySQL.o RecordsetSqlite.o helpers.o \
@@ -48,7 +49,7 @@ W32OBJS = \
 	$(W32L)/xy.o \
 	$(W32L)/EventLC1Display.o
 
-CFLAGS = -c -I.
+CFLAGS = -c -I. 
 
 W32CF = -c -I. -I/home/daleb/src/boost -D WIN32 $(shell /opt/SDL-win32/bin/sdl-config --cflags)
 #-I/usr/i586-mingw32msvc/include/SDL -I/home/daleb/src/boost -D WIN32
@@ -62,6 +63,7 @@ W32MYF = -Iwin32/mysql/include
 MYFLAGS = -I/usr/include/mysql
 MYLINK=-L/usr/lib/mysql -lmysqlclient 
 SDL_CFLAGS := $(shell sdl-config --cflags)
+RTAFLAGS = -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__
 #SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer
 #SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_mixer -lSDL_ttf
 SDL_LDFLAGS = $(shell sdl-config --libs) -lSDL -lpthread -lSDL_image -lSDL_mixer -lSDL_ttf
@@ -82,10 +84,13 @@ pp3main.o : pp3main.cpp picture.h
 	$(CC) $(CFLAGS) $(ELINK_CFLAGS) $(SDL_CFLAGS) pp3main.cpp
 
 exp2 : $(OBJS) sblib.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
-	$(CC) -o exp2 expshell2.o sblib.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lasound $(MYLINK) 
+	$(CC) $(RTAFLAGS) -o exp2 expshell2.o sblib.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lasound $(MYLINK) 
 
 expdebug2 : sblib-debug.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
-	$(CC) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lasound $(MYLINK) 
+	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lasound $(MYLINK) 
+
+install : exp2 expdebug2
+	cp exp2 ../bin/exp2; cp expdebug2 ../bin/expdebug2
 
 expdebug2pp3 : sblib-debug.a pp3main.o ClockFn.o StimulusEyeLinkMsg-notrack.o
 	$(CC) -o expdebug2 pp3main.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lasound $(MYLINK)
@@ -144,8 +149,13 @@ StimulusEyeLinkMsg-notrack.o : StimulusEyeLinkMsg.cpp StimulusEyeLinkMsg.hpp Tem
 StimulusEyeLinkMsg.o : StimulusEyeLinkMsg.cpp StimulusEyeLinkMsg.hpp Template.hpp global.hpp
 	g++ $(CFLAGS) $(SDL_CFLAGS) $(ELINK_CFLAGS) -DEXP_EYELINK_VERS -o StimulusEyeLinkMsg.o StimulusEyeLinkMsg.cpp
 
+RtAudio.o : RtAudio.cpp RtAudio.h
+	g++ $(CFLAGS) $(RTAFLAGS) -O2 -Wall -Wextra -fPIC -o RtAudio.o RtAudio.cpp
+
 %.o : %.cpp %.hpp
 	$(CC) $(CFLAGS) $(SDL_CFLAGS) $<
+
+# win 32
 
 $(W32L)/%.o : %.cpp %.hpp
 	$(W32CC) $(W32CF) -o $@ $<
