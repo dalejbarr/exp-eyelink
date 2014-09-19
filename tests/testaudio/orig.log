@@ -1,0 +1,742 @@
+<--- Entering Experiment::Experiment() 0 --->
+<--- Exiting Experiment::Experiment() 0 --->
+<--- Entering Experiment::InitializeDB() 0 --->
+using sqlite3 version
+<--- Exiting Experiment::InitializeDB() 0 --->
+<--- Entering Experiment::InitializeExp() --->
+mode is 1
+<--- Entering Experiment::DeleteSession()  --->
+sqlite: DELETE FROM  StateTiming  WHERE TrialID IN (SELECT TrialID FROM Trial WHERE SessionID=1)
+sqlite: DELETE FROM  EventTiming  WHERE TrialID IN (SELECT TrialID FROM Trial WHERE SessionID=1)
+sqlite: DELETE FROM  Msg  WHERE TrialID IN (SELECT TrialID FROM Trial WHERE SessionID=1)
+sqlite: DELETE FROM  Mouse  WHERE RespID IN (SELECT RespID FROM Response JOIN Trial USING (TrialID) WHERE SessionID=1)
+sqlite: DELETE FROM  Eye  WHERE RespID IN (SELECT RespID FROM Response JOIN Trial USING (TrialID) WHERE SessionID=1)
+sqlite: DELETE FROM  Keyboard  WHERE RespID IN (SELECT RespID FROM Response JOIN Trial USING (TrialID) WHERE SessionID=1)
+sqlite: DELETE FROM  KeyTrack  WHERE RespID IN (SELECT RespID FROM Response JOIN Trial USING (TrialID) WHERE SessionID=1)
+sqlite: DELETE FROM  ResponsesExcluded  WHERE RespID IN (SELECT RespID FROM Response JOIN Trial USING (TrialID) WHERE SessionID=1)
+sqlite: DELETE FROM  GamePad  WHERE RespID IN (SELECT RespID FROM Response JOIN Trial USING (TrialID) WHERE SessionID=1)
+sqlite: DELETE FROM  Response  WHERE TrialID IN (SELECT TrialID FROM Trial WHERE SessionID=1)
+sqlite: DELETE FROM  Trial  WHERE SessionID=1
+<--- Exiting Experiment::DeleteSession()  --->
+<--- Entering Experiment::CreateOrPurgeResponseDir()  --->
+response/s0000001
+<--- Exiting Experiment::CreateOrPurgeResponseDir()  --->
+sqlite: SELECT ListID FROM Session WHERE SessionID=1
+ListID is 1 for SessionID 1
+sqlite: UPDATE Session SET Completion='IN PROGRESS' WHERE SessionID=1
+sqlite: UPDATE Session SET Seed=1370882370 WHERE SessionID=1
+established seed of 1370882370
+sqlite: UPDATE Session SET Completion='IN_PROGRESS' WHERE SessionID=1
+sqlite: UPDATE Session SET Date=datetime('now') WHERE SessionID=1
+sqlite: SELECT SubjID FROM Subject WHERE SessionID=1
+Subject ID is 1
+<--- Entering Experiment::LoadTemplates() --->
+sqlite: SELECT Template.TemplateID, Template.Timeout, Template.Name 
+FROM Template 
+INNER JOIN Item ON Template.TemplateID=Item.TemplateID 
+INNER JOIN ListOrder ON Item.ItemCellID=ListOrder.ItemCellID 
+INNER JOIN Phase ON ListOrder.PhaseID=Phase.PhaseID 
+INNER JOIN Block ON Phase.BlockID=Block.BlockID 
+WHERE ListOrder.ListID= 1 
+GROUP BY Template.TemplateID, Template.Timeout, Template.Name
+   <--- Entering Template::Template() only (1) --->
+   <--- Exiting Template::Template() only (1) --->
+
+1 templates retrieved
+
+   <--- Entering Template::LoadAOIs() only (1) --->
+sqlite: SELECT AOIArgs.AOIID, AOIArgs.ArgID, AOIArgs.Info 
+FROM AOIArgs INNER JOIN AOI ON AOI.AOIID=AOIArgs.AOIID 
+WHERE AOI.ID=1 AND AOI.Link='template' 
+ORDER BY AOIArgs.AOIID, AOIArgs.ArgID
+sqlite: SELECT AOI.AOIID, Name, Resource, x1, y1, Layer 
+FROM AOI 
+WHERE ID=1 AND Link='template' 
+ORDER BY Layer, AOI.AOIID ASC
+   <--- Exiting Template::LoadAOIs() only (1) --->
+sqlite: SELECT StateID, Name, Sequence 
+FROM State 
+WHERE TemplateID= 1 
+ORDER BY Sequence;
+
+TemplateID 1 has 1 states.
+
+      <--- Entering State::State() only (1) --->
+      <--- Exiting State::State() only (1) --->
+      <--- Entering LoadEvents() only (1) --->
+sqlite: SELECT EventID, EvtCmdID, Msec 
+FROM Event 
+WHERE StateID=1
+ORDER BY Msec ASC
+         <--- Entering State::GetArgs() only (1) --->
+sqlite: SELECT ArgID, Info 
+FROM EventArgs
+WHERE EventID=1
+         <--- Exiting State::GetArgs() only (1) --->
+the EvtCmdID was 5
+   <--- Entering Event::Event() 1 --->
+   <--- Exiting Event::Event() 1 --->
+         <--- Entering State::GetArgs() only (1) --->
+sqlite: SELECT ArgID, Info 
+FROM EventArgs
+WHERE EventID=3
+         <--- Exiting State::GetArgs() only (1) --->
+the EvtCmdID was 10
+<--- Entering Template::FindOrCreateInputDev() 0 --->
+creating audioinput device
+=====> Initializing ALSA SOUNDIN
+<--- Exiting Template::FindOrCreateInputDev() 0 --->
+   <--- Entering Event::Event() 3 --->
+   <--- Exiting Event::Event() 3 --->
+      <--- Entering EventRecord::EventRecord() 3 --->
+output file set to  $SFILE
+      <--- Exiting EventRecord::EventRecord() 3 --->
+         <--- Entering State::GetArgs() only (1) --->
+sqlite: SELECT ArgID, Info 
+FROM EventArgs
+WHERE EventID=2
+         <--- Exiting State::GetArgs() only (1) --->
+the EvtCmdID was 8
+         <--- Entering StimulusTxt::StimulusTxt()() $TXT --->
+         <--- Exiting StimulusTxt::StimulusTxt()() $TXT --->
+      <--- Exiting LoadEvents() only (1) --->
+      <--- Entering LoadWatches() only (1) --->
+sqlite: SELECT WatchID, WCmdID, NextStateID 
+FROM Watch 
+WHERE StateID=1
+ORDER BY WatchID ASC
+         <--- Entering State::GetArgs() only (1) --->
+sqlite: SELECT ArgID, Info 
+FROM WatchArgs
+WHERE WatchID=1
+         <--- Exiting State::GetArgs() only (1) --->
+      <--- Exiting LoadWatches() only (1) --->
+<--- Exiting Experiment::LoadTemplates() --->
+<--- Entering Experiment::LoadItems() --->
+sqlite: SELECT Item.ItemCellID, Item.TemplateID 
+FROM Item 
+INNER JOIN ListOrder ON Item.ItemCellID=ListOrder.ItemCellID 
+INNER JOIN Phase ON ListOrder.PhaseID=Phase.PhaseID 
+INNER JOIN Block ON Phase.BlockID=Block.BlockID 
+WHERE ListID=1
+GROUP BY Item.ItemCellID, Item.TemplateID
+   <--- Entering ItemCell::LoadAOIs() 1 --->
+sqlite: SELECT AOIArgs.AOIID, AOIArgs.ArgID, AOIArgs.Info 
+FROM AOIArgs INNER JOIN AOI ON AOI.AOIID=AOIArgs.AOIID 
+WHERE AOI.ID=1 AND AOI.Link='itemcell' 
+ORDER BY AOIArgs.AOIID, AOIArgs.ArgID
+sqlite: SELECT AOI.AOIID, Name, Resource, x1, y1, Layer 
+FROM AOI 
+WHERE ID=1 AND Link='itemcell' 
+ORDER BY Layer, AOI.AOIID ASC
+   <--- Exiting ItemCell::LoadAOIs() 1 --->
+   <--- Entering ItemCell::LoadResources() 1 --->
+sqlite: SELECT Code, Data 
+FROM Resource 
+WHERE ItemCellID= 1 ORDER BY Code
+SFILE=01.raw
+TXT=Hello world
+   <--- Exiting ItemCell::LoadResources() 1 --->
+   <--- Entering ItemCell::LoadAOIs() 2 --->
+sqlite: SELECT AOIArgs.AOIID, AOIArgs.ArgID, AOIArgs.Info 
+FROM AOIArgs INNER JOIN AOI ON AOI.AOIID=AOIArgs.AOIID 
+WHERE AOI.ID=2 AND AOI.Link='itemcell' 
+ORDER BY AOIArgs.AOIID, AOIArgs.ArgID
+sqlite: SELECT AOI.AOIID, Name, Resource, x1, y1, Layer 
+FROM AOI 
+WHERE ID=2 AND Link='itemcell' 
+ORDER BY Layer, AOI.AOIID ASC
+   <--- Exiting ItemCell::LoadAOIs() 2 --->
+   <--- Entering ItemCell::LoadResources() 2 --->
+sqlite: SELECT Code, Data 
+FROM Resource 
+WHERE ItemCellID= 2 ORDER BY Code
+SFILE=02.raw
+TXT=Yo
+   <--- Exiting ItemCell::LoadResources() 2 --->
+   <--- Entering ItemCell::LoadAOIs() 3 --->
+sqlite: SELECT AOIArgs.AOIID, AOIArgs.ArgID, AOIArgs.Info 
+FROM AOIArgs INNER JOIN AOI ON AOI.AOIID=AOIArgs.AOIID 
+WHERE AOI.ID=3 AND AOI.Link='itemcell' 
+ORDER BY AOIArgs.AOIID, AOIArgs.ArgID
+sqlite: SELECT AOI.AOIID, Name, Resource, x1, y1, Layer 
+FROM AOI 
+WHERE ID=3 AND Link='itemcell' 
+ORDER BY Layer, AOI.AOIID ASC
+   <--- Exiting ItemCell::LoadAOIs() 3 --->
+   <--- Entering ItemCell::LoadResources() 3 --->
+sqlite: SELECT Code, Data 
+FROM Resource 
+WHERE ItemCellID= 3 ORDER BY Code
+SFILE=03.raw
+TXT=Trial3
+   <--- Exiting ItemCell::LoadResources() 3 --->
+   <--- Entering ItemCell::LoadAOIs() 4 --->
+sqlite: SELECT AOIArgs.AOIID, AOIArgs.ArgID, AOIArgs.Info 
+FROM AOIArgs INNER JOIN AOI ON AOI.AOIID=AOIArgs.AOIID 
+WHERE AOI.ID=4 AND AOI.Link='itemcell' 
+ORDER BY AOIArgs.AOIID, AOIArgs.ArgID
+sqlite: SELECT AOI.AOIID, Name, Resource, x1, y1, Layer 
+FROM AOI 
+WHERE ID=4 AND Link='itemcell' 
+ORDER BY Layer, AOI.AOIID ASC
+   <--- Exiting ItemCell::LoadAOIs() 4 --->
+   <--- Entering ItemCell::LoadResources() 4 --->
+sqlite: SELECT Code, Data 
+FROM Resource 
+WHERE ItemCellID= 4 ORDER BY Code
+SFILE=04.raw
+TXT=Trial4
+   <--- Exiting ItemCell::LoadResources() 4 --->
+<--- Exiting Experiment::LoadItems() --->
+<--- Entering Experiment::PurgeTrialsTodo() --->
+sqlite: SELECT COUNT(*) FROM sqlite_master WHERE type='table' and name='TrialsTodo'
+sqlite: DELETE FROM TrialsTodo WHERE SessionID=1
+<--- Exiting Experiment::PurgeTrialsTodo() --->
+<--- Entering Experiment::SequenceItems() --->
+sqlite: SELECT Block.BlockID, Block.OrderConstraint 
+FROM Block 
+INNER JOIN Phase ON Block.BlockID=Phase.BlockID 
+INNER JOIN ListOrder ON Phase.PhaseID=ListOrder.PhaseID 
+WHERE (ListID= 1 ) AND (Block.OrderConstraint IS NOT NULL) 
+GROUP BY Block.OrderConstraint, Block.BlockID
+sqlite: SELECT Block.BlockID 
+FROM Block 
+INNER JOIN Phase ON Block.BlockID=Phase.BlockID 
+INNER JOIN ListOrder ON Phase.PhaseID=ListOrder.PhaseID 
+WHERE (ListID= 1 ) AND (Block.OrderConstraint IS NULL) 
+GROUP BY Block.BlockID 
+ORDER BY RANDOM()
+Block order is:
+1 
+
+sqlite: SELECT Phase.PhaseID, Phase.OrderConstraint 
+FROM Phase 
+INNER JOIN ListOrder ON Phase.PhaseID=ListOrder.PhaseID 
+WHERE (Phase.BlockID= 1 ) AND (ListID= 1) AND (Phase.OrderConstraint IS NOT NULL) 
+GROUP BY Phase.OrderConstraint, Phase.PhaseID
+sqlite: SELECT Phase.PhaseID, Phase.OrderConstraint 
+FROM Phase 
+INNER JOIN ListOrder ON Phase.PhaseID=ListOrder.PhaseID 
+WHERE (Phase.BlockID= 1 ) AND (ListID= 1) AND (Phase.OrderConstraint IS NULL) 
+GROUP BY Phase.PhaseID 
+ORDER BY RANDOM()
+Phase order is:
+1 
+
+sqlite: SELECT ItemCellID, OrderConstraint FROM ListOrder 
+WHERE (PhaseID=1) AND (ListID=1) AND (OrderConstraint IS NOT NULL) 
+ORDER BY OrderConstraint
+sqlite: SELECT ItemCellID, OrderConstraint FROM ListOrder 
+WHERE (PhaseID=1) AND (ListID=1) AND (OrderConstraint IS NULL) 
+ORDER BY RANDOM()
+Item order is:
+3 1 2 4 
+
+<--- Exiting Experiment::SequenceItems() --->
+<--- Entering Experiment::FillTrialsTodo() --->
+sqlite: CREATE TABLE IF NOT EXISTS TrialsTodo (SessionID INTEGER, ItemCellID INTEGER, BlockID INTEGER, PhaseID INTEGER, Ord INTEGER)
+sqlite: BEGIN;
+sqlite: INSERT INTO TrialsTodo VALUES (1, 3, 1, 1, 1)
+sqlite: INSERT INTO TrialsTodo VALUES (1, 1, 1, 1, 2)
+sqlite: INSERT INTO TrialsTodo VALUES (1, 2, 1, 1, 3)
+sqlite: INSERT INTO TrialsTodo VALUES (1, 4, 1, 1, 4)
+sqlite: COMMIT;
+<--- Exiting Experiment::FillTrialsTodo() --->
+<--- Entering Experiment::CreateTrialObjects() --->
+There are 4 trials in all
+<--- Exiting Experiment::CreateTrialObjects() --->
+<--- Exiting Experiment::InitializeExp() --->
+<--- Entering Experiment::Prepare() 0 --->
+Display size is 3200 1080
+<--- Entering Audio_SDL::Audio_SDL() 0 --->
+<--- Exiting Audio_SDL::Audio_SDL() 0 --->
+<--- Exiting Experiment::Prepare() 0 --->
+<--- Entering Experiment::PrepareNextTrial() 0 --->
+   <--- Entering Template::AddAOIs() only (1) --->
+   <--- Exiting Template::AddAOIs() only (1) --->
+   <--- Entering Template::Prepare() only (1) --->
+   <--- Entering State::Prepare() only (1) --->
+         <--- Entering Event::Prepare() 1 --->
+         <--- Exiting Event::Prepare() 1 --->
+      <--- Entering EventRecord::Prepare() 3 --->
+      <--- Exiting EventRecord::Prepare() 3 --->
+         <--- Entering Event::Prepare() 3 --->
+         <--- Exiting Event::Prepare() 3 --->
+         <--- Entering Event::Prepare() 2 --->
+   <--- Entering StimulusTxt::Prepare() 0 --->
+   <--- Exiting StimulusTxt::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 2 --->
+   <--- Exiting State::Prepare() only (1) --->
+<--- Entering Template::AttachState() 1 --->
+<--- Exiting Template::AttachState() 1 --->
+      <--- Entering AlsaSoundIn::Prepare() 0 --->
+response/s0000001
+saving file to response/s0000001/03.raw
+   <--- Entering InputDev::Prepare() 3 --->
+   <--- Exiting InputDev::Prepare() 3 --->
+      <--- Exiting AlsaSoundIn::Prepare() 0 --->
+   <--- Exiting Template::Prepare() only (1) --->
+      <--- Entering AlsaSoundIn::MAIN() 0 --->
+<--- Exiting Experiment::PrepareNextTrial() 0 --->
+<--- Entering Experiment::StartNextTrial() 0 --->
+   <--- Entering Trial::Start() 1 --->
+   <--- Entering ItemCell::Start() 3 --->
+      <--- Entering Template::Start() 1 --->
+      <--- Exiting Template::Start() 1 --->
+         <--- Entering State::Start() only (1) --->
+
+!! ALSA now recording !!
+
+   <--- Entering InputDev::Start() 3 --->
+   <--- Exiting InputDev::Start() 3 --->
+         <--- Entering Event::Action() 3 --->
+stimulus associated w/EventID=3 was not defined
+         <--- Exiting Event::Action() 3 --->
+         <--- Exiting State::Start() only (1) --->
+   <--- Exiting Trial::Start() 1 --->
+<--- Exiting Experiment::StartNextTrial() 0 --->
+         <--- Entering Event::Action() 2 --->
+   <--- Entering StimulusTxt::Action() 0 --->
+   <--- Exiting StimulusTxt::Action() 0 --->
+   <--- Entering Stimulus::Action() 0 --->
+   <--- Exiting Stimulus::Action() 0 --->
+         <--- Exiting Event::Action() 2 --->
+key up (273) pressed
+~-~-~-~-~ key down ~-~-~-~-~
+~-~-~-~-~ key up ~-~-~-~-~
+key return (13) pressed
+~-~-~-~-~ key down ~-~-~-~-~
+~-~-~-~-~ key up ~-~-~-~-~
+state timeout
+the user event was 24
+timeout signaled
+            <--- Entering State::Finish() only (1) --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
+            <--- Exiting State::Finish() only (1) --->
+<--- Entering Template::HandleEvent() 1 --->
+ending trial
+   <--- Entering Template::Finish() only (1) --->
+      <--- Exiting AlsaSoundIn::MAIN() 0 --->
+==== RECORDING STOPPED ====
+   <--- Entering InputDev::Stop() 3 --->
+   <--- Exiting InputDev::Stop() 3 --->
+   <--- Entering Trial::SaveRespData() 1 --->
+0 events saved
+   <--- Exiting Trial::SaveRespData() 1 --->
+            <--- Entering State::Finish() only (1) --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
+            <--- Exiting State::Finish() only (1) --->
+            <--- Entering State::PostTrial() only (1) --->
+            <--- Exiting State::Finish() only (1) --->
+   <--- Exiting Template::Finish() only (1) --->
+<--- Exiting Template::HandleEvent() 1 --->
+trial completed
+<--- Entering Experiment::FinishTrial() 0 --->
+sqlite: SELECT COUNT(*) FROM sqlite_master WHERE type='table' and name='TrialsTodo'
+sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=3 AND Ord=1
+   <--- Entering Trial::Finish() 1 --->
+      <--- Entering ItemCell::Finish() 3 --->
+      <--- Exiting ItemCell::Finish() 3 --->
+<--- Exiting Trial::Finish() 1 --->
+<--- Exiting Experiment::FinishTrial() 0 --->
+<--- Entering Experiment::PrepareNextTrial() 0 --->
+   <--- Entering Template::AddAOIs() only (1) --->
+   <--- Exiting Template::AddAOIs() only (1) --->
+   <--- Entering Template::Prepare() only (1) --->
+   <--- Entering State::Prepare() only (1) --->
+         <--- Entering Event::Prepare() 1 --->
+         <--- Exiting Event::Prepare() 1 --->
+      <--- Entering EventRecord::Prepare() 3 --->
+      <--- Exiting EventRecord::Prepare() 3 --->
+         <--- Entering Event::Prepare() 3 --->
+         <--- Exiting Event::Prepare() 3 --->
+         <--- Entering Event::Prepare() 2 --->
+   <--- Entering StimulusTxt::Prepare() 0 --->
+   <--- Exiting StimulusTxt::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 2 --->
+   <--- Exiting State::Prepare() only (1) --->
+<--- Entering Template::AttachState() 1 --->
+<--- Exiting Template::AttachState() 1 --->
+      <--- Entering AlsaSoundIn::Prepare() 0 --->
+response/s0000001
+saving file to response/s0000001/01.raw
+   <--- Entering InputDev::Prepare() 3 --->
+   <--- Exiting InputDev::Prepare() 3 --->
+      <--- Entering AlsaSoundIn::MAIN() 0 --->
+      <--- Exiting AlsaSoundIn::Prepare() 0 --->
+   <--- Exiting Template::Prepare() only (1) --->
+<--- Exiting Experiment::PrepareNextTrial() 0 --->
+<--- Entering Experiment::StartNextTrial() 0 --->
+   <--- Entering Trial::Start() 2 --->
+   <--- Entering ItemCell::Start() 1 --->
+      <--- Entering Template::Start() 1 --->
+      <--- Exiting Template::Start() 1 --->
+         <--- Entering State::Start() only (1) --->
+
+!! ALSA now recording !!
+
+   <--- Entering InputDev::Start() 3 --->
+   <--- Exiting InputDev::Start() 3 --->
+         <--- Entering Event::Action() 3 --->
+stimulus associated w/EventID=3 was not defined
+         <--- Exiting Event::Action() 3 --->
+         <--- Exiting State::Start() only (1) --->
+   <--- Exiting Trial::Start() 2 --->
+<--- Exiting Experiment::StartNextTrial() 0 --->
+         <--- Entering Event::Action() 2 --->
+   <--- Entering StimulusTxt::Action() 0 --->
+   <--- Exiting StimulusTxt::Action() 0 --->
+   <--- Entering Stimulus::Action() 0 --->
+   <--- Exiting Stimulus::Action() 0 --->
+         <--- Exiting Event::Action() 2 --->
+state timeout
+the user event was 24
+timeout signaled
+            <--- Entering State::Finish() only (1) --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
+            <--- Exiting State::Finish() only (1) --->
+<--- Entering Template::HandleEvent() 1 --->
+ending trial
+   <--- Entering Template::Finish() only (1) --->
+      <--- Exiting AlsaSoundIn::MAIN() 0 --->
+==== RECORDING STOPPED ====
+   <--- Entering InputDev::Stop() 3 --->
+   <--- Exiting InputDev::Stop() 3 --->
+   <--- Entering Trial::SaveRespData() 2 --->
+0 events saved
+   <--- Exiting Trial::SaveRespData() 2 --->
+            <--- Entering State::Finish() only (1) --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
+            <--- Exiting State::Finish() only (1) --->
+            <--- Entering State::PostTrial() only (1) --->
+            <--- Exiting State::Finish() only (1) --->
+   <--- Exiting Template::Finish() only (1) --->
+<--- Exiting Template::HandleEvent() 1 --->
+trial completed
+<--- Entering Experiment::FinishTrial() 0 --->
+sqlite: SELECT COUNT(*) FROM sqlite_master WHERE type='table' and name='TrialsTodo'
+sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=1 AND Ord=2
+   <--- Entering Trial::Finish() 2 --->
+      <--- Entering ItemCell::Finish() 1 --->
+      <--- Exiting ItemCell::Finish() 1 --->
+<--- Exiting Trial::Finish() 2 --->
+<--- Exiting Experiment::FinishTrial() 0 --->
+<--- Entering Experiment::PrepareNextTrial() 0 --->
+   <--- Entering Template::AddAOIs() only (1) --->
+   <--- Exiting Template::AddAOIs() only (1) --->
+   <--- Entering Template::Prepare() only (1) --->
+   <--- Entering State::Prepare() only (1) --->
+         <--- Entering Event::Prepare() 1 --->
+         <--- Exiting Event::Prepare() 1 --->
+      <--- Entering EventRecord::Prepare() 3 --->
+      <--- Exiting EventRecord::Prepare() 3 --->
+         <--- Entering Event::Prepare() 3 --->
+         <--- Exiting Event::Prepare() 3 --->
+         <--- Entering Event::Prepare() 2 --->
+   <--- Entering StimulusTxt::Prepare() 0 --->
+   <--- Exiting StimulusTxt::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 2 --->
+   <--- Exiting State::Prepare() only (1) --->
+<--- Entering Template::AttachState() 1 --->
+<--- Exiting Template::AttachState() 1 --->
+      <--- Entering AlsaSoundIn::Prepare() 0 --->
+response/s0000001
+saving file to response/s0000001/02.raw
+   <--- Entering InputDev::Prepare() 3 --->
+   <--- Exiting InputDev::Prepare() 3 --->
+      <--- Entering AlsaSoundIn::MAIN() 0 --->
+      <--- Exiting AlsaSoundIn::Prepare() 0 --->
+   <--- Exiting Template::Prepare() only (1) --->
+<--- Exiting Experiment::PrepareNextTrial() 0 --->
+<--- Entering Experiment::StartNextTrial() 0 --->
+   <--- Entering Trial::Start() 3 --->
+   <--- Entering ItemCell::Start() 2 --->
+      <--- Entering Template::Start() 1 --->
+      <--- Exiting Template::Start() 1 --->
+         <--- Entering State::Start() only (1) --->
+
+!! ALSA now recording !!
+
+   <--- Entering InputDev::Start() 3 --->
+   <--- Exiting InputDev::Start() 3 --->
+         <--- Entering Event::Action() 3 --->
+stimulus associated w/EventID=3 was not defined
+         <--- Exiting Event::Action() 3 --->
+         <--- Exiting State::Start() only (1) --->
+   <--- Exiting Trial::Start() 3 --->
+<--- Exiting Experiment::StartNextTrial() 0 --->
+         <--- Entering Event::Action() 2 --->
+   <--- Entering StimulusTxt::Action() 0 --->
+   <--- Exiting StimulusTxt::Action() 0 --->
+   <--- Entering Stimulus::Action() 0 --->
+   <--- Exiting Stimulus::Action() 0 --->
+         <--- Exiting Event::Action() 2 --->
+state timeout
+the user event was 24
+timeout signaled
+            <--- Entering State::Finish() only (1) --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
+            <--- Exiting State::Finish() only (1) --->
+<--- Entering Template::HandleEvent() 1 --->
+ending trial
+   <--- Entering Template::Finish() only (1) --->
+      <--- Exiting AlsaSoundIn::MAIN() 0 --->
+==== RECORDING STOPPED ====
+   <--- Entering InputDev::Stop() 3 --->
+   <--- Exiting InputDev::Stop() 3 --->
+   <--- Entering Trial::SaveRespData() 3 --->
+0 events saved
+   <--- Exiting Trial::SaveRespData() 3 --->
+            <--- Entering State::Finish() only (1) --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
+            <--- Exiting State::Finish() only (1) --->
+            <--- Entering State::PostTrial() only (1) --->
+            <--- Exiting State::Finish() only (1) --->
+   <--- Exiting Template::Finish() only (1) --->
+<--- Exiting Template::HandleEvent() 1 --->
+trial completed
+<--- Entering Experiment::FinishTrial() 0 --->
+sqlite: SELECT COUNT(*) FROM sqlite_master WHERE type='table' and name='TrialsTodo'
+sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=2 AND Ord=3
+   <--- Entering Trial::Finish() 3 --->
+      <--- Entering ItemCell::Finish() 2 --->
+      <--- Exiting ItemCell::Finish() 2 --->
+<--- Exiting Trial::Finish() 3 --->
+<--- Exiting Experiment::FinishTrial() 0 --->
+<--- Entering Experiment::PrepareNextTrial() 0 --->
+   <--- Entering Template::AddAOIs() only (1) --->
+   <--- Exiting Template::AddAOIs() only (1) --->
+   <--- Entering Template::Prepare() only (1) --->
+   <--- Entering State::Prepare() only (1) --->
+         <--- Entering Event::Prepare() 1 --->
+         <--- Exiting Event::Prepare() 1 --->
+      <--- Entering EventRecord::Prepare() 3 --->
+      <--- Exiting EventRecord::Prepare() 3 --->
+         <--- Entering Event::Prepare() 3 --->
+         <--- Exiting Event::Prepare() 3 --->
+         <--- Entering Event::Prepare() 2 --->
+   <--- Entering StimulusTxt::Prepare() 0 --->
+   <--- Exiting StimulusTxt::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 2 --->
+   <--- Exiting State::Prepare() only (1) --->
+<--- Entering Template::AttachState() 1 --->
+<--- Exiting Template::AttachState() 1 --->
+      <--- Entering AlsaSoundIn::Prepare() 0 --->
+response/s0000001
+saving file to response/s0000001/04.raw
+   <--- Entering InputDev::Prepare() 3 --->
+   <--- Exiting InputDev::Prepare() 3 --->
+      <--- Entering AlsaSoundIn::MAIN() 0 --->
+      <--- Exiting AlsaSoundIn::Prepare() 0 --->
+   <--- Exiting Template::Prepare() only (1) --->
+<--- Exiting Experiment::PrepareNextTrial() 0 --->
+<--- Entering Experiment::StartNextTrial() 0 --->
+   <--- Entering Trial::Start() 4 --->
+   <--- Entering ItemCell::Start() 4 --->
+      <--- Entering Template::Start() 1 --->
+      <--- Exiting Template::Start() 1 --->
+         <--- Entering State::Start() only (1) --->
+
+!! ALSA now recording !!
+
+   <--- Entering InputDev::Start() 3 --->
+   <--- Exiting InputDev::Start() 3 --->
+         <--- Entering Event::Action() 3 --->
+stimulus associated w/EventID=3 was not defined
+         <--- Exiting Event::Action() 3 --->
+         <--- Exiting State::Start() only (1) --->
+   <--- Exiting Trial::Start() 4 --->
+<--- Exiting Experiment::StartNextTrial() 0 --->
+         <--- Entering Event::Action() 2 --->
+   <--- Entering StimulusTxt::Action() 0 --->
+   <--- Exiting StimulusTxt::Action() 0 --->
+   <--- Entering Stimulus::Action() 0 --->
+   <--- Exiting Stimulus::Action() 0 --->
+         <--- Exiting Event::Action() 2 --->
+state timeout
+the user event was 24
+timeout signaled
+            <--- Entering State::Finish() only (1) --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
+            <--- Exiting State::Finish() only (1) --->
+<--- Entering Template::HandleEvent() 1 --->
+ending trial
+   <--- Entering Template::Finish() only (1) --->
+      <--- Exiting AlsaSoundIn::MAIN() 0 --->
+==== RECORDING STOPPED ====
+   <--- Entering InputDev::Stop() 3 --->
+   <--- Exiting InputDev::Stop() 3 --->
+   <--- Entering Trial::SaveRespData() 4 --->
+0 events saved
+   <--- Exiting Trial::SaveRespData() 4 --->
+            <--- Entering State::Finish() only (1) --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
+            <--- Exiting State::Finish() only (1) --->
+            <--- Entering State::PostTrial() only (1) --->
+            <--- Exiting State::Finish() only (1) --->
+   <--- Exiting Template::Finish() only (1) --->
+<--- Exiting Template::HandleEvent() 1 --->
+trial completed
+<--- Entering Experiment::FinishTrial() 0 --->
+sqlite: SELECT COUNT(*) FROM sqlite_master WHERE type='table' and name='TrialsTodo'
+sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=4 AND Ord=4
+   <--- Entering Trial::Finish() 4 --->
+      <--- Entering ItemCell::Finish() 4 --->
+      <--- Exiting ItemCell::Finish() 4 --->
+<--- Exiting Trial::Finish() 4 --->
+<--- Exiting Experiment::FinishTrial() 0 --->
+<--- Entering Experiment::PrepareNextTrial() 0 --->
+END OF TRIALS!
+<--- Exiting Experiment::PrepareNextTrial() 0 --->
+finished experiment
+cleanup
+sqlite: INSERT INTO Trial VALUES (NULL, 1, 3, 1, 1746, 4879, NULL, NULL)
+sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
+NULL, 1, 84
+sqlite: INSERT INTO Response VALUES (NULL, 1, 84)
+sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
+respData has 1 events
+sqlite: BEGIN;
+sqlite: COMMIT;
+      <--- Entering ItemCell::StoreData() 3 --->
+sqlite: BEGIN;
+sqlite: INSERT INTO StateTiming VALUES (84, 1, 1728)
+sqlite: COMMIT;
+sqlite: BEGIN;
+sqlite: INSERT INTO EventTiming VALUES (84, 3, 1746)
+sqlite: INSERT INTO EventTiming VALUES (84, 2, 1760)
+sqlite: COMMIT;
+      <--- Exiting ItemCell::StoreData() 3 --->
+sqlite: INSERT INTO Trial VALUES (NULL, 2, 1, 1, 4909, 8054, NULL, NULL)
+sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
+NULL, 1, 85
+sqlite: INSERT INTO Response VALUES (NULL, 1, 85)
+sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
+respData has 1 events
+sqlite: BEGIN;
+sqlite: COMMIT;
+      <--- Entering ItemCell::StoreData() 1 --->
+sqlite: BEGIN;
+sqlite: INSERT INTO StateTiming VALUES (85, 1, 4902)
+sqlite: COMMIT;
+sqlite: BEGIN;
+sqlite: INSERT INTO EventTiming VALUES (85, 3, 4909)
+sqlite: INSERT INTO EventTiming VALUES (85, 2, 4920)
+sqlite: COMMIT;
+      <--- Exiting ItemCell::StoreData() 1 --->
+sqlite: INSERT INTO Trial VALUES (NULL, 3, 2, 1, 8098, 11253, NULL, NULL)
+sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
+NULL, 1, 86
+sqlite: INSERT INTO Response VALUES (NULL, 1, 86)
+sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
+respData has 1 events
+sqlite: BEGIN;
+sqlite: COMMIT;
+      <--- Entering ItemCell::StoreData() 2 --->
+sqlite: BEGIN;
+sqlite: INSERT INTO StateTiming VALUES (86, 1, 8091)
+sqlite: COMMIT;
+sqlite: BEGIN;
+sqlite: INSERT INTO EventTiming VALUES (86, 3, 8097)
+sqlite: INSERT INTO EventTiming VALUES (86, 2, 8111)
+sqlite: COMMIT;
+      <--- Exiting ItemCell::StoreData() 2 --->
+sqlite: INSERT INTO Trial VALUES (NULL, 4, 4, 1, 11280, 14412, NULL, NULL)
+sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
+NULL, 1, 87
+sqlite: INSERT INTO Response VALUES (NULL, 1, 87)
+sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
+respData has 1 events
+sqlite: BEGIN;
+sqlite: COMMIT;
+      <--- Entering ItemCell::StoreData() 4 --->
+sqlite: BEGIN;
+sqlite: INSERT INTO StateTiming VALUES (87, 1, 11274)
+sqlite: COMMIT;
+sqlite: BEGIN;
+sqlite: INSERT INTO EventTiming VALUES (87, 3, 11280)
+sqlite: INSERT INTO EventTiming VALUES (87, 2, 11293)
+sqlite: COMMIT;
+      <--- Exiting ItemCell::StoreData() 4 --->
+sqlite: UPDATE Session SET Completion='COMPLETED' WHERE SessionID=1
+<--- Entering Experiment::~Experiment() --->
+.Deleting Trials.
+   <--- Entering Trial::~Trial() 4 --->
+   <--- Exiting Trial::~Trial() 4 --->
+   <--- Entering Trial::~Trial() 3 --->
+   <--- Exiting Trial::~Trial() 3 --->
+   <--- Entering Trial::~Trial() 2 --->
+   <--- Exiting Trial::~Trial() 2 --->
+   <--- Entering Trial::~Trial() 1 --->
+   <--- Exiting Trial::~Trial() 1 --->
+.Deleting ItemCells.
+   <--- Entering ItemCell::~ItemCell() 4 --->
+   <--- Exiting ItemCell::~ItemCell() 4 --->
+   <--- Entering ItemCell::~ItemCell() 3 --->
+   <--- Exiting ItemCell::~ItemCell() 3 --->
+   <--- Entering ItemCell::~ItemCell() 2 --->
+   <--- Exiting ItemCell::~ItemCell() 2 --->
+   <--- Entering ItemCell::~ItemCell() 1 --->
+   <--- Exiting ItemCell::~ItemCell() 1 --->
+.Deleting Templates.
+   <--- Entering Template::~Template() only (1) --->
+      <--- Entering State::~State() only (1) --->
+         <--- Entering Event::~Event() 2 --->
+         <--- Exiting Event::~Event() 2 --->
+         <--- Entering Event::~Event() 3 --->
+         <--- Exiting Event::~Event() 3 --->
+         <--- Entering Event::~Event() 1 --->
+         <--- Exiting Event::~Event() 1 --->
+         <--- Entering Watch::~Watch() 1 --->
+         <--- Exiting Watch::~Watch() 1 --->
+      <--- Exiting State::~State() only (1) --->
+=====> Closing ALSA SOUNDIN
+   <--- Exiting Template::~Template() only (1) --->
+.Deleting Stimuli.
+.Deleting Devices.
+.Deleting Recordsets.
+<--- Exiting Experiment::~Experiment() --->
+<--- Entering Audio_SDL::~Audio_SDL() 0 --->
+<--- Exiting Audio_SDL::~Audio_SDL() 0 --->
+.Deleting ReportError.
