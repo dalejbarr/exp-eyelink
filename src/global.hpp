@@ -3,6 +3,7 @@
 
 #include "Recordset.hpp"
 #include "Device.hpp"
+#include "EXPConfig.hpp"
 #include "SDL.h"
 #include "SDL_ttf.h"
 
@@ -23,6 +24,7 @@
 extern Recordset * g_prsStim;
 extern Recordset * g_prsResp;
 extern ReportError * g_pErr;
+extern EXPConfig * g_pConfig;
 
 Device * FindOrCreateDevice(long lgType, long id);
 string CheckSlashes(const char *pc);

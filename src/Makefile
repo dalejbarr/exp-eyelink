@@ -1,4 +1,5 @@
 OBJS = 	Experiment.o Template.o State.o \
+  EXPConfig.o \
 	ItemCell.o Trial.o Display.o Device.o Display_SDL.o \
 	Audio.o Audio_SDL.o \
 	InputDev.o Mouse_SDL.o \

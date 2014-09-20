@@ -24,6 +24,7 @@ using std::vector;
 #include "Experiment.hpp"
 #include "RecordsetSqlite.hpp"
 #include "RecordsetMySQL.hpp"
+#include "EXPConfig.hpp"
 
 #include "pastestr.hpp"
 using pastestr::paste;
@@ -45,6 +46,7 @@ Audio_SDL * g_pAudio = NULL;
 Recordset * g_prsStim = NULL;
 Recordset * g_prsResp = NULL;
 ReportError * g_pErr = NULL;
+EXPConfig * g_pConfig = NULL;
 
 StimulusMap Experiment::s_mapStimulus;
 DeviceMMap Experiment::s_mmapDevice;
@@ -185,7 +187,8 @@ int Experiment::InitializeExp(const char * pcMode, bool bResume) {
 				    "UPDATE Session SET Seed=", Experiment::g_nSeed, " WHERE SessionID=", GetSessionID()));
     g_pErr->Debug(pastestr::paste("su", "", "established seed of ", Experiment::g_nSeed));
   } else {
-    g_prsStim->Exec(pastestr::paste("sd", "", "SELECT Seed FROM Session WHERE SessionID=", GetSessionID()));
+    g_prsStim->Exec(pastestr::paste("sd", "", "SELECT Seed FROM Session WHERE SessionID=", 
+																		GetSessionID()));
     if (!g_prsStim->RowReady()) {
       g_pErr->Report("error in Experiment::InitializeExp");
     } else {}
@@ -195,6 +198,9 @@ int Experiment::InitializeExp(const char * pcMode, bool bResume) {
   srand(Experiment::g_nSeed);
 
   UpdateSessionStatus("IN_PROGRESS");
+
+	LoadConfiguration();
+
   LoadOrCreateSubjects();
 
   //LoadDevices();
@@ -269,6 +275,10 @@ int Experiment::Cleanup() {
     delete g_prsResp;
     g_prsResp = NULL;
   } else {}
+
+	if (g_pConfig) {
+		delete g_pConfig;
+	} else {}
 
   g_pErr->Debug(".Deleting Recordsets.");
   m_mapCounter.clear();
@@ -1410,4 +1420,14 @@ long Experiment::GetCounter(const char * pcCtr) {
 
 Uint32 Experiment::GetMSElapsed() {
   return (ClockFn()-m_msExpBegin);
+}
+
+int Experiment::LoadConfiguration(unsigned long eid) {
+	if (g_pConfig) {
+		delete g_pConfig;
+	} else {}
+
+	g_pConfig = new EXPConfig(eid);
+
+	return 0;
 }

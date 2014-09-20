@@ -1,9 +1,9 @@
 #include "EventRecord.hpp"
 #include "Mouse_SDL.hpp"
 
-#ifndef WIN32
-#include "PASoundIn.hpp"
-#endif
+// #ifndef WIN32
+// #include "PASoundIn.hpp"
+// #endif
 
 EventRecord::EventRecord(long idEvent, long msec, long idCmd, 
 			 ArgMMap mmArgs, Template * pTemplate, InputDevPtr pDev) :

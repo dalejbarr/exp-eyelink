@@ -121,6 +121,7 @@ public:
 
   int StartSession();
   int LoadDevices();
+	int LoadConfiguration(unsigned long eid = 0);
   int LoadTemplates();
   int LoadItems();
   vector<listordinfo> SequenceItems();
