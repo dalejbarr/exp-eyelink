@@ -42,9 +42,9 @@ void SoundInput::Initialize() {
   } else {}
 
 	m_nDevice = 0;
-	if (!g_pConfig->GetConfigInt("Audio_Device_ID", &m_nDevice)) {
+	if (!g_pConfig->GetConfigInt("Audio_Input_Device_ID", &m_nDevice)) {
 		// TODO get default device
-		g_pErr->Debug("no device specified in EXPConfig ('Audio_Device_ID'); using default");
+		g_pErr->Debug("no device specified in EXPConfig ('Audio_Input_Device_ID'); using default");
 	} else {}
 
 	m_framesPerSec = 22050;

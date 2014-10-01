@@ -1427,6 +1427,7 @@ int Experiment::LoadConfiguration(unsigned long eid) {
 		delete g_pConfig;
 	} else {}
 
+	g_pErr->Debug("LOADING EXPERIMENT CONFIGURATION...");
 	g_pConfig = new EXPConfig(eid);
 
 	return 0;

@@ -24,12 +24,14 @@ EXPConfig::EXPConfig(unsigned long eid /*=0*/) {
 	if (g_prsStim->TableExists("EXPConfig")) { // backwards compatibility
 		g_prsStim->ExecCount(qstr);
 		if (g_prsStim->RowReady()) {
-			while (g_prsStim->MoveNext()) {
+			do {
 				m_configMap[g_prsStim->Get(0)] = g_prsStim->Get(1);
 				g_pErr->Debug(pastestr::paste("sss", "", g_prsStim->Get(0), " = ", g_prsStim->Get(1)));
-			}
+			} while (g_prsStim->MoveNext());
 		} else {}
-	} else {}
+	} else {
+		g_pErr->Debug("...TABLE EXPConfig NOT FOUND!...");
+	}
 	//	g_prsStim->ExecCount();
 }
 
