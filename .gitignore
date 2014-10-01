@@ -6,3 +6,4 @@
 /bin/
 /tests/*/response
 *~
+/tools/audioprobe
