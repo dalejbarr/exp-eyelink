@@ -763,8 +763,13 @@ int Experiment::Prepare(SDL_Surface * pDisplay /* = null */, bool bFullScreen /*
       g_pDisplay->CreateScreen(0, 0, sdlVid->current_w, sdlVid->current_h, 
 			       SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_FULLSCREEN );
     } else {
-      g_pDisplay->CreateScreen(0, 0, 1024, 768, 
-			       SDL_DOUBLEBUF | SDL_HWSURFACE);
+			string cstr;
+			int scrwidth = 1024;
+			int scrheight = 768;
+			g_pConfig->GetConfigInt("Display_Width", &scrwidth);
+			g_pConfig->GetConfigInt("Display_Height", &scrheight);
+			g_pDisplay->CreateScreen(0, 0, scrwidth, scrheight, 
+															 SDL_DOUBLEBUF | SDL_HWSURFACE);
     }
   } else {}
   g_pErr->Debug("display initialized");
