@@ -46,6 +46,12 @@ void EventRecord::ParseArgs(ArgMMap mmArgs) {
     pMouse->SetHome((pii.first)->second.c_str());
   } else {}
 
+  pii = mmArgs.equal_range("xyLimits");
+  if (pii.first != pii.second) {
+    Mouse_SDL * pMouse = (Mouse_SDL *) m_vpDev[0].get();
+    pMouse->SetLimits((pii.first)->second.c_str());
+  } else {}
+
   pii = mmArgs.equal_range("Soundfile");
   if (pii.first != pii.second) {
     m_sResource = pii.first->second;

@@ -636,6 +636,28 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
     pwSignaled = ProcessMouseButton(pEvt);
 
   case SDL_MOUSEMOTION :
+	  // InputDevPtr pDev = pTemplate->FindOrCreateInputDev(SBX_MOUSE_DEV);
+		/*
+		// truncate values if limits are set and cursor goes beyond them
+		if ( ! ((s_xLim0==0) && (s_xLim1==0) && (s_yLim0==0) && (s_yLim1==0)) ) { // limits are set
+			g_pErr->Debug("checking limits");
+			if ((m_xLast < s_xLim0) || (m_xLast > s_yLim1)) {
+				g_pErr->Debug("out of x bounds");
+			} else {}
+			if ((m_xLast < s_yLim0) || (m_xLast > s_yLim1)) {
+				g_pErr->Debug("out of y bounds");
+			} else {}
+			m_xLast = (m_xLast<=s_xLim0) * s_xLim0 + 
+				((m_xLast>s_xLim0) && (m_xLast<s_xLim1)) * m_xLast +
+				(m_xLast>=s_xLim1) * s_xLim1;
+			m_yLast = (m_yLast<=s_yLim0) * s_yLim0 + 
+				((m_yLast>s_yLim0) && (m_yLast<s_yLim1)) * m_yLast +
+				(m_yLast>=s_yLim1) * s_yLim1;				
+		} else { // limits unset
+			g_pErr->Debug(pastestr::paste("sdddd", " ", ".limits",
+																		(long) s_xLim0, (long) s_yLim0, (long) s_xLim1, (long) s_yLim1));
+		}
+		*/
     State::s_nMouseCurX.Set(pEvt->motion.x);
     State::s_nMouseCurY.Set(pEvt->motion.y);
 
@@ -643,10 +665,10 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
     wmip = m_mmapWatch.equal_range(SBX_WATCH_MOUSEMOVE);
     for (wmi = wmip.first; wmi != wmip.second; wmi++) {
       if ((*wmi).second->CheckCondition()) {
-	pwSignaled = (*wmi).second.get();
+				pwSignaled = (*wmi).second.get();
       } else {}
     }
-
+		
     if (m_pEvtMove) {
       ((EventGrabAOI *) m_pEvtMove)->Update(pEvt->motion.x, pEvt->motion.y);
     } else {}

@@ -62,10 +62,14 @@ public:
   inline unsigned int GetY() {return m_yLast;}
   static unsigned int s_x0;
   static unsigned int s_y0;
+  static unsigned int s_xLim0, s_xLim1;
+  static unsigned int s_yLim0, s_yLim1;
   static unsigned int s_xHome;
   static unsigned int s_yHome;
   inline void SetDraw(bool bDraw) { m_bDraw = bDraw; }
   void SetHome(const char * pcHome);
+  void SetLimits(const char * pcLimits);
+	int Truncate(int z, int z0, int z1);
 };
 
 extern Display_SDL * g_pDisplay;

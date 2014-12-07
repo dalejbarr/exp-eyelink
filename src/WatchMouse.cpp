@@ -131,7 +131,7 @@ bool WatchMouse::CheckCondition(SDL_Event * pEvt) {
       nResult = false;
       g_pErr->Debug(pastestr::paste("sdddd"," ",
 				    "testing for mouse in region",
-				    m_x1, m_y1, m_x2, m_y2));
+																		(long) m_x1, (long) m_y1, (long) m_x2, (long) m_y2));
       if ( ((X >= m_x1) && (X <= m_x2)) &&
 	   ((Y >= m_y1) && (Y <= m_y2)) ) {
 	nResult = true;

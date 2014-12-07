@@ -6,6 +6,10 @@ unsigned int Mouse_SDL::s_x0 = 0;
 unsigned int Mouse_SDL::s_y0 = 0;
 unsigned int Mouse_SDL::s_xHome = 512;
 unsigned int Mouse_SDL::s_yHome = 384;
+unsigned int Mouse_SDL::s_xLim0 = 0;
+unsigned int Mouse_SDL::s_yLim0 = 0;
+unsigned int Mouse_SDL::s_xLim1 = 0;
+unsigned int Mouse_SDL::s_yLim1 = 0;
 
 MousePoint::MousePoint() {
 }
@@ -70,22 +74,50 @@ void Mouse_SDL::Prepare() {
   g_pErr->DFO("Mouse_SDL::Prepare", 0L, 3);
 }
 
+int Mouse_SDL::Truncate(int z, int z0, int z1) {
+	int result = z;
+
+	if (z0 != z1) {
+		result = (z < z0) * z0 +
+			((z >= z0) && (z <= z1)) * z +
+			(z > z1) * z1;
+	} else {}
+
+	return result;
+}
+
 void Mouse_SDL::NewPt(Uint32 ms, int x, int y) {
+	/*
+				x = pEvt->motion.xrel;
+				y = pEvt->motion.yrel;
+				if ( ! ((s_xLim0==0) && (s_xLim1==0) && (s_yLim0==0) && (s_yLim1==0)) ) { // limits are set
+					x = (pEvt->motion.xrel <= s_xLim0) * s_xLim0 + 
+						((pEvt->motion.xrel > s_xLim0) && (pEvt->motion.xrel < s_xLim1)) * pEvt->motion.xrel +
+						(pEvt->motion.xrel >= s_xLim1) * s_xLim1;
+					y = (pEvt->motion.yrel<=s_yLim0) * s_yLim0 + 
+						((pEvt->motion.yrel>s_yLim0) && (pEvt->motion.yrel<s_yLim1)) * pEvt->motion.yrel +
+						(pEvt->motion.yrel>=s_yLim1) * s_yLim1;				
+				} else {} // limits unset
+	*/
+
   static int old_x = 0;
   static int old_y = 0;
 
   if (m_bFirst) {
     if (m_bDraw) {
       old_x = m_xLast; old_y = m_yLast;
-      m_xLast += x; m_yLast += y;
+      m_xLast += x; 
+			m_yLast += y;
+			m_xLast = Truncate(m_xLast, s_xLim0, s_xLim1);
+			m_yLast = Truncate(m_yLast, s_yLim0, s_yLim1);
       m_vPts.push_back(MousePoint(ms, m_xLast, m_yLast));
       m_pCursor->m_CurX.Set(m_xLast);
       m_pCursor->m_CurY.Set(m_yLast);
       //m_pTemplate->Redraw();
       DrawCursor(old_x, old_y);
     } else {
-      m_xLast = Mouse_SDL::s_x0 + x;
-      m_yLast = Mouse_SDL::s_y0 + y;
+      m_xLast = Truncate(Mouse_SDL::s_x0 + x, s_xLim0, s_xLim1);
+      m_yLast = Truncate(Mouse_SDL::s_y0 + y, s_yLim0, s_yLim1);
       m_vPts.push_back(MousePoint(ms, m_xLast, m_yLast));
     }
   } else {
@@ -106,15 +138,28 @@ void Mouse_SDL::HandleEvent(SDL_Event * pEvt) {
     switch (pEvt->type) {
     case SDL_MOUSEMOTION :
       {
-	NewPt(ClockFn(), pEvt->motion.xrel, pEvt->motion.yrel);
-	break;
+				NewPt(ClockFn(),  pEvt->motion.xrel, pEvt->motion.yrel);
+				break;
       }
     }
   } else {
-    if (!m_bDraw) {
+    if (!m_bDraw) {  // only do this if we are not drawing the mouse
       m_xLast = Mouse_SDL::s_x0 + pEvt->motion.xrel;
       m_yLast = Mouse_SDL::s_y0 + pEvt->motion.yrel;
-    } else {}
+			// truncate values if limits are set and cursor goes beyond them
+			if ( ! ((s_xLim0==0) && (s_xLim1==0) && (s_yLim0==0) && (s_yLim1==0)) ) { // limits are set
+				if ((m_xLast < s_xLim0) || (m_xLast > s_yLim1)) {
+				} else {}
+				if ((m_xLast < s_yLim0) || (m_xLast > s_yLim1)) {
+				} else {}
+				m_xLast = (m_xLast<=s_xLim0) * s_xLim0 + 
+					((m_xLast>s_xLim0) && (m_xLast<s_xLim1)) * m_xLast +
+					(m_xLast>=s_xLim1) * s_xLim1;
+				m_yLast = (m_yLast<=s_yLim0) * s_yLim0 + 
+					((m_yLast>s_yLim0) && (m_yLast<s_yLim1)) * m_yLast +
+					(m_yLast>=s_yLim1) * s_yLim1;				
+			} else {} // limits unset
+    } else {} // drawing
   }
 }
 
@@ -179,4 +224,15 @@ void Mouse_SDL::SetHome(const char * pcHome) {
   istringstream iss(pcHome);
 
   iss >> s_xHome >> s_yHome;
+}
+
+void Mouse_SDL::SetLimits(const char * pcLimits) {
+  g_pErr->DFI("Mouse_SDL::SetLimits", 0L, 3);
+
+  istringstream iss(pcLimits);
+
+  iss >> s_xLim0 >> s_yLim0 >> s_xLim1 >> s_yLim1;
+	g_pErr->Debug(pastestr::paste("sdddd", " ", "Limits", (long) s_xLim0, (long) s_yLim0,
+																(long) s_xLim1, (long) s_yLim1));
+  g_pErr->DFO("Mouse_SDL::SetLimits", 0L, 3);
 }
