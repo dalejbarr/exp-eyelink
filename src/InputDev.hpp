@@ -8,6 +8,7 @@
 #define SBX_GAMEPAD_DEV 2
 #define SBX_AUDIOREC_DEV 3
 #define SBX_SCROLLTRACKGP_DEV 4
+#define SBX_SOCKET_DEV 5
 
 class ItemCell;
 

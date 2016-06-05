@@ -10,7 +10,7 @@ protected:
 public:
 	EXPConfig(unsigned long eid = 0);
 	virtual ~EXPConfig();
-	inline bool GetConfig(std::string key, std::string *ps);
+	bool GetConfig(std::string key, std::string *ps);
 	bool GetConfigInt(std::string key, int *pn);
 	//int GetConfigInt(std::string key) {
 };

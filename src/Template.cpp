@@ -21,6 +21,7 @@ using pastestr::paste;
 #include "ScrollTrackGP_SDL.hpp"
 #include "Experiment.hpp"
 #include "SoundInput.hpp"
+#include "Socket.hpp"
 
 #ifndef WIN32
 #include "AlsaSoundIn.hpp"
@@ -816,9 +817,15 @@ InputDevPtr Template::FindOrCreateInputDev(unsigned long idDev, int nIndex /*=0*
 #endif
       }
       break;
+		case SBX_SOCKET_DEV :
+			{
+				g_pErr->Debug("creating socket device");
+				pDev = InputDevPtr(new Socket(SBX_SOCKET_DEV, nIndex));
+			}
+			break;
     default:
       {
-	g_pErr->Report("error in Template::FindOrCreateInputDev");
+				g_pErr->Report("error in Template::FindOrCreateInputDev");
       }
       break;
     }

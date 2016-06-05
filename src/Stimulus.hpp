@@ -42,7 +42,7 @@ public:
   virtual int Action();
   virtual int Finish() { return 0; }
   virtual int Cleanup() { return 0; }
-  string GetResourceString(string s1);
+  static string GetResourceString(string s1);
   string GetFilenameFromResource(string s1);
   inline int GetID() { return m_id; }
   inline string GetResource() { return m_sResource; }

@@ -14,6 +14,7 @@
 #include "ItemCell.hpp"
 #include "Trial.hpp"
 #include "Stimulus.hpp"
+#include "SocketListener.hpp"
 
 class listordinfo {
 public:
@@ -113,6 +114,7 @@ public:
 
   static StimulusMap s_mapStimulus;
   static DeviceMMap s_mmapDevice;
+	static SocketListener * s_pSockListener;
 
   static Device * FindOrCreateDevice(long, long);
   static Stimulus * FindOrCreateStimulus(long id, 

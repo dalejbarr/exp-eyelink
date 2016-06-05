@@ -51,6 +51,8 @@ EXPConfig * g_pConfig = NULL;
 StimulusMap Experiment::s_mapStimulus;
 DeviceMMap Experiment::s_mmapDevice;
 
+SocketListener * Experiment::s_pSockListener = NULL;
+
 unsigned int Experiment::g_nSeed = 0;
 
 /*
@@ -246,6 +248,10 @@ Experiment::~Experiment()
 }
 
 int Experiment::Cleanup() {
+	if (s_pSockListener) {
+		delete s_pSockListener;
+	}
+
   g_pErr->Debug(".Deleting Trials.");
   m_mapTrial.clear();
 
@@ -936,7 +942,7 @@ int Experiment::PollEvent() {
     switch (event.type) {
     case SDL_QUIT :
       if (m_pCurTrial) {
-	m_pCurTrial->Finish();
+				m_pCurTrial->Finish();
       } else {}
       m_pCurTrial = NULL;
       nResult = SBX_ABORT_EXPERIMENT;
@@ -945,12 +951,12 @@ int Experiment::PollEvent() {
     case SDL_USEREVENT :
       switch (event.user.code) {
       case SBX_FINISHED :
-	g_pErr->Debug("trial completed");
-	nResult = SBX_FINISHED;
-	break;
+				g_pErr->Debug("trial completed");
+				nResult = SBX_FINISHED;
+				break;
       }
       if (m_pCurTrial) {
-	m_pCurTrial->HandleEvent(&event);      
+				m_pCurTrial->HandleEvent(&event);      
       } else {}
       break;
     case SDL_KEYDOWN :
