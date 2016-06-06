@@ -488,6 +488,7 @@ int State::Start() {
 int State::Update() {
   static Event * pEvent = NULL;
   static SDL_Event sdlEvent;  
+  static SDL_Event sdlEventDone;  
   static Uint32 msDiff = 0;
   static SDL_Event event;
   static SDL_UserEvent userevent;
@@ -499,17 +500,17 @@ int State::Update() {
   while (1) {
     if (m_nTimeout) {
       if (msDiff >= m_nTimeout) {
-	//g_pErr->Report(pastestr::paste("sd", " ", "state timeout", m_id));
-	m_pCurEvent = m_mmapEvent.end(); // make sure no more events will be triggered
-	userevent.type = SDL_USEREVENT;
-	userevent.code = SBX_WATCH_TIMEOUT;
-	userevent.data1 = NULL;
-	userevent.data2 = NULL;
-	event.type = SDL_USEREVENT;
-	event.user = userevent;
-	SDL_PushEvent(&event);
-	nFinished = 1;
-	break;
+				//g_pErr->Report(pastestr::paste("sd", " ", "state timeout", m_id));
+				m_pCurEvent = m_mmapEvent.end(); // make sure no more events will be triggered
+				userevent.type = SDL_USEREVENT;
+				userevent.code = SBX_WATCH_TIMEOUT;
+				userevent.data1 = NULL;
+				userevent.data2 = NULL;
+				event.type = SDL_USEREVENT;
+				event.user = userevent;
+				SDL_PushEvent(&event);
+				nFinished = 1;
+				break;
       } else {}
     } else {}
 
@@ -518,6 +519,12 @@ int State::Update() {
     } else {
       nFinished = 1;
       pEvent = NULL;
+			sdlEventDone.type=SDL_USEREVENT;
+			sdlEventDone.user.code=SBX_WATCH_DONE;
+			sdlEventDone.user.data1=NULL;
+			sdlEventDone.user.data2=NULL;
+			SDL_PushEvent(&sdlEventDone);
+
       break;
     }
 
@@ -624,6 +631,7 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
     g_pErr->Debug(pastestr::paste("sd", " ", "the user event was", 
 																	(long) pEvt->user.type));
     switch (pEvt->user.code) {
+			g_pErr->Debug(pastestr::paste("sd", " ", "... user event", (long) pEvt->user.code));
     case SBX_WATCH_DONE : {
       wmip = m_mmapWatch.equal_range(SBX_WATCH_DONE);
       if (wmip.first != wmip.second) {

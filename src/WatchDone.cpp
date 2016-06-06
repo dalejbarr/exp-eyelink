@@ -26,18 +26,24 @@ WatchDone::WatchDone(long idWatch, long idNext, ArgMMap mmap) :
 }
 
 bool WatchDone::CheckCondition(SDL_Event * pEvt) {
+  g_pErr->DFI("WatchDone::CheckCondition", GetID(), 3);
 
-  int nResult = false;
+  bool bResult = false;
   long * pData = NULL;
   
   if (m_idEvent != 0) {
     pData = (long *) pEvt->user.data1;
     if (*pData==m_idEvent) {
-      nResult = true;
+      bResult = true;
     } else {}
     g_pErr->Debug(pastestr::paste("sdsd", " ",
 				  "looking for", m_idEvent, "found", *pData));
-  } else {}
+  } else {
+		// make sure all events are done
+		bResult = true;
+	}
 
-  return nResult;
+  g_pErr->DFO("WatchDone::CheckCondition", GetID(), 3);
+
+  return bResult;
 }
