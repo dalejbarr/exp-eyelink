@@ -822,35 +822,36 @@ int Experiment::Run() {
     switch (event.type) {
     case SDL_QUIT :
       if (pTrial) {
-	pTrial->Finish();
+				pTrial->Finish();
       } else {}
       pTrial = NULL;
       break;
     case SDL_USEREVENT :
       switch (event.user.code) {
       case SBX_FINISHED :
-	g_pErr->Debug("trial completed");
-	pTrial->Finish();
-	pTrial = NextTrial();
-	if (pTrial) {
-	  //cout << pTrial->m_pItemCell->m_pTemplate.m_mmapAOI.size();
-	  pTrial->Prepare();
-	  pTrial->Run();
-	} else {
-	  g_pErr->Debug("EXPERIMENT COMPLETED");
-	}
-	break;
+				g_pErr->Debug("trial completed");
+				pTrial->Finish();
+				pTrial = NextTrial();
+				if (pTrial) {
+					//cout << pTrial->m_pItemCell->m_pTemplate.m_mmapAOI.size();
+					pTrial->Prepare();
+					pTrial->Run();
+				} else {
+					g_pErr->Debug("EXPERIMENT COMPLETED");
+				}
+				break;
       }
     case SDL_KEYDOWN :
       {
-	g_pErr->Debug("here1");
-	sprintf(charinfo, "key %s (%d) pressed", SDL_GetKeyName(event.key.keysym.sym), event.key.keysym.sym);
-	g_pErr->Debug(charinfo);
+				g_pErr->Debug("here1");
+				sprintf(charinfo, "key %s (%d) pressed", SDL_GetKeyName(event.key.keysym.sym), 
+								event.key.keysym.sym);
+				g_pErr->Debug(charinfo);
       }
       break;
     default :
       if (pTrial) {
-	pTrial->HandleEvent(&event);      
+				pTrial->HandleEvent(&event);      
       } else {}
     }
   }

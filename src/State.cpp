@@ -55,6 +55,8 @@ using pastestr::paste;
 OpInt State::s_nMouseCurX(0);
 OpInt State::s_nMouseCurY(0);
 
+bool State::s_bFinished = false;
+
 State::State(long id, const char * pcName, long seq) {
 
   m_nTimeout = 0;
@@ -468,11 +470,14 @@ int State::Finish() {
   }
 
   LockWatches();
+
   g_pErr->DFO("State::Finish", m_strDebug.c_str(), 5);
 }
 
 int State::Start() {
   g_pErr->DFI("State::Start", m_strDebug.c_str(), 4);
+
+	State::s_bFinished = false;
 
   //m_bVisited = 1;
   m_pCurEvent = m_mmapEvent.begin();
@@ -492,12 +497,10 @@ int State::Update() {
   static Uint32 msDiff = 0;
   static SDL_Event event;
   static SDL_UserEvent userevent;
-  static int nFinished = 0;
 
-  nFinished = 0;
   msDiff = ClockFn() - m_vMsBegin.back();
 
-  while (1) {
+  while (!State::s_bFinished) {
     if (m_nTimeout) {
       if (msDiff >= m_nTimeout) {
 				//g_pErr->Report(pastestr::paste("sd", " ", "state timeout", m_id));
@@ -509,7 +512,7 @@ int State::Update() {
 				event.type = SDL_USEREVENT;
 				event.user = userevent;
 				SDL_PushEvent(&event);
-				nFinished = 1;
+				State::s_bFinished = true;
 				break;
       } else {}
     } else {}
@@ -517,14 +520,13 @@ int State::Update() {
     if (m_pCurEvent != m_mmapEvent.end()) {
       pEvent = (*m_pCurEvent).second.get();
     } else {
-      nFinished = 1;
+			State::s_bFinished = true;
       pEvent = NULL;
 			sdlEventDone.type=SDL_USEREVENT;
 			sdlEventDone.user.code=SBX_WATCH_DONE;
 			sdlEventDone.user.data1=NULL;
 			sdlEventDone.user.data2=NULL;
 			SDL_PushEvent(&sdlEventDone);
-
       break;
     }
 
@@ -536,7 +538,7 @@ int State::Update() {
     }
   }
 
-  return nFinished;
+  return State::s_bFinished;
 }
 
 int State::Run() {
@@ -628,10 +630,10 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
     // MOUSEBUTTON watch
     // handle the watch for specific keys first, then default to ANYKEY.
   case SDL_USEREVENT : {
-    g_pErr->Debug(pastestr::paste("sd", " ", "the user event was", 
-																	(long) pEvt->user.type));
+    //g_pErr->Debug(pastestr::paste("sd", " ", "the user event was", 
+		//(long) pEvt->user.code));
+		g_pErr->Debug(pastestr::paste("sd", " ", "... user event", (long) pEvt->user.code));
     switch (pEvt->user.code) {
-			g_pErr->Debug(pastestr::paste("sd", " ", "... user event", (long) pEvt->user.code));
     case SBX_WATCH_DONE : {
       wmip = m_mmapWatch.equal_range(SBX_WATCH_DONE);
       if (wmip.first != wmip.second) {

@@ -11,7 +11,7 @@
 
 // extern EXPConfig * g_pConfig = NULL;
 
-Socket::Socket(unsigned long ulDev, int nIndex) : InputDev(ulDev) {
+Socket::Socket(unsigned long ulDev, int nIndex) : InputDev(ulDev, nIndex) {
 	g_pErr->Debug("¬¬ INITIALIZING Socket ¬¬");
 	Initialize();
 }
@@ -21,6 +21,7 @@ Socket::~Socket() {
 	Destroy();
 }
 
+// when local computer is SOCKET_SERVER
 int Socket::StartServer(string strPort) {
 	std::size_t space;
 	socklen_t clilen;
@@ -28,7 +29,7 @@ int Socket::StartServer(string strPort) {
 
 	space = strPort.find(" ");
 	if ((space == string::npos)) {
-		g_pErr->Report("SOCKET_CLIENT specified wrong in EXPConfig (should be 'ID port')");
+		g_pErr->Report("SOCKET_SERVER specified wrong in EXPConfig (should be 'ID port')");
 	}
 
 	m_id = boost::lexical_cast<long>(string(strPort, 0, space));
@@ -42,31 +43,32 @@ int Socket::StartServer(string strPort) {
 																"' starting server on port '", 
 																(long) m_usPort, "'"));
 
-	m_sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (m_sockfd < 0) 
+	m_oldsockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (m_oldsockfd < 0) 
 		g_pErr->Report("ERROR opening socket");
 	bzero((char *) &serv_addr, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
 	serv_addr.sin_port = htons(m_usPort);
-	if (bind(m_sockfd, (struct sockaddr *) &serv_addr,
+	if (bind(m_oldsockfd, (struct sockaddr *) &serv_addr,
 					 sizeof(serv_addr)) < 0) 
 		g_pErr->Report("ERROR on binding");
-	listen(m_sockfd, 5);
+	listen(m_oldsockfd, 5);
 	clilen = sizeof(cli_addr);
 
 	std::cout << "- - - WAITING FOR CONNECTION FROM CLIENT - - -" << std::endl;
-	m_newsockfd = accept(m_sockfd, 
+	m_sockfd = accept(m_oldsockfd, 
 											 (struct sockaddr *) &cli_addr, 
 											 &clilen);
 	std::cout << "-- connection received! --" << std::endl;
 
-	if (m_newsockfd < 0) 
+	if (m_sockfd < 0) 
 		g_pErr->Report("ERROR on accept");
 
 	return(0);
 }
 
+// when local computer is SOCKET_CLIENT
 int Socket::ConnectToServer(string strAddress) {
 	struct sockaddr_in serv_addr;
 	struct hostent *server;
@@ -117,8 +119,8 @@ void Socket::Initialize() {
 	g_pErr->DFI("Socket::Initialize", (long) 0, 1);
 	m_strAddr.assign("");
 	m_usPort = 0;
+	m_oldsockfd = -1;
 	m_sockfd = -1;
-	m_newsockfd = -1;
 
 	string strSock;
 	// TODO: change things so that you can have multiple sockets
@@ -143,8 +145,8 @@ void Socket::Destroy() {
 	if (m_sockfd >= 0) {
 		close(m_sockfd);
 	}
-	if (m_newsockfd >= 0) {
-		close(m_newsockfd);
+	if (m_oldsockfd >= 0) {
+		close(m_oldsockfd);
 	}
 
 	g_pErr->DFO("Socket::Destroy", (long) 0, 1);
@@ -169,11 +171,11 @@ int Socket::Read() {
 	int n = -1;
 	// warning this function blocks until data is read
 	// send SIGINT using sigaction() to unblock
-	if (m_newsockfd < 0) {
+	if (m_sockfd < 0) {
 		g_pErr->Report("unable to listen on socket :(");
 	}
 	bzero(buffer, 256);
-	n = read(m_newsockfd, buffer, 255);	
+	n = read(m_sockfd, buffer, 255);	
 	if (n > 0) {
 		string strMsg(buffer);
 		boost::trim(strMsg);

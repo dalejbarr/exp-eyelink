@@ -9,8 +9,8 @@ protected:
 	string m_strAddr;
 	Uint32 m_id;
 	unsigned short m_usPort;
+	int m_oldsockfd;
 	int m_sockfd;
-	int m_newsockfd;
 	std::queue<string> m_qMessages;
 public:
   Socket(unsigned long idDev, int nIndex);

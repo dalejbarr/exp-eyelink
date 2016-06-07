@@ -300,16 +300,16 @@ int Template::HandleEvent(SDL_Event * pEvt) {
       g_pErr->DFI("Template::HandleEvent", m_id, 1);
       
       if (pwSignaled->GetNextID() != 0) {
-	AttachState(m_mapState[pwSignaled->GetNextID()].get());
-	(m_mapState[pwSignaled->GetNextID()].get())->Start();
-	//m_pCurState->Run();
+				AttachState(m_mapState[pwSignaled->GetNextID()].get());
+				(m_mapState[pwSignaled->GetNextID()].get())->Start();
+				//m_pCurState->Run();
       } else {
-	g_pErr->Debug("ending trial");
-	Finish();
-	SDL_Event event;
-	event.type = SDL_USEREVENT;
-	event.user.code = SBX_FINISHED;
-	SDL_PushEvent(&event);
+				g_pErr->Debug("ending trial");
+				Finish();
+				SDL_Event event;
+				event.type = SDL_USEREVENT;
+				event.user.code = SBX_FINISHED;
+				SDL_PushEvent(&event);
       }
 
       g_pErr->DFO("Template::HandleEvent", m_id, 1);
@@ -752,8 +752,8 @@ bool Template::DeviceExists(unsigned long idDev, int n) {
   } else {
     for (ii = pii.first; ii != pii.second; ii++) {
       if (ii->second->GetIndex() == n) {
-	bResult = true;
-	break;
+				bResult = true;
+				break;
       } else {}
     }
   }
@@ -792,28 +792,28 @@ InputDevPtr Template::FindOrCreateInputDev(unsigned long idDev, int nIndex /*=0*
     switch (idDev) {
     case SBX_MOUSE_DEV :
       {
-	g_pErr->Debug("creating mouse device");
-	pDev = InputDevPtr(new Mouse_SDL());
+				g_pErr->Debug("creating mouse device");
+				pDev = InputDevPtr(new Mouse_SDL());
       }
       break;
     case SBX_GAMEPAD_DEV :
       {
-	g_pErr->Debug("creating gamepad device");
-	pDev = InputDevPtr(new GamePad_SDL(SBX_GAMEPAD_DEV, nIndex));
+				g_pErr->Debug("creating gamepad device");
+				pDev = InputDevPtr(new GamePad_SDL(SBX_GAMEPAD_DEV, nIndex));
       }
       break;
     case SBX_SCROLLTRACKGP_DEV :
       {
-	g_pErr->Debug("creating periscopic display device");
-	pDev = InputDevPtr(new ScrollTrackGP_SDL(SBX_SCROLLTRACKGP_DEV, nIndex));
+				g_pErr->Debug("creating periscopic display device");
+				pDev = InputDevPtr(new ScrollTrackGP_SDL(SBX_SCROLLTRACKGP_DEV, nIndex));
       }
       break;
     case SBX_AUDIOREC_DEV :
       {
 #ifndef WIN32
-	g_pErr->Debug("creating audioinput device");
-	//pDev = InputDevPtr(new AlsaSoundIn(SBX_AUDIOREC_DEV));
-	pDev = InputDevPtr(new SoundInput(SBX_AUDIOREC_DEV));
+				g_pErr->Debug("creating audioinput device");
+				//pDev = InputDevPtr(new AlsaSoundIn(SBX_AUDIOREC_DEV));
+				pDev = InputDevPtr(new SoundInput(SBX_AUDIOREC_DEV));
 #endif
       }
       break;

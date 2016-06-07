@@ -46,6 +46,8 @@ class State
   static int s_nMouseY;
   static OpInt s_nMouseCurX;
   static OpInt s_nMouseCurY;
+
+	static bool s_bFinished;
   
   WatchMap m_mmapWatch;
   State(long id, const char * pcName, long seq);
