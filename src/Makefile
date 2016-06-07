@@ -91,28 +91,28 @@ pp3main.o : pp3main.cpp picture.h
 	$(CC) $(CFLAGS) $(ELINK_CFLAGS) $(SDL_CFLAGS) pp3main.cpp
 
 exp2 : $(OBJS) sblib.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
-	$(CC) $(RTAFLAGS) -o exp2 expshell2.o sblib.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lasound $(MYLINK) 
+	$(CC) $(RTAFLAGS) -o exp2 expshell2.o sblib.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) 
 
 expdebug2 : sblib-debug.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
-	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lasound $(MYLINK) 
+	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) 
 
 install : exp2 expdebug2
 	cp exp2 ../bin/exp2; cp expdebug2 ../bin/expdebug2
 
 expdebug2pp3 : sblib-debug.a pp3main.o ClockFn.o StimulusEyeLinkMsg-notrack.o
-	$(CC) -o expdebug2 pp3main.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lasound $(MYLINK)
+	$(CC) -o expdebug2 pp3main.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK)
 
 expeyelink : sblib.a main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
-	$(CC) -o expeyelink main.o sblib.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lasound  
+	$(CC) -o expeyelink main.o sblib.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound  
 
 expeyelinkpp3 : sblib.a pp3main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
-	$(CC) -o expeyelinkpp3 pp3main.o sblib.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lasound  
+	$(CC) -o expeyelinkpp3 pp3main.o sblib.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound  
 
 expeyelinkdebug : sblib-debug.a main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
-	$(CC) -o expeyelinkdebug main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lasound 
+	$(CC) -o expeyelinkdebug main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound 
 
 expeyelinkpp3debug : sblib-debug.a pp3main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
-	$(CC) -o expeyelinkpp3debug pp3main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lasound 
+	$(CC) -o expeyelinkpp3debug pp3main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound 
 
 assigncontroller : assigncontroller.o sblib-debug.a ClockFn.o
 	$(CC) -ldl -pthread $(MYLINK) $(SDL_LDFLAGS) -o assigncontroller assigncontroller.o sblib-debug.a ClockFn.o

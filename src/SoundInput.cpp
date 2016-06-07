@@ -32,47 +32,51 @@ int SoundInput::input(void * /*outputBuffer*/, void *inputBuffer, unsigned int n
 }
 
 void SoundInput::Initialize() {
-	//unsigned int channels, fs, bufferFrames, device = 0, offset = 0;
-	g_pErr->DFI("SoundInput::Initialize", (long) 0, 1);
+  //unsigned int channels, fs, bufferFrames, device = 0, offset = 0;
+  g_pErr->DFI("SoundInput::Initialize", (long) 0, 1);
 
-	//std::cout << m_adc.getDeviceCount() << std::endl;
+  //std::cout << m_adc.getDeviceCount() << std::endl;
   if ( m_adc.getDeviceCount() < 1 ) {
-		g_pErr->Report("No audio devices found!");
-		return;
+    g_pErr->Report("No audio devices found!");
+    return;
   } else {}
 
-	m_nDevice = 0;
-	if (!g_pConfig->GetConfigInt("Audio_Input_Device_ID", &m_nDevice)) {
-		// TODO get default device
-		g_pErr->Debug("no device specified in EXPConfig ('Audio_Input_Device_ID'); using default");
-	} else {}
+  m_nDevice = 0;
+  if (!g_pConfig->GetConfigInt("Audio_Input_Device_ID", &m_nDevice)) {
+    // TODO get default device
+    g_pErr->Debug("no device specified in EXPConfig ('Audio_Input_Device_ID'); using default");
+  } else {}
 
-	m_framesPerSec = 22050;
-	if (!g_pConfig->GetConfigInt("Audio_Sampling_Rate", &m_framesPerSec)) {
-		g_pErr->Debug("no 'Audio_Sampling_Rate' specified in EXPConfig; defaulting to 22050");
-	} else {}
+  m_framesPerSec = 22050;
+  if (!g_pConfig->GetConfigInt("Audio_Sampling_Rate", &m_framesPerSec)) {
+    g_pErr->Debug("no 'Audio_Sampling_Rate' specified in EXPConfig; defaulting to 22050");
+  } else {}
+
+  m_nChannels = 1;
+  if (!g_pConfig->GetConfigInt("Audio_Input_Channels", &m_nChannels)) {
+    g_pErr->Debug("no 'Audio_Input_Channels' specified in EXPConfig; defaulting to 1 (mono)");
+  } else {}
 
   m_data.buffer = 0;
 
-	m_nChannels = 1;
-	//m_nDevice = 3;
-	m_nOffset = 0;
-	m_nMaxSecsToRecord = 30;
+  //m_nDevice = 3;
+  m_nOffset = 0;
+  m_nMaxSecsToRecord = 30;
 
-	// let rtaudio print warnings to stderr
-	m_adc.showWarnings( true );
+  // let rtaudio print warnings to stderr
+  m_adc.showWarnings( true );
 
   m_nBufferFrames = 512;
   if (m_nDevice == 0) {
     m_inputParams.deviceId = m_adc.getDefaultInputDevice();
-	} else {
+  } else {
     m_inputParams.deviceId = m_nDevice;
-	}
+  }
   m_inputParams.nChannels = m_nChannels;
   m_inputParams.firstChannel = m_nOffset;
-	g_pErr->Debug(pastestr::paste("sdsd", "", "nchannels ", (long) m_inputParams.nChannels, " ", (long) m_nChannels));
+  g_pErr->Debug(pastestr::paste("sdsd", "", "nchannels ", (long) m_inputParams.nChannels, " ", (long) m_nChannels));
 
-	g_pErr->DFO("SoundInput::Initialize", (long) 0, 1);
+  g_pErr->DFO("SoundInput::Initialize", (long) 0, 1);
 }
 
 void SoundInput::Destroy() {
