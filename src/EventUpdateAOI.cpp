@@ -49,7 +49,7 @@ int EventUpdateAOI::Action() {
   g_pErr->DFI("EventUpdateAOI::Action", m_id, 4);
   pair<ArgIter, ArgIter> pii;
   ArgMMap::iterator ii;
-  StimulusBmp * pStim = (StimulusBmp *) (*m_ppAOI).get();
+  StimulusImg * pStim = (StimulusImg *) (*m_ppAOI).get();
   if (!pStim) {
     g_pErr->Report("couldn't get m_ppAOI");
   } else {
@@ -65,7 +65,7 @@ int EventUpdateAOI::Action() {
   if (pii.first != pii.second) {
     pStim->ResetLoc();
     //pStim->Draw();
-    //StimulusBmp::Flip();
+    //StimulusImg::Flip();
   } else {}
 
   pii = m_mmapArgs.equal_range("Highlight");
@@ -75,7 +75,7 @@ int EventUpdateAOI::Action() {
 
   pii = m_mmapArgs.equal_range("Image");
   if (pii.first != pii.second) {    
-    pStim->LoadBMP(pastestr::paste("ss", "", "resource/", (*pii.first).second.c_str()));
+    pStim->Load(pastestr::paste("ss", "", "resource/", (*pii.first).second.c_str()));
   } else {}
 
   //AOIPtr p1 = AOIPtr(pStim);

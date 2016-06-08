@@ -4,7 +4,7 @@
 #include "global.hpp"
 #include "InputDev.hpp"
 #include "Display_SDL.hpp"
-#include "StimulusBmp.hpp"
+#include "StimulusImg.hpp"
 #include <vector>
 
 using std::vector;
@@ -40,7 +40,7 @@ protected:
   MPvec m_vPts;
   void NewPt(Uint32 ms, int x, int y);
   bool m_bFirst;
-  StimulusBmp * m_pCursor;
+  StimulusImg * m_pCursor;
   SDL_Surface * m_pOld;
   //Template * m_pTemplate;
   SDL_Rect m_rect;

@@ -54,11 +54,11 @@ EventGSC1DrawGrid::EventGSC1DrawGrid(long id, long msec, long idCmd, ArgMMap mmA
   string sName;
 
   sName.assign("GRIDENC");
-  m_pGridE = StimulusPtr(new StimulusBmp(0, NULL, sName.c_str(), m_nGridTopEncX, m_nGridTopEncY, -1, -1, 1));
+  m_pGridE = StimulusPtr(new StimulusImg(0, NULL, sName.c_str(), m_nGridTopEncX, m_nGridTopEncY, -1, -1, 1));
   mmapAOI.insert(StimulusPair(sName.c_str(), m_pGridE));
 
   sName.assign("GRIDDEC");
-  m_pGridD = StimulusPtr(new StimulusBmp(0, NULL, sName.c_str(), m_nGridTopDecX, m_nGridTopDecY, -1, -1, 1));
+  m_pGridD = StimulusPtr(new StimulusImg(0, NULL, sName.c_str(), m_nGridTopDecX, m_nGridTopDecY, -1, -1, 1));
   mmapAOI.insert(StimulusPair(sName.c_str(), m_pGridD));
 
   int nRow, nCol;
@@ -74,7 +74,7 @@ EventGSC1DrawGrid::EventGSC1DrawGrid(long id, long msec, long idCmd, ArgMMap mmA
     // blank white (decoder)
     osstr.str(std::string());
     osstr << "B" << i+1;
-    pStim = StimulusPtr(new StimulusBmp(0, NULL, osstr.str().c_str(), 
+    pStim = StimulusPtr(new StimulusImg(0, NULL, osstr.str().c_str(), 
 					Col2X(false, nCol),
 					Row2Y(false, nRow),
 					-1, -1, 3));
@@ -84,7 +84,7 @@ EventGSC1DrawGrid::EventGSC1DrawGrid(long id, long msec, long idCmd, ArgMMap mmA
     // blank black (encoder)
     osstr.str(std::string());
     osstr << "E" << i+1;
-    pStim = StimulusPtr(new StimulusBmp(0, NULL, osstr.str().c_str(), 
+    pStim = StimulusPtr(new StimulusImg(0, NULL, osstr.str().c_str(), 
 					Col2X(true, nCol),
 					Row2Y(true, nRow),
 					-1, -1, 3));
@@ -95,11 +95,11 @@ EventGSC1DrawGrid::EventGSC1DrawGrid(long id, long msec, long idCmd, ArgMMap mmA
     for (int j = 0; j < 2; j++) {
       osstr.str(std::string());
       osstr << "F" << i+1;
-      pStim = StimulusPtr(new StimulusBmp(0, NULL, osstr.str().c_str(), 
+      pStim = StimulusPtr(new StimulusImg(0, NULL, osstr.str().c_str(), 
 					  Col2X(j, nCol),
 					  Row2Y(j, nRow),
 					  -1, -1, 2));
-      ((StimulusBmp *) pStim.get())->SetColorkey(255,128,255);
+      ((StimulusImg *) pStim.get())->SetColorkey(255,128,255);
       mmapAOI.insert(StimulusPair(osstr.str().c_str(), pStim));
       m_vFlags.push_back(pStim);
     }
@@ -107,22 +107,22 @@ EventGSC1DrawGrid::EventGSC1DrawGrid(long id, long msec, long idCmd, ArgMMap mmA
 
   // add in the Cursor
   s.assign("cursor");
-  m_pCursorD = StimulusPtr(new StimulusBmp(0, NULL, s.c_str(),
+  m_pCursorD = StimulusPtr(new StimulusImg(0, NULL, s.c_str(),
 					  Col2X(false, 1),
 					  Row2Y(false, 1),
 					  -1, -1, 6));
-  ((StimulusBmp *) m_pCursorD.get())->SetColorkey(255,128,255);
+  ((StimulusImg *) m_pCursorD.get())->SetColorkey(255,128,255);
   mmapAOI.insert(StimulusPair(s.c_str(), m_pCursorD));
-  m_pCursorE = StimulusPtr(new StimulusBmp(0, NULL, s.c_str(),
+  m_pCursorE = StimulusPtr(new StimulusImg(0, NULL, s.c_str(),
 					  Col2X(true, 1),
 					  Row2Y(true, 1),
 					  -1, -1, 6));
-  ((StimulusBmp *) m_pCursorE.get())->SetColorkey(255,128,255);
+  ((StimulusImg *) m_pCursorE.get())->SetColorkey(255,128,255);
   mmapAOI.insert(StimulusPair(s.c_str(), m_pCursorE));
 
   // add in the Next Button
   s.assign("Next");
-  m_pNext = StimulusPtr(new StimulusBmp(0, NULL, s.c_str(),
+  m_pNext = StimulusPtr(new StimulusImg(0, NULL, s.c_str(),
 				      m_nGridTopDecX + (m_nGridWidth-116)/2,
 				      m_nGridTopDecY + (m_nGridWidth+15),
 				      -1, -1, 1));
@@ -176,15 +176,15 @@ int EventGSC1DrawGrid::Prepare() {
   m_vGSC1Toggle.clear();
   m_vGSC1Cursor.clear();
 
-  StimulusBmp * pStim = (StimulusBmp *) m_pTemplate->m_mmapAOI.find("GRIDENC")->second.get();
-  //  pStim = (StimulusBmp *) m_pGridE.get();
+  StimulusImg * pStim = (StimulusImg *) m_pTemplate->m_mmapAOI.find("GRIDENC")->second.get();
+  //  pStim = (StimulusImg *) m_pGridE.get();
   pStim->LoadBMP("resource/gridonly.bmp");
   pStim->m_x1 = m_nGridTopEncX;
   pStim->m_CurX.Set(m_nGridTopEncX);
   pStim->m_y1 = m_nGridTopEncY;
   pStim->m_CurY.Set(m_nGridTopEncY);
 
-  pStim = (StimulusBmp *) m_pTemplate->m_mmapAOI.find("GRIDDEC")->second.get();
+  pStim = (StimulusImg *) m_pTemplate->m_mmapAOI.find("GRIDDEC")->second.get();
   pStim->LoadBMP("resource/gridonly.bmp");
   pStim->m_x1 = m_nGridTopDecX;
   pStim->m_CurX.Set(m_nGridTopDecX);
@@ -196,8 +196,8 @@ int EventGSC1DrawGrid::Prepare() {
 
     osstr.str(std::string());
     osstr << "B" << i+1;
-    pStim = (StimulusBmp *) m_pTemplate->m_mmapAOI.find(osstr.str().c_str())->second.get();
-    //pStim = (StimulusBmp *) m_vBlankWhite[i].get();
+    pStim = (StimulusImg *) m_pTemplate->m_mmapAOI.find(osstr.str().c_str())->second.get();
+    //pStim = (StimulusImg *) m_vBlankWhite[i].get();
     pStim->LoadBMP("resource/blankwhite.bmp");
     pStim->m_nLayer = 3;
     pStim->m_x1 = Col2X(false, Cell2Col(i));
@@ -207,8 +207,8 @@ int EventGSC1DrawGrid::Prepare() {
 
     osstr.str(std::string());
     osstr << "E" << i+1;
-    //pStim = (StimulusBmp *) m_vBlankBlack[i].get();
-    pStim = (StimulusBmp *) m_pTemplate->m_mmapAOI.find(osstr.str().c_str())->second.get();
+    //pStim = (StimulusImg *) m_vBlankBlack[i].get();
+    pStim = (StimulusImg *) m_pTemplate->m_mmapAOI.find(osstr.str().c_str())->second.get();
     pStim->LoadBMP("resource/blankblack.bmp");
     pStim->m_nLayer = 3;
     pStim->m_x1 = Col2X(true, Cell2Col(i));
@@ -221,8 +221,8 @@ int EventGSC1DrawGrid::Prepare() {
     pii = m_pTemplate->m_mmapAOI.equal_range(osstr.str().c_str());
     j = 0;
     for (ii = pii.first; ii != pii.second; ii++, j++) {
-      pStim = (StimulusBmp *) ii->second.get();
-      //pStim = (StimulusBmp *) m_pTemplate->m_mmapAOI.find(osstr.str().c_str())->second.get();
+      pStim = (StimulusImg *) ii->second.get();
+      //pStim = (StimulusImg *) m_pTemplate->m_mmapAOI.find(osstr.str().c_str())->second.get();
       pStim->LoadBMP("resource/flagcolor.bmp");
       pStim->m_nLayer = 2;
       pStim->m_x1 = Col2X(j, Cell2Col(i));
@@ -230,13 +230,13 @@ int EventGSC1DrawGrid::Prepare() {
       pStim->m_y1 = Row2Y(j, Cell2Row(i));
       pStim->m_CurY.Set(pStim->m_y1);      
     }
-    //pStim = (StimulusBmp *) m_vFlags[i].get();
+    //pStim = (StimulusImg *) m_vFlags[i].get();
       /*
       */
   }
 
-  //pStim = (StimulusBmp *) m_pNext.get();
-  pStim = (StimulusBmp *) m_pTemplate->m_mmapAOI.find("Next")->second.get();
+  //pStim = (StimulusImg *) m_pNext.get();
+  pStim = (StimulusImg *) m_pTemplate->m_mmapAOI.find("Next")->second.get();
   pStim->LoadBMP("resource/next1.bmp");
   pStim->m_x1 = m_nGridTopDecX + (m_nGridWidth-116)/2;
   pStim->m_y1 = m_nGridTopDecY + (m_nGridWidth+15);
@@ -244,11 +244,11 @@ int EventGSC1DrawGrid::Prepare() {
   pStim->m_CurY.Set(pStim->m_y1);
   g_pErr->Debug(pastestr::paste("sdd", " ", "nextxy", (long) pStim->m_x1, (long) pStim->m_y1));
 
-  //pStim = (StimulusBmp *) m_pCursor.get();
+  //pStim = (StimulusImg *) m_pCursor.get();
 
   pii = m_pTemplate->m_mmapAOI.equal_range("cursor");
   for (ii = pii.first; ii != pii.second; ii++) {
-    pStim = (StimulusBmp *) ii->second.get();
+    pStim = (StimulusImg *) ii->second.get();
     pStim->m_nLayer = 6;
     pStim->LoadBMP("resource/cursor.bmp");
     if (pStim == m_pCursorD.get()) {
@@ -294,11 +294,11 @@ int EventGSC1DrawGrid::Prepare() {
     pnUsed[nLoc] = 1;
     nCol = Cell2Col(nLoc);
     nRow = Cell2Row(nLoc);
-    pStim2 = StimulusPtr(new StimulusBmp(0, NULL, "Bomb", 
+    pStim2 = StimulusPtr(new StimulusImg(0, NULL, "Bomb", 
 					Col2X(true, nCol),
 					Row2Y(true, nRow),
 					-1, -1, 4));
-    ((StimulusBmp *) pStim2.get())->LoadBMP("resource/bombblack.bmp");
+    ((StimulusImg *) pStim2.get())->LoadBMP("resource/bombblack.bmp");
     mmapAOI.insert(StimulusPair("Bomb", pStim2));
     m_vGSC1Stars.push_back(GSC1Locs(nRow+1, nCol+1));
     m_vBombs.push_back(pStim2);
@@ -306,11 +306,11 @@ int EventGSC1DrawGrid::Prepare() {
   }
 
   /*
-  pStim2 = StimulusPtr(new StimulusBmp(0, NULL, "Bomb", 
+  pStim2 = StimulusPtr(new StimulusImg(0, NULL, "Bomb", 
 					Col2X(true, 1),
 					Row2Y(true, 2),
 					-1, -1, 3));
-  ((StimulusBmp *) pStim2.get())->LoadBMP("resource/bombblack.bmp");
+  ((StimulusImg *) pStim2.get())->LoadBMP("resource/bombblack.bmp");
   mmapAOI.insert(StimulusPair("Bomb", pStim2));
   m_vBombs.push_back(pStim2);
   m_vBombLocs.push_back(xy(2, 3));
@@ -364,8 +364,8 @@ int EventGSC1DrawGrid::Cell2Col(int i) {
 void EventGSC1DrawGrid::MoveUp() {
   g_pErr->DFI("EventGSC1DrawGrid::MoveUp", 0L, 3);
 
-  StimulusBmp * pStimD = (StimulusBmp *) m_pCursorD.get();
-  StimulusBmp * pStimE = (StimulusBmp *) m_pCursorE.get();
+  StimulusImg * pStimD = (StimulusImg *) m_pCursorD.get();
+  StimulusImg * pStimE = (StimulusImg *) m_pCursorE.get();
   
   xy xyThisD = Loc2Grid(xy(pStimD->m_x1, pStimD->m_y1),
 		       xy(m_nGridTopDecX, m_nGridTopDecY), m_nCellWidth);
@@ -392,8 +392,8 @@ void EventGSC1DrawGrid::MoveUp() {
 void EventGSC1DrawGrid::MoveDown() {
   g_pErr->DFI("EventGSC1DrawGrid::MoveDown", 0L, 3);
 
-  StimulusBmp * pStimD = (StimulusBmp *) m_pCursorD.get();
-  StimulusBmp * pStimE = (StimulusBmp *) m_pCursorE.get();
+  StimulusImg * pStimD = (StimulusImg *) m_pCursorD.get();
+  StimulusImg * pStimE = (StimulusImg *) m_pCursorE.get();
   
   xy xyThisD = Loc2Grid(xy(pStimD->m_x1, pStimD->m_y1),
 		       xy(m_nGridTopDecX, m_nGridTopDecY), m_nCellWidth);
@@ -419,8 +419,8 @@ void EventGSC1DrawGrid::MoveDown() {
 void EventGSC1DrawGrid::MoveLeft() {
   g_pErr->DFI("EventGSC1DrawGrid::MoveLeft", 0L, 3);
 
-  StimulusBmp * pStimD = (StimulusBmp *) m_pCursorD.get();
-  StimulusBmp * pStimE = (StimulusBmp *) m_pCursorE.get();
+  StimulusImg * pStimD = (StimulusImg *) m_pCursorD.get();
+  StimulusImg * pStimE = (StimulusImg *) m_pCursorE.get();
   
   xy xyThisD = Loc2Grid(xy(pStimD->m_x1, pStimD->m_y1),
 		       xy(m_nGridTopDecX, m_nGridTopDecY), m_nCellWidth);
@@ -447,8 +447,8 @@ void EventGSC1DrawGrid::MoveLeft() {
 void EventGSC1DrawGrid::MoveRight() {
   g_pErr->DFI("EventGSC1DrawGrid::MoveRight", 0L, 3);
 
-  StimulusBmp * pStimD = (StimulusBmp *) m_pCursorD.get();
-  StimulusBmp * pStimE = (StimulusBmp *) m_pCursorE.get();
+  StimulusImg * pStimD = (StimulusImg *) m_pCursorD.get();
+  StimulusImg * pStimE = (StimulusImg *) m_pCursorE.get();
   
   xy xyThisD = Loc2Grid(xy(pStimD->m_x1, pStimD->m_y1),
 		       xy(m_nGridTopDecX, m_nGridTopDecY), m_nCellWidth);
@@ -471,8 +471,8 @@ void EventGSC1DrawGrid::MoveRight() {
 }
 
 void EventGSC1DrawGrid::Toggle() {
-  StimulusBmp * pFlag = NULL;
-  //StimulusBmp * pBlank = NULL;
+  StimulusImg * pFlag = NULL;
+  //StimulusImg * pBlank = NULL;
   pair<StimulusPtrMMap::iterator, StimulusPtrMMap::iterator> piiFlag; //, piiBlank;
   //StimulusPtrMMap::iterator ii;
   StimulusPtrMMap::iterator iiFlag, iiBlank;
@@ -481,7 +481,7 @@ void EventGSC1DrawGrid::Toggle() {
   g_pErr->Debug("toggling");
 
   // figure out cursor position
-  StimulusBmp * pStim = (StimulusBmp *) m_pCursorD.get();
+  StimulusImg * pStim = (StimulusImg *) m_pCursorD.get();
   xy xyThis = Loc2Grid(xy(pStim->m_x1, pStim->m_y1),
 		       xy(m_nGridTopDecX, m_nGridTopDecY), m_nCellWidth);
   int nCell = xyThis.toScalar();
@@ -494,18 +494,18 @@ void EventGSC1DrawGrid::Toggle() {
   //osstr << "B" << nCell;
   //piiBlank = m_pTemplate->m_mmapAllAOI.equal_range(osstr.str().c_str());
   //iiFlag = m_pTemplate->m_mmapAllAOI.find(osstr.str().c_str());
-  //pFlag = (StimulusBmp *) iiFlag->second.get();
+  //pFlag = (StimulusImg *) iiFlag->second.get();
   // find blank
   //iiBlank = m_pTemplate->m_mmapAllAOI.find(osstr.str().c_str());
-  //pBlank = (StimulusBmp *) iiBlank->second.get();
+  //pBlank = (StimulusImg *) iiBlank->second.get();
 
   //iiBlank = piiBlank.first;
   int nFlag = 0;
   bool bFirst = 0;
   //  for (iiFlag = piiFlag.first; iiFlag != piiFlag.second; iiFlag++, iiBlank++) {
   for (iiFlag = piiFlag.first; iiFlag != piiFlag.second; iiFlag++) {
-    pFlag = (StimulusBmp *) iiFlag->second.get();
-    //pBlank = (StimulusBmp *) iiBlank->second.get();
+    pFlag = (StimulusImg *) iiFlag->second.get();
+    //pBlank = (StimulusImg *) iiBlank->second.get();
 
     if (pFlag) {
       // swap the aois and redraw.
@@ -537,12 +537,12 @@ void EventGSC1DrawGrid::Toggle() {
 
 void EventGSC1DrawGrid::GiveFeedback() {
 
-  vector<StimulusBmp *> vpAOIBomb;
+  vector<StimulusImg *> vpAOIBomb;
   pair<StimulusPtrMMapIter, StimulusPtrMMapIter> pii;
   StimulusPtrMMap::iterator ii, ii0, ii1, ii2;
-  StimulusBmp * pAOI1 = NULL;
-  StimulusBmp * pAOI2 = NULL;
-  typedef map<xy, StimulusBmp *> mapXYAOI;
+  StimulusImg * pAOI1 = NULL;
+  StimulusImg * pAOI2 = NULL;
+  typedef map<xy, StimulusImg *> mapXYAOI;
   mapXYAOI mapBomb;
   xy bloc;
   //StimulusWav wavLose(0, NULL, "explosion-03.wav");
@@ -577,10 +577,10 @@ void EventGSC1DrawGrid::GiveFeedback() {
   pii = m_pTemplate->m_mmapAllAOI.equal_range("Bomb");
   StimulusPtr p1;
   for (ii = pii.first; ii != pii.second; ii++) {
-    pAOI1 = (StimulusBmp *) (*ii).second.get();
+    pAOI1 = (StimulusImg *) (*ii).second.get();
     bloc = Loc2Grid(xy(pAOI1->m_x1, pAOI1->m_y1), xyTopLeftE, nGridSide);
     mapBomb[bloc] = pAOI1;
-    p1 = StimulusPtr(new StimulusBmp(0, NULL, "StarFbk", 
+    p1 = StimulusPtr(new StimulusImg(0, NULL, "StarFbk", 
 				     Col2X(false, bloc.m_x - 1), 
 				     Row2Y(false, bloc.m_y - 1), -1, -1, 4));
     vStarsForDecoder.push_back(p1);
@@ -590,10 +590,10 @@ void EventGSC1DrawGrid::GiveFeedback() {
     g_pErr->Debug(pastestr::paste("sdd", " ", "star", (long) bloc.m_y, (long) bloc.m_x));
   }
 
-  ((StimulusBmp *) m_pCursorE.get())->m_nLayer = 1;
-  ((StimulusBmp *) m_pCursorD.get())->m_nLayer = 1;
-  m_pTemplate->Reinsert((StimulusBmp *) m_pCursorE.get());
-  m_pTemplate->Reinsert((StimulusBmp *) m_pCursorD.get());
+  ((StimulusImg *) m_pCursorE.get())->m_nLayer = 1;
+  ((StimulusImg *) m_pCursorD.get())->m_nLayer = 1;
+  m_pTemplate->Reinsert((StimulusImg *) m_pCursorE.get());
+  m_pTemplate->Reinsert((StimulusImg *) m_pCursorD.get());
 
   // put all decoder blanks down to layer 3 (so they don't obscure stars on layer 4)
   // later: move all flags up to layer 5
@@ -602,17 +602,17 @@ void EventGSC1DrawGrid::GiveFeedback() {
   ii1 = m_pTemplate->m_mmapAllAOI.find("B9");
   ii1++;
   for (ii = ii0; ii != ii1; ii++) {
-    pAOI1 = (StimulusBmp *) (*ii).second.get();
+    pAOI1 = (StimulusImg *) (*ii).second.get();
     pAOI1->m_nLayer = 3;
     m_pTemplate->Reinsert(pAOI1);
-    pAOI1 = (StimulusBmp *) (*ii1).second.get();
+    pAOI1 = (StimulusImg *) (*ii1).second.get();
   }
   */
 
   for (int i = 0; i < vStarsForDecoder.size(); i++) {
     m_pTemplate->m_mmapAllAOI2.insert(StimulusPair2(4, vStarsForDecoder[i]));
-    ((StimulusBmp *) vStarsForDecoder[i].get())->LoadBMP("resource/bombblack.bmp");
-    //Reinsert((StimulusBmp *) vStarsForDecoder[i].get());
+    ((StimulusImg *) vStarsForDecoder[i].get())->LoadBMP("resource/bombblack.bmp");
+    //Reinsert((StimulusImg *) vStarsForDecoder[i].get());
   }
 
 
@@ -627,41 +627,41 @@ void EventGSC1DrawGrid::GiveFeedback() {
     piix = m_pTemplate->m_mmapAllAOI.equal_range(osstr.str().c_str());
     iix = piix.first;
 
-    pAOI1 = (StimulusBmp *) iix->second.get();
+    pAOI1 = (StimulusImg *) iix->second.get();
     bloc = Loc2Grid(xy(pAOI1->m_x1, pAOI1->m_y1), xyTopLeftD, nGridSide);
     if (pAOI1->m_nLayer == 5) {
       g_pErr->Debug(pastestr::paste("sdd", " ", "flag at", (long) bloc.m_y, (long) bloc.m_x));
       if (mapBomb.find(bloc) != mapBomb.end()) {
 	// +flag, +bomb = successfully defused!
-	p1 = StimulusPtr(new StimulusBmp(0, NULL, "Check", 
+	p1 = StimulusPtr(new StimulusImg(0, NULL, "Check", 
 					 Col2X(true, bloc.m_x - 1), 
 					 Row2Y(true, bloc.m_y - 1), -1, -1, 3));
-	((StimulusBmp *) p1.get())->SetColorkey(255,128,255);
-	((StimulusBmp *) p1.get())->LoadBMP("resource/check.bmp");
+	((StimulusImg *) p1.get())->SetColorkey(255,128,255);
+	((StimulusImg *) p1.get())->LoadBMP("resource/check.bmp");
 	vGreenCheck.push_back(p1);
 
-	p1 = StimulusPtr(new StimulusBmp(0, NULL, "Check", 
+	p1 = StimulusPtr(new StimulusImg(0, NULL, "Check", 
 					 Col2X(false, bloc.m_x - 1), 
 					 Row2Y(false, bloc.m_y - 1), -1, -1, 3));
-	((StimulusBmp *) p1.get())->SetColorkey(255,128,255);
-	((StimulusBmp *) p1.get())->LoadBMP("resource/check.bmp");
+	((StimulusImg *) p1.get())->SetColorkey(255,128,255);
+	((StimulusImg *) p1.get())->LoadBMP("resource/check.bmp");
 	vGreenCheck.push_back(p1);
 
 	m_vGSC1Flags.push_back(GSC1Locs(bloc.m_y, bloc.m_x));
       } else {
 	// +flag, -bomb = error!
-	p1 = StimulusPtr(new StimulusBmp(0, NULL, "RedX", 
+	p1 = StimulusPtr(new StimulusImg(0, NULL, "RedX", 
 					 Col2X(true, bloc.m_x - 1), 
 					 Row2Y(true, bloc.m_y - 1), -1, -1, 3));
-	((StimulusBmp *) p1.get())->SetColorkey(255,128,255);
-	((StimulusBmp *) p1.get())->LoadBMP("resource/redx.bmp");
+	((StimulusImg *) p1.get())->SetColorkey(255,128,255);
+	((StimulusImg *) p1.get())->LoadBMP("resource/redx.bmp");
 	vRedX.push_back(p1);
 
-	p1 = StimulusPtr(new StimulusBmp(0, NULL, "RedX", 
+	p1 = StimulusPtr(new StimulusImg(0, NULL, "RedX", 
 					 Col2X(false, bloc.m_x - 1), 
 					 Row2Y(false, bloc.m_y - 1), -1, -1, 3));
-	((StimulusBmp *) p1.get())->SetColorkey(255,128,255);
-	((StimulusBmp *) p1.get())->LoadBMP("resource/redx.bmp");
+	((StimulusImg *) p1.get())->SetColorkey(255,128,255);
+	((StimulusImg *) p1.get())->LoadBMP("resource/redx.bmp");
 	vRedX.push_back(p1);
 
 	m_vGSC1Flags.push_back(GSC1Locs(bloc.m_y, bloc.m_x));
@@ -672,18 +672,18 @@ void EventGSC1DrawGrid::GiveFeedback() {
       pAOI1->m_nLayer = 2;
       if (mapBomb.find(bloc) != mapBomb.end()) {
 	// -flag, +bomb = exploded!
-	p1 = StimulusPtr(new StimulusBmp(0, NULL, "RedX", 
+	p1 = StimulusPtr(new StimulusImg(0, NULL, "RedX", 
 					 Col2X(true, bloc.m_x - 1), 
 					 Row2Y(true, bloc.m_y - 1), -1, -1, 3));
-	((StimulusBmp *) p1.get())->SetColorkey(255,128,255);
-	((StimulusBmp *) p1.get())->LoadBMP("resource/redx.bmp");
+	((StimulusImg *) p1.get())->SetColorkey(255,128,255);
+	((StimulusImg *) p1.get())->LoadBMP("resource/redx.bmp");
 	vRedX.push_back(p1);
 
-	p1 = StimulusPtr(new StimulusBmp(0, NULL, "RedX", 
+	p1 = StimulusPtr(new StimulusImg(0, NULL, "RedX", 
 					 Col2X(false, bloc.m_x - 1), 
 					 Row2Y(false, bloc.m_y - 1), -1, -1, 3));
-	((StimulusBmp *) p1.get())->SetColorkey(255,128,255);
-	((StimulusBmp *) p1.get())->LoadBMP("resource/redx.bmp");
+	((StimulusImg *) p1.get())->SetColorkey(255,128,255);
+	((StimulusImg *) p1.get())->LoadBMP("resource/redx.bmp");
 	vRedX.push_back(p1);
 	nLose = 1;
       } else {
@@ -698,14 +698,14 @@ void EventGSC1DrawGrid::GiveFeedback() {
 
   /*
   for (ii = ii0; ii != ii1; ii++) {
-    pAOI1 = (StimulusBmp *) (*ii).second.get();
+    pAOI1 = (StimulusImg *) (*ii).second.get();
     if (pAOI1->m_nLayer == 5) {
       bloc = Loc2Grid(xy(pAOI1->m_x1, pAOI1->m_y1), xyTopLeftD, nGridSide);
-      p1 = StimulusPtr(new StimulusBmp(0, NULL, "FlagFbk", 
+      p1 = StimulusPtr(new StimulusImg(0, NULL, "FlagFbk", 
 				       Col2X(true, bloc.m_x - 1), 
 				       Row2Y(true, bloc.m_y - 1), -1, -1, 3));
-      ((StimulusBmp *) p1.get())->SetColorkey(255,128,255);
-      ((StimulusBmp *) p1.get())->LoadBMP("resource/flagcolor.bmp");
+      ((StimulusImg *) p1.get())->SetColorkey(255,128,255);
+      ((StimulusImg *) p1.get())->LoadBMP("resource/flagcolor.bmp");
       m_pTemplate->m_mmapAllAOI2.insert(StimulusPair2(3, p1));
       vFlagsForEncoder.push_back(p1);
     } else {}
@@ -716,8 +716,8 @@ void EventGSC1DrawGrid::GiveFeedback() {
 
   /*
   for (ii = ii0; ii != ii1; ii++, ii2++) {
-    pAOI1 = (StimulusBmp *) (*ii).second.get();
-    //pAOI2 = (StimulusBmp *) (*ii2).second.get();
+    pAOI1 = (StimulusImg *) (*ii).second.get();
+    //pAOI2 = (StimulusImg *) (*ii2).second.get();
     bloc = Loc2Grid(xy(pAOI1->m_x1, pAOI1->m_y1), xyTopLeftD, nGridSide);
     if (pAOI1->m_nLayer == 5) {
       //pAOI1->m_nLayer == 5;
@@ -726,18 +726,18 @@ void EventGSC1DrawGrid::GiveFeedback() {
       if (mapBomb.find(bloc) != mapBomb.end()) {
 	// +flag, +bomb = successfully defused!
 	//pAOI1->LoadBMP("resource/bombblackdefusedcheck.bmp");
-	p1 = StimulusPtr(new StimulusBmp(0, NULL, "Check", 
+	p1 = StimulusPtr(new StimulusImg(0, NULL, "Check", 
 					 Col2X(true, bloc.m_x - 1), 
 					 Row2Y(true, bloc.m_y - 1), -1, -1, 3));
-	((StimulusBmp *) p1.get())->SetColorkey(255,128,255);
-	((StimulusBmp *) p1.get())->LoadBMP("resource/check.bmp");
+	((StimulusImg *) p1.get())->SetColorkey(255,128,255);
+	((StimulusImg *) p1.get())->LoadBMP("resource/check.bmp");
 	vGreenCheck.push_back(p1);
 
-	p1 = StimulusPtr(new StimulusBmp(0, NULL, "Check", 
+	p1 = StimulusPtr(new StimulusImg(0, NULL, "Check", 
 					 Col2X(false, bloc.m_x - 1), 
 					 Row2Y(false, bloc.m_y - 1), -1, -1, 3));
-	((StimulusBmp *) p1.get())->SetColorkey(255,128,255);
-	((StimulusBmp *) p1.get())->LoadBMP("resource/check.bmp");
+	((StimulusImg *) p1.get())->SetColorkey(255,128,255);
+	((StimulusImg *) p1.get())->LoadBMP("resource/check.bmp");
 	vGreenCheck.push_back(p1);
 
 	m_vGSC1Flags.push_back(GSC1Locs(bloc.m_y, bloc.m_x));
@@ -745,18 +745,18 @@ void EventGSC1DrawGrid::GiveFeedback() {
 	//pAOI2->LoadBMP("resource/bombblackdefusedcheck.bmp");
       } else {
 	// +flag, -bomb = error!
-	p1 = StimulusPtr(new StimulusBmp(0, NULL, "RedX", 
+	p1 = StimulusPtr(new StimulusImg(0, NULL, "RedX", 
 					 Col2X(true, bloc.m_x - 1), 
 					 Row2Y(true, bloc.m_y - 1), -1, -1, 3));
-	((StimulusBmp *) p1.get())->SetColorkey(255,128,255);
-	((StimulusBmp *) p1.get())->LoadBMP("resource/redx.bmp");
+	((StimulusImg *) p1.get())->SetColorkey(255,128,255);
+	((StimulusImg *) p1.get())->LoadBMP("resource/redx.bmp");
 	vRedX.push_back(p1);
 
-	p1 = StimulusPtr(new StimulusBmp(0, NULL, "RedX", 
+	p1 = StimulusPtr(new StimulusImg(0, NULL, "RedX", 
 					 Col2X(false, bloc.m_x - 1), 
 					 Row2Y(false, bloc.m_y - 1), -1, -1, 3));
-	((StimulusBmp *) p1.get())->SetColorkey(255,128,255);
-	((StimulusBmp *) p1.get())->LoadBMP("resource/redx.bmp");
+	((StimulusImg *) p1.get())->SetColorkey(255,128,255);
+	((StimulusImg *) p1.get())->LoadBMP("resource/redx.bmp");
 	vRedX.push_back(p1);
 
 	m_vGSC1Flags.push_back(GSC1Locs(bloc.m_y, bloc.m_x));
@@ -771,18 +771,18 @@ void EventGSC1DrawGrid::GiveFeedback() {
       //m_pTemplate->Reinsert(pAOI1);
       if (mapBomb.find(bloc) != mapBomb.end()) {
 	// -flag, +bomb = exploded!
-	p1 = StimulusPtr(new StimulusBmp(0, NULL, "RedX", 
+	p1 = StimulusPtr(new StimulusImg(0, NULL, "RedX", 
 					 Col2X(true, bloc.m_x - 1), 
 					 Row2Y(true, bloc.m_y - 1), -1, -1, 3));
-	((StimulusBmp *) p1.get())->SetColorkey(255,128,255);
-	((StimulusBmp *) p1.get())->LoadBMP("resource/redx.bmp");
+	((StimulusImg *) p1.get())->SetColorkey(255,128,255);
+	((StimulusImg *) p1.get())->LoadBMP("resource/redx.bmp");
 	vRedX.push_back(p1);
 
-	p1 = StimulusPtr(new StimulusBmp(0, NULL, "RedX", 
+	p1 = StimulusPtr(new StimulusImg(0, NULL, "RedX", 
 					 Col2X(false, bloc.m_x - 1), 
 					 Row2Y(false, bloc.m_y - 1), -1, -1, 3));
-	((StimulusBmp *) p1.get())->SetColorkey(255,128,255);
-	((StimulusBmp *) p1.get())->LoadBMP("resource/redx.bmp");
+	((StimulusImg *) p1.get())->SetColorkey(255,128,255);
+	((StimulusImg *) p1.get())->LoadBMP("resource/redx.bmp");
 	vRedX.push_back(p1);
 	//pAOI1->LoadBMP("resource/explosion.bmp");
 	//pAOI2->LoadBMP("resource/explosion.bmp");

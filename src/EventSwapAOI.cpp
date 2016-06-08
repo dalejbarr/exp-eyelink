@@ -51,15 +51,15 @@ int EventSwapAOI::Prepare() {
 }
 
 int EventSwapAOI::Action() {
-  StimulusBmp * p1 = NULL;
-  StimulusBmp * p2 = NULL;
+  StimulusImg * p1 = NULL;
+  StimulusImg * p2 = NULL;
 
   if ( (!m_ppAOI1) || (!m_ppAOI2) ) {
     g_pErr->Report("null values in EventSwapAOI::Action()");
   } else {}
 
-  p1 = (StimulusBmp *) (*m_ppAOI1).get();
-  p2 = (StimulusBmp *) (*m_ppAOI2).get();
+  p1 = (StimulusImg *) (*m_ppAOI1).get();
+  p2 = (StimulusImg *) (*m_ppAOI2).get();
   
   int x = p1->m_x1;
   int y = p1->m_y1;

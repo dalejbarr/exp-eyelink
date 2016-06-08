@@ -1,5 +1,5 @@
 #include "StimulusTxt.hpp"
-#include "StimulusBmp.hpp"
+#include "StimulusImg.hpp"
 #include "Template.hpp"
 
 StimulusTxt::StimulusTxt(long id, Template * pTemplate, long idCmd, ArgMMap mmArgs) : Stimulus(id, pTemplate) {

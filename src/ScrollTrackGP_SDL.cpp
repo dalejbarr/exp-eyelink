@@ -18,12 +18,12 @@ ScrollTrackGP_SDL::~ScrollTrackGP_SDL() {
 
 void ScrollTrackGP_SDL::Prepare() {
   if (!m_pDisp) {
-    m_pDisp = new StimulusBmp(0, NULL, "scrolltrack", 156, 28, -1, -1, -1);
+    m_pDisp = new StimulusImg(0, NULL, "scrolltrack", 156, 28, -1, -1, -1);
     //m_pDisp->Highlight("2 255 255 255");
   } else {}
   g_pErr->Debug(pastestr::paste("ss", " ", "ScrollTrackGP resource is", 
 				m_pDisp->GetFilenameFromResource(m_sResource).c_str()));
-  m_pDisp->LoadBMP(m_pDisp->GetFilenameFromResource(m_sResource).c_str());
+  m_pDisp->Load(m_pDisp->GetFilenameFromResource(m_sResource).c_str());
 
   m_rect.x = 227; m_rect.y = 227; m_rect.w = 260; m_rect.h = 260;
   m_rectOld.x = m_rect.x; m_rectOld.y = m_rect.y;
@@ -64,7 +64,7 @@ void ScrollTrackGP_SDL::Redraw(bool bForce) {
       r1.x = (int) (m_rectOld.x + i*fx);
       r1.y = (int) (m_rectOld.y + i*fy);
       SDL_BlitSurface(m_pDisp->GetSurface(), &r1, pScreen, &m_rectViewPort);
-      StimulusBmp::Flip1();
+      StimulusImg::Flip1();
       SDL_Delay(frameint);
     }
   } else {

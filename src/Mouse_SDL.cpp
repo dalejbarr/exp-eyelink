@@ -50,12 +50,12 @@ void Mouse_SDL::Prepare() {
   if (m_bDraw) {
     m_xLast = s_xHome; m_yLast = s_yHome;
     if (!m_pCursor) {
-      m_pCursor = new StimulusBmp(0, NULL, "mouse", s_xHome, s_yHome, -1, -1, -1);
-      //m_pCursor = new StimulusBmp(0, m_pTemplate, "mouse", 512, 384, -1, -1, -1);
+      m_pCursor = new StimulusImg(0, NULL, "mouse", s_xHome, s_yHome, -1, -1, -1);
+      //m_pCursor = new StimulusImg(0, m_pTemplate, "mouse", 512, 384, -1, -1, -1);
       m_pCursor->SetColorkey(128, 0, 255);
     } else {}
 
-    m_pCursor->LoadBMP("mouse.bmp");
+    m_pCursor->Load("mouse.bmp");
     //m_pCursor->ConvertSurface(g_pDisplay->GetSDLSurface());
     m_pCursor->m_CurX.Set(s_xHome);
     m_pCursor->m_CurY.Set(s_yHome);
@@ -184,7 +184,7 @@ void Mouse_SDL::Start() {
     m_rect.w = m_pCursor->m_rect.w; m_rect.h = m_pCursor->m_rect.h;
     SDL_BlitSurface(g_pDisplay->GetSDLScreen(), &m_rect, m_pOld, NULL);
     m_pCursor->Draw();
-    StimulusBmp::Flip1();
+    StimulusImg::Flip1();
   } else {}
 
   InputDev::Start();
@@ -199,7 +199,7 @@ void Mouse_SDL::DrawCursor(int old_x, int old_y) {
 
     // erase old one
     SDL_BlitSurface(m_pOld, NULL, g_pDisplay->GetSDLScreen(), &m_rect);  
-    //StimulusBmp::Flip();
+    //StimulusImg::Flip();
 
     // store background before drawing new one
     r1.w = m_rect.w; r1.h = m_rect.h;
@@ -209,7 +209,7 @@ void Mouse_SDL::DrawCursor(int old_x, int old_y) {
 
     // now draw
     m_pCursor->Draw();
-    StimulusBmp::Flip1();
+    StimulusImg::Flip1();
   } else {}
 }
 

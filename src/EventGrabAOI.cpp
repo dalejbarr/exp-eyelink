@@ -34,7 +34,7 @@ EventGrabAOI::EventGrabAOI(long id, long msec, long idCmd, ArgMMap mmArgs, Templ
 int EventGrabAOI::Action() {
   g_pErr->DFI("EventGrabAOI::Action", "", 2);
 
-  StimulusBmp * pStim = (StimulusBmp *) (*m_ppStim).get();
+  StimulusImg * pStim = (StimulusImg *) (*m_ppStim).get();
   
   if (pStim) {
     m_nOffX = pStim->m_CurX.Get() - State::s_nMouseCurX.Get();
@@ -59,7 +59,7 @@ int EventGrabAOI::Action() {
 
 int EventGrabAOI::Update(int x, int y) {
 
-  StimulusBmp * pStim = (StimulusBmp *) (*m_ppStim).get();
+  StimulusImg * pStim = (StimulusImg *) (*m_ppStim).get();
   if ((ClockFn() - m_msLastDraw) > 33) {
     if (m_pTemplate) {
 

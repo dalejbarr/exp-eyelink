@@ -56,6 +56,7 @@ OpInt State::s_nMouseCurX(0);
 OpInt State::s_nMouseCurY(0);
 
 bool State::s_bFinished = false;
+bool State::s_bTimedOut = false;
 
 State::State(long id, const char * pcName, long seq) {
 
@@ -136,8 +137,8 @@ ORDER BY Msec ASC");
     // handle "stimulus" events
     switch (idCmd) {
     case SBX_EVENT_SHOW_BITMAP :
-      //pStim = StimulusPtr(new StimulusBmp(0, idCmd, mmArgs));
-      pStim = StimulusPtr(new StimulusBmp(0, pTemplate, idCmd, mmArgs));
+      //pStim = StimulusPtr(new StimulusImg(0, idCmd, mmArgs));
+      pStim = StimulusPtr(new StimulusImg(0, pTemplate, idCmd, mmArgs));
       break;
     case SBX_EVENT_DISPLAY_ON :
       //pStim = StimulusPtr(new StimulusDisplayOn(0));
@@ -478,6 +479,7 @@ int State::Start() {
   g_pErr->DFI("State::Start", m_strDebug.c_str(), 4);
 
 	State::s_bFinished = false;
+	State::s_bTimedOut = false;
 
   //m_bVisited = 1;
   m_pCurEvent = m_mmapEvent.begin();
@@ -491,18 +493,22 @@ int State::Start() {
 }
 
 int State::Update() {
+  g_pErr->DFI("State::Update", m_strDebug.c_str(), 4);  
+
   static Event * pEvent = NULL;
   static SDL_Event sdlEvent;  
   static SDL_Event sdlEventDone;  
   static Uint32 msDiff = 0;
   static SDL_Event event;
   static SDL_UserEvent userevent;
+	bool bExit = false;
 
-  msDiff = ClockFn() - m_vMsBegin.back();
-
-  while (!State::s_bFinished) {
-    if (m_nTimeout) {
-      if (msDiff >= m_nTimeout) {
+  while (!bExit) {
+		msDiff = ClockFn() - m_vMsBegin.back();
+		if (m_nTimeout && !State::s_bTimedOut) {
+			if (msDiff >= m_nTimeout) {
+				State::s_bTimedOut = true;
+				State::s_bFinished = true; // don't run any more events
 				//g_pErr->Report(pastestr::paste("sd", " ", "state timeout", m_id));
 				m_pCurEvent = m_mmapEvent.end(); // make sure no more events will be triggered
 				userevent.type = SDL_USEREVENT;
@@ -512,31 +518,33 @@ int State::Update() {
 				event.type = SDL_USEREVENT;
 				event.user = userevent;
 				SDL_PushEvent(&event);
-				State::s_bFinished = true;
-				break;
-      } else {}
-    } else {}
+				bExit = true;
+			} else {}
+		} else {}
 
-    if (m_pCurEvent != m_mmapEvent.end()) {
-      pEvent = (*m_pCurEvent).second.get();
-    } else {
-			State::s_bFinished = true;
-      pEvent = NULL;
-			sdlEventDone.type=SDL_USEREVENT;
-			sdlEventDone.user.code=SBX_WATCH_DONE;
-			sdlEventDone.user.data1=NULL;
-			sdlEventDone.user.data2=NULL;
-			SDL_PushEvent(&sdlEventDone);
-      break;
-    }
+		if (!State::s_bFinished) {
+			pEvent = (*m_pCurEvent).second.get();
+			if ( (msDiff > pEvent->Msec()) || ((msDiff - pEvent->Msec()) < EXP_EVENT_TIMER_RESOLUTION) ) {
+				g_pErr->Debug(pastestr::paste("dd", ":", (long) pEvent->Msec(), (long) msDiff));
+				pEvent->Action();
+				m_pCurEvent++;
+				if (m_pCurEvent == m_mmapEvent.end()) { // that was last event
+					State::s_bFinished = true;
+					pEvent = NULL;
+					sdlEventDone.type=SDL_USEREVENT;
+					sdlEventDone.user.code=SBX_WATCH_DONE;
+					sdlEventDone.user.data1=NULL;
+					sdlEventDone.user.data2=NULL;
+					SDL_PushEvent(&sdlEventDone);
+					if ((!m_nTimeout) || s_bTimedOut) {
+						bExit = true;
+					}
+				}
+			}
+		}
+	}
 
-    if ( (msDiff > pEvent->Msec()) || ((msDiff - pEvent->Msec()) < EXP_EVENT_TIMER_RESOLUTION) ) {
-      pEvent->Action();
-      m_pCurEvent++;
-    } else {
-      break;
-    }
-  }
+  g_pErr->DFO("State::Update", m_strDebug.c_str(), 4);  
 
   return State::s_bFinished;
 }
@@ -632,7 +640,8 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
   case SDL_USEREVENT : {
     //g_pErr->Debug(pastestr::paste("sd", " ", "the user event was", 
 		//(long) pEvt->user.code));
-		g_pErr->Debug(pastestr::paste("sd", " ", "... user event", (long) pEvt->user.code));
+		g_pErr->Debug(pastestr::paste("sdd", " ", "... user event", (long) pEvt->user.code,
+																	(long) ClockFn()));
     switch (pEvt->user.code) {
     case SBX_WATCH_DONE : {
       wmip = m_mmapWatch.equal_range(SBX_WATCH_DONE);
@@ -787,14 +796,14 @@ Watch * State::ProcessMouseButton(SDL_Event * pEvt) {
     int nTopPriority = -1;
     int nWinner = 0;
     int nTopLayer = -1;
-    StimulusBmp * pAOI = NULL;
+    StimulusImg * pAOI = NULL;
     for (int i = 0; i < vpwmSignaled.size(); i++) {
       pwm = vpwmSignaled[i];
       if (pwm->GetRegion() > nTopPriority) {
 	nTopPriority = pwm->GetRegion();
 	if (pwm->GetRegion() == WATCHMOUSE_AOI) {
 	  if (pwm->m_pSelectedAOI) {
-	    pAOI = (StimulusBmp *) pwm->m_pSelectedAOI.get();
+	    pAOI = (StimulusImg *) pwm->m_pSelectedAOI.get();
 	    if (pAOI->m_nLayer > nTopLayer) {
 	      nWinner = i;
 	      nTopLayer = pAOI->m_nLayer;

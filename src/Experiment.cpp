@@ -30,7 +30,7 @@ using std::vector;
 using pastestr::paste;
 
 #include "global.hpp"
-#include "StimulusBmp.hpp"
+#include "StimulusImg.hpp"
 
 #include "Display_SDL.hpp"
 #include "Audio_SDL.hpp"
@@ -678,7 +678,7 @@ Stimulus * Experiment::FindOrCreateStimulus(long id, Template * pTemplate) {
     if (it == Experiment::s_mapStimulus.end()) {
       switch (id) {
       case EXP_STIMULUS_BITMAP :
-	pStim = new StimulusBmp();
+	pStim = new StimulusImg();
 	break;
       case EXP_STIMULUS_AOI :
 	pStim = new StimulusAOI();

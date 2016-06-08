@@ -17,7 +17,7 @@ using std::map;
 using std::multimap;
 
 #include "State.hpp"
-#include "StimulusBmp.hpp"
+#include "StimulusImg.hpp"
 #include "Watch.hpp"
 #include "InputDev.hpp"
 #include "EventTime.hpp"
@@ -107,14 +107,14 @@ public:
   //int SetResourceMap(ResourceMap m);
   static InputDevPtr FindOrCreateInputDev(unsigned long idDev, int nIndex = 0);
   static InputDevPtr GetDevice(unsigned long idDev, int nIndex = 0);
-  //StimulusBmp ** AOIArg(string s);
+  //StimulusImg ** AOIArg(string s);
   StimulusPtr * AOIArg(string s);
 
   Watch * FindWatch(long id);
   Operation * FindVar(string s);
 
   Operation NewOplist(string s);
-  int Reinsert(StimulusBmp * pAOI);
+  int Reinsert(StimulusImg * pAOI);
   vector<EventTimePtr> GetStateTiming();
   vector<EventTimePtr> GetEventTiming();
 
@@ -130,7 +130,7 @@ typedef boost::shared_ptr<Template> TemplatePtr;
 
 #include "global.hpp"
 #include "pastestr.hpp"
-#include "StimulusBmp.hpp"
+#include "StimulusImg.hpp"
 
 template<class t> 
 void LoadAOI(t * pClass, const char * pcLink, Template * pTemplate) {
@@ -188,7 +188,7 @@ ORDER BY AOIArgs.AOIID, AOIArgs.ArgID");
       y2 = atoi((*pii.first).second.c_str());
     } else {}
 
-    pAOI = StimulusPtr(new StimulusBmp(id, pTemplate,
+    pAOI = StimulusPtr(new StimulusImg(id, pTemplate,
 				  s.c_str(),
 				  atoi(g_prsStim->Get(3)),
 				  atoi(g_prsStim->Get(4)),
@@ -201,7 +201,7 @@ ORDER BY AOIArgs.AOIID, AOIArgs.ArgID");
       int r, g, b;
       istringstream iss((*pii.first).second);
       iss >> r >> g >> b;
-      ((StimulusBmp *) pAOI.get())->SetColorkey(r, g, b);      
+      ((StimulusImg *) pAOI.get())->SetColorkey(r, g, b);      
     } else {}
     
     pClass->m_mmapAOI.insert(StimulusPair(g_prsStim->Get(1), pAOI));

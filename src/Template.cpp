@@ -166,7 +166,7 @@ int Template::LoadAOIs() {
 
 int Template::AddAOIs(StimulusPtrMMap m, bool bTemplateAlso /*=true*/) {
   // used to add AOIs from Item to Template
-  StimulusBmp * pt = NULL;
+  StimulusImg * pt = NULL;
 
   g_pErr->DFI("Template::AddAOIs", m_strDebug.c_str(), 2);
   StimulusPtrMMap::iterator ii;
@@ -178,8 +178,8 @@ int Template::AddAOIs(StimulusPtrMMap m, bool bTemplateAlso /*=true*/) {
     m_mmapAllAOI = StimulusPtrMMap(m_mmapAOI.begin(), m_mmapAOI.end());
     
     for (ii = m_mmapAOI.begin(); ii != m_mmapAOI.end(); ii++) {
-      m_mmapAllAOI2.insert(StimulusPair2( ((StimulusBmp *) (*ii).second.get())->m_nLayer, (*ii).second));
-      pt = (StimulusBmp *) ii->second.get();
+      m_mmapAllAOI2.insert(StimulusPair2( ((StimulusImg *) (*ii).second.get())->m_nLayer, (*ii).second));
+      pt = (StimulusImg *) ii->second.get();
       g_pErr->Debug(pastestr::paste("sddd", ", ",
 				    ii->first.c_str(),
 				    (long) pt->m_x1, (long) pt->m_y1, (long) pt->m_nLayer));
@@ -188,7 +188,7 @@ int Template::AddAOIs(StimulusPtrMMap m, bool bTemplateAlso /*=true*/) {
   } else {}
 
   for (ii = m.begin(); ii != m.end(); ii++) {
-    m_mmapAllAOI2.insert(StimulusPair2( ((StimulusBmp *) (*ii).second.get())->m_nLayer, (*ii).second));
+    m_mmapAllAOI2.insert(StimulusPair2( ((StimulusImg *) (*ii).second.get())->m_nLayer, (*ii).second));
     m_mmapAllAOI.insert(StimulusPair( (*ii).first, (*ii).second));
   }
 
@@ -369,7 +369,7 @@ int Template::Redraw(setStimulus setExcluding, bool bMem /* = FALSE */) {
 
   for (ii = m_mmapAllAOI2.begin(); ii != m_mmapAllAOI2.end(); ii++) {
     pAOI = (*ii).second;
-    ((StimulusBmp *) pAOI.get())->Draw(bMem);
+    ((StimulusImg *) pAOI.get())->Draw(bMem);
     //if (setExcluding.find(pAOI)) {
       //pAOI->
     //} else {}
@@ -391,9 +391,9 @@ int Template::Redraw(bool bMem /* = FALSE */) {
   StimulusPtrMMap2::iterator ii;
   for (ii = m_mmapAllAOI2.begin(); ii != m_mmapAllAOI2.end(); ii++) {
     pAOI = (*ii).second;
-    ((StimulusBmp *) pAOI.get())->Draw(bMem);
+    ((StimulusImg *) pAOI.get())->Draw(bMem);
   }
-  StimulusBmp::Flip1(bMem);
+  StimulusImg::Flip1(bMem);
 
   return 0;
 }
@@ -434,7 +434,7 @@ StimulusPtr * Template::AOIArg(string s) {
   return ppStim;
 }
 
-int Template::Reinsert(StimulusBmp * pAOI) {
+int Template::Reinsert(StimulusImg * pAOI) {
   //AOIPtr ptrAOI;
   //AOIPtr ptrAOIold;
   StimulusPtrMMap2::iterator pi;
@@ -446,8 +446,8 @@ int Template::Reinsert(StimulusBmp * pAOI) {
   for (pi = m_mmapAllAOI2.begin(); pi != m_mmapAllAOI2.end(); pi++) {
     if (pi->second.get() == pAOI) {
       nFound = 1;
-      ((StimulusBmp *) pi->second.get())->swap(*pAOI);
-      m_mmapAllAOI2.insert(StimulusPair2(((StimulusBmp *) pi->second.get())->m_nLayer, pi->second));
+      ((StimulusImg *) pi->second.get())->swap(*pAOI);
+      m_mmapAllAOI2.insert(StimulusPair2(((StimulusImg *) pi->second.get())->m_nLayer, pi->second));
       //ptrAOI = pi->second;
       m_mmapAllAOI2.erase(pi);
       break;
@@ -653,7 +653,7 @@ int Template::InsertAOIs(StimulusPtrMMap m) {
 
   for (ii = m.begin(); ii != m.end(); ii++) {
     InsertAOI((*ii).first, (*ii).second);
-    //m_mmapAllAOI2.insert(StimulusPair2( ((StimulusBmp *) (*ii).second.get())->m_nLayer, (*ii).second));
+    //m_mmapAllAOI2.insert(StimulusPair2( ((StimulusImg *) (*ii).second.get())->m_nLayer, (*ii).second));
     //m_mmapAllAOI.insert(StimulusPair( (*ii).first, (*ii).second));
   }
 
@@ -662,7 +662,7 @@ int Template::InsertAOIs(StimulusPtrMMap m) {
 }
 
 int Template::InsertAOI(string strName, StimulusPtr pStim) {
-  StimulusBmp * pStimBMP = (StimulusBmp *) pStim.get();
+  StimulusImg * pStimBMP = (StimulusImg *) pStim.get();
   ostringstream osstr;
 
   osstr << strName.c_str() << " " << pStimBMP->m_x1 << " " << pStimBMP->m_y1;

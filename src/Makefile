@@ -3,7 +3,8 @@ OBJS = 	Experiment.o Template.o State.o \
 	ItemCell.o Trial.o Display.o Device.o Display_SDL.o \
 	Audio.o Audio_SDL.o \
 	InputDev.o Mouse_SDL.o \
-	Stimulus.o StimulusDisplayOn.o StimulusBmp.o \
+	Webcam.o \
+	Stimulus.o StimulusDisplayOn.o StimulusImg.o \
 	StimulusWav.o StimulusTxt.o \
 	Event.o EventGrabAOI.o EventSwapAOI.o EventUpdateAOI.o \
 	EventUpdate.o EventRecord.o EventMsg.o StimulusShowAOI.o \
@@ -35,7 +36,8 @@ W32OBJS = \
 	$(W32L)/ItemCell.o $(W32L)/Trial.o $(W32L)/Display.o $(W32L)/Device.o $(W32L)/Display_SDL.o \
 	$(W32L)/Audio.o $(W32L)/Audio_SDL.o \
 	$(W32L)/InputDev.o $(W32L)/Mouse_SDL.o \
-	$(W32L)/Stimulus.o $(W32L)/StimulusDisplayOn.o $(W32L)/StimulusBmp.o \
+	$(W32L)/Webcam.o \
+	$(W32L)/Stimulus.o $(W32L)/StimulusDisplayOn.o $(W32L)/StimulusImg.o \
 	$(W32L)/StimulusWav.o $(W32L)/StimulusTxt.o \
 	$(W32L)/Event.o $(W32L)/EventGrabAOI.o $(W32L)/EventSwapAOI.o $(W32L)/EventUpdateAOI.o \
 	$(W32L)/EventUpdate.o $(W32L)/EventRecord.o $(W32L)/EventMsg.o $(W32L)/StimulusShowAOI.o \

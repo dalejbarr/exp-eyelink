@@ -1,5 +1,5 @@
 #include "Display_SDL.hpp"
-#include "StimulusBmp.hpp"
+#include "StimulusImg.hpp"
 #include <stdio.h>
 
 SDL_Surface * Display_SDL::m_pScreen = NULL;
@@ -12,7 +12,7 @@ Display_SDL::Display_SDL(SDL_Surface * pSurface) {
   if (pSurface) {
     m_bSelfAlloc = false;
     m_pScreen = pSurface;
-    StimulusBmp::SetScreen(m_pScreen);
+    StimulusImg::SetScreen(m_pScreen);
   } else {}
 }
 
@@ -43,7 +43,7 @@ int Display_SDL::CreateScreen(int x0, int y0, int w, int h, Uint32 nFlags) {
   //g_pErr->Report("NO!");
   SDL_putenv(pc);
   m_pScreen = SDL_SetVideoMode(w, h, 0, nFlags);
-  StimulusBmp::SetScreen(m_pScreen);
+  StimulusImg::SetScreen(m_pScreen);
   m_bSelfAlloc = true;
 }
 

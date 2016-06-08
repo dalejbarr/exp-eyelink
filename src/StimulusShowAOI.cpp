@@ -1,5 +1,5 @@
 #include "StimulusShowAOI.hpp"
-#include "StimulusBmp.hpp"
+#include "StimulusImg.hpp"
 #include "Template.hpp"
 
 StimulusShowAOI::StimulusShowAOI(long id, long msec, long idCmd, ArgMMap mmArgs, 
@@ -29,14 +29,14 @@ int StimulusShowAOI::Action() {
     s1.assign(Stimulus::GetResourceString(m_vsShow[i]));
     pair<StimulusPtrMMap::iterator,StimulusPtrMMap::iterator> pii;
     StimulusPtrMMap::iterator ii;
-    StimulusBmp * pStim = NULL;
+    StimulusImg * pStim = NULL;
 
     pii = m_pTemplate->m_mmapAllAOI.equal_range(s1.c_str());
     if (pii.first == pii.second) {
       g_pErr->Report(pastestr::paste("ss", " ", "couldn't find AOI named", s1.c_str()));
     } else {
       for (ii = pii.first; ii != pii.second; ii++) {
-	pStim = (StimulusBmp *) ii->second.get();      
+	pStim = (StimulusImg *) ii->second.get();      
       //g_pErr->Report(pastestr::paste("s", " ", pStim->
 	pStim->Action();
       }

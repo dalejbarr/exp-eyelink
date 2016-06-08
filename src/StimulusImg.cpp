@@ -1,11 +1,11 @@
-#include "StimulusBmp.hpp"
+#include "StimulusImg.hpp"
 #include "global.hpp"
 #include "pastestr.hpp"
 
-SDL_Surface * StimulusBmp::m_pScreen = NULL;
-SDL_Surface * StimulusBmp::m_pMemSurface = NULL;
+SDL_Surface * StimulusImg::m_pScreen = NULL;
+SDL_Surface * StimulusImg::m_pMemSurface = NULL;
 
-StimulusBmp::StimulusBmp(long id, Template * pTemplate,
+StimulusImg::StimulusImg(long id, Template * pTemplate,
 			 long idCmd, ArgMMap mmArgs) :
   Stimulus(id, pTemplate) {
 
@@ -21,7 +21,7 @@ StimulusBmp::StimulusBmp(long id, Template * pTemplate,
   ii = pii.first;
   m_sResource = (*ii).second;
 
-  g_pErr->DFI("StimulusBmp::StimulusBmp(mmArgs)", m_sResource.c_str(), 4);
+  g_pErr->DFI("StimulusImg::StimulusImg(mmArgs)", m_sResource.c_str(), 4);
 
   pii = mmArgs.equal_range("x"); ii = pii.first;
   m_x1 = atoi((*ii).second.c_str());
@@ -56,13 +56,13 @@ StimulusBmp::StimulusBmp(long id, Template * pTemplate,
   }
 
 
-  g_pErr->DFO("StimulusBmp::StimulusBmp(mmArgs)", m_sResource.c_str(), 4);  
+  g_pErr->DFO("StimulusImg::StimulusImg(mmArgs)", m_sResource.c_str(), 4);  
 }
 
-StimulusBmp::StimulusBmp(long id, Template * pTemplate, const char * pName, 
+StimulusImg::StimulusImg(long id, Template * pTemplate, const char * pName, 
 			 int x1, int y1, int x2, int y2, int nLayer) :
   Stimulus(id, pTemplate) {
-  g_pErr->DFI("StimulusBmp::StimulusBmp", pName, 3);
+  g_pErr->DFI("StimulusImg::StimulusImg", pName, 3);
   m_sResource.assign(pName);
   if ((m_sResource == "") && (x2 == -1) && (y2 == -1)) {
     g_pErr->Report("can't have blank AOI Name and missing x2,y2 coords!!");
@@ -73,10 +73,10 @@ StimulusBmp::StimulusBmp(long id, Template * pTemplate, const char * pName,
   m_nLayer = nLayer;
   Initialize();
 
-  g_pErr->DFO("StimulusBmp::StimulusBmp", pName, 3);
+  g_pErr->DFO("StimulusImg::StimulusImg", pName, 3);
 }
 
-void StimulusBmp::Initialize() {
+void StimulusImg::Initialize() {
   m_rect.x = m_x1;
   m_rect.y = m_y1;
   m_rect.w = m_x2-m_x1; m_rect.h = m_y2-m_y1;
@@ -94,9 +94,9 @@ void StimulusBmp::Initialize() {
   m_pSurface = NULL;
 }
 
-StimulusBmp::~StimulusBmp() {
-  g_pErr->DFI("StimulusBmp::~StimulusBmp", m_sResource.c_str(), 3);
-  g_pErr->DFO("StimulusBmp::~StimulusBmp", m_sResource.c_str(), 3);
+StimulusImg::~StimulusImg() {
+  g_pErr->DFI("StimulusImg::~StimulusImg", m_sResource.c_str(), 3);
+  g_pErr->DFO("StimulusImg::~StimulusImg", m_sResource.c_str(), 3);
 
   if (m_pMemSurface) {
     SDL_FreeSurface(m_pMemSurface);
@@ -104,25 +104,25 @@ StimulusBmp::~StimulusBmp() {
   } else {}
 }
 
-int StimulusBmp::Prepare() {
+int StimulusImg::Prepare() {
   Stimulus::Prepare();
   InitMemSurface();
   // load it in
-  g_pErr->DFI("StimulusBmp::Prepare", m_sResource.c_str(), 3);
+  g_pErr->DFI("StimulusImg::Prepare", m_sResource.c_str(), 3);
   if (m_sFileName == "") {
     g_pErr->Debug("blank");
     return 1;
   } else {}
 
   string s1 = Stimulus::GetFilenameFromResource(m_sResource.c_str());
-  LoadBMP(s1.c_str());
+  Load(s1.c_str());
 
-  g_pErr->DFO("StimulusBmp::Prepare", m_sFileName.c_str(), 3);
+  g_pErr->DFO("StimulusImg::Prepare", m_sFileName.c_str(), 3);
   return 0;
 }
 
-int StimulusBmp::Finish() {
-  g_pErr->DFI("StimulusBmp::Finish", m_sResource.c_str(), 3);
+int StimulusImg::Finish() {
+  g_pErr->DFI("StimulusImg::Finish", m_sResource.c_str(), 3);
   
   if (m_pSurface) {
     SDL_FreeSurface(m_pSurface);
@@ -131,12 +131,12 @@ int StimulusBmp::Finish() {
 
   Stimulus::Finish();
 
-  g_pErr->DFO("StimulusBmp::Finish", m_sResource.c_str(), 3);
+  g_pErr->DFO("StimulusImg::Finish", m_sResource.c_str(), 3);
   return 0;
 }
 
-int StimulusBmp::Draw(bool bMem /*=0*/) {
-  //g_pErr->DFI("StimulusBmp::Draw", m_sFileName.c_str(), 3);
+int StimulusImg::Draw(bool bMem /*=0*/) {
+  //g_pErr->DFI("StimulusImg::Draw", m_sFileName.c_str(), 3);
   SDL_Rect r1;
   SDL_Surface * pSurf = m_pScreen;
   r1.w = m_rect.w; r1.h = m_rect.h;
@@ -164,8 +164,8 @@ int StimulusBmp::Draw(bool bMem /*=0*/) {
   return 0;
 }
 
-int StimulusBmp::Action() {
-  g_pErr->DFI("StimulusBmp::Action", m_sResource.c_str(), 3);
+int StimulusImg::Action() {
+  g_pErr->DFI("StimulusImg::Action", m_sResource.c_str(), 3);
 
   // update position (if necessary)
   m_rect.x = m_CurX.Get(); //*m_px;
@@ -173,43 +173,43 @@ int StimulusBmp::Action() {
   g_pErr->Debug(pastestr::paste("dd", " ", (long) m_CurX.Get(), (long) m_CurY.Get()));
 
   if (!m_pSurface) {
-    g_pErr->Report("error in StimulusBmp::Action()");
+    g_pErr->Report("error in StimulusImg::Action()");
     return 1;
   } else {}
 
   Draw();
-  StimulusBmp::Flip1();
+  StimulusImg::Flip1();
 
-  g_pErr->DFO("StimulusBmp::Action", m_sResource.c_str(), 3);
+  g_pErr->DFO("StimulusImg::Action", m_sResource.c_str(), 3);
   return 0;
 }
 
-void StimulusBmp::Flip1(bool bMem) {
+void StimulusImg::Flip1(bool bMem) {
   if (!m_pScreen) {
     g_pErr->Report("SDL screen not initialized.");
     return;
   } else {}
 
   if (bMem) {
-    if (StimulusBmp::m_pMemSurface) {
-      SDL_Flip(StimulusBmp::m_pMemSurface);
+    if (StimulusImg::m_pMemSurface) {
+      SDL_Flip(StimulusImg::m_pMemSurface);
     } else {
       g_pErr->Debug("memory surface not initialized");
     }
   } else {
-    SDL_Flip(StimulusBmp::m_pScreen);
+    SDL_Flip(StimulusImg::m_pScreen);
   }
 }
 
-void StimulusBmp::SetScreen(SDL_Surface * pSurface) {
-  StimulusBmp::m_pScreen = pSurface;
+void StimulusImg::SetScreen(SDL_Surface * pSurface) {
+  StimulusImg::m_pScreen = pSurface;
 }
 
-int StimulusBmp::SetColorkey(int r, int g, int b) {
+int StimulusImg::SetColorkey(int r, int g, int b) {
   m_r = r; m_g = g; m_b = b; m_bColorKey = 1;
 }
 
-int StimulusBmp::InAOI(Uint16 x, Uint16 y) {
+int StimulusImg::InAOI(Uint16 x, Uint16 y) {
   int nResult = 0;
 
   if ( (x >= m_CurX.Get()) && (x <= (m_CurX.Get() + m_rect.w) ) &&
@@ -220,35 +220,35 @@ int StimulusBmp::InAOI(Uint16 x, Uint16 y) {
   return nResult;
 }
 
-int StimulusBmp::SetLayer(int nLayer) {
-  g_pErr->DFI("StimulusBmp::SetLayer", m_id, 5);
+int StimulusImg::SetLayer(int nLayer) {
+  g_pErr->DFI("StimulusImg::SetLayer", m_id, 5);
   m_nLayer = nLayer;
-  g_pErr->DFO("StimulusBmp::SetLayer", m_id, 5);
+  g_pErr->DFO("StimulusImg::SetLayer", m_id, 5);
 
   return 0;
 }
 
-void StimulusBmp::ResetLoc() {
-  g_pErr->DFI("StimulusBmp::ResetLoc", m_id, 5);
+void StimulusImg::ResetLoc() {
+  g_pErr->DFI("StimulusImg::ResetLoc", m_id, 5);
   m_CurX.Set(m_x1);
   m_CurY.Set(m_y1);
   //m_px = &m_CurX;
   //m_py = &m_CurY;
-  g_pErr->DFO("StimulusBmp::ResetLoc", m_id, 5);
+  g_pErr->DFO("StimulusImg::ResetLoc", m_id, 5);
 }
 
-void StimulusBmp::Highlight(const char * pHinfo) {
+void StimulusImg::Highlight(const char * pHinfo) {
   istringstream istr(pHinfo);
-  g_pErr->DFI("StimulusBmp::Highlight", m_id, 5);
+  g_pErr->DFI("StimulusImg::Highlight", m_id, 5);
   m_bHighlight = 1;
   istr >> m_nHighlightWidth;
   istr >> m_nHR; istr >> m_nHG; istr >> m_nHB;
   //g_pErr->Debug(m_sFileName.c_str());
-  g_pErr->DFO("StimulusBmp::Highlight", m_id, 5);
+  g_pErr->DFO("StimulusImg::Highlight", m_id, 5);
 }
 
 /*
-Oplist * StimulusBmp::GetAttr(string s) {
+Oplist * StimulusImg::GetAttr(string s) {
   if (s == "x1") {
     return &m_CurX;
   } else if (s == "y1") {
@@ -258,30 +258,30 @@ Oplist * StimulusBmp::GetAttr(string s) {
 }
 */
 
-void StimulusBmp::InitMemSurface() {
+void StimulusImg::InitMemSurface() {
 
-  g_pErr->DFI("StimulusBmp::InitMemSurface", 4, 0);
-  if (!StimulusBmp::m_pMemSurface) {
+  g_pErr->DFI("StimulusImg::InitMemSurface", 4, 0);
+  if (!StimulusImg::m_pMemSurface) {
     g_pErr->Debug("initializing memory surface");
     if (m_pScreen) {
-      StimulusBmp::m_pMemSurface = SDL_ConvertSurface(m_pScreen, m_pScreen->format, m_pScreen->flags);
-      if (!StimulusBmp::m_pMemSurface) {
-	g_pErr->Report("StimulusBmp::InitMemSurface, couldn't initialize");
+      StimulusImg::m_pMemSurface = SDL_ConvertSurface(m_pScreen, m_pScreen->format, m_pScreen->flags);
+      if (!StimulusImg::m_pMemSurface) {
+	g_pErr->Report("StimulusImg::InitMemSurface, couldn't initialize");
       } else {}
     } else {
-      g_pErr->Report("In StimulusBmp::InitMemSurface; couldn't initialize memory surface");
+      g_pErr->Report("In StimulusImg::InitMemSurface; couldn't initialize memory surface");
     }
   } else {}
-  g_pErr->DFO("StimulusBmp::InitMemSurface", 4, 0);
+  g_pErr->DFO("StimulusImg::InitMemSurface", 4, 0);
 
 }
 
-void StimulusBmp::FlipMemoryToScreen() {
+void StimulusImg::FlipMemoryToScreen() {
   SDL_BlitSurface(m_pMemSurface, NULL, m_pScreen, NULL);
   SDL_Flip(m_pScreen);
 }
 
-int StimulusBmp::LoadBMP(string s1) {
+int StimulusImg::Load(string s1) {
 
   SDL_Surface * psTemp;
 
@@ -292,6 +292,7 @@ int StimulusBmp::LoadBMP(string s1) {
   } else {}
 
   psTemp = SDL_LoadBMP(s1.c_str());
+	// psTemp = LoadImage(s1.c_str());
   if (psTemp == NULL) {
     g_pErr->Report(pastestr::paste("ss", "",
 				   "Unable to load bitmap ",
@@ -319,13 +320,13 @@ int StimulusBmp::LoadBMP(string s1) {
   if (m_bColorKey) {
 		g_pErr->Debug(pastestr::paste("sddd", " ", "colorkey", (long) m_r, (long) m_g, (long) m_b));
     SDL_SetColorKey( m_pSurface, SDL_SRCCOLORKEY | SDL_RLEACCEL,
-		     SDL_MapRGB(StimulusBmp::m_pScreen->format, m_r, m_g, m_b) );
+		     SDL_MapRGB(StimulusImg::m_pScreen->format, m_r, m_g, m_b) );
   } else {}
 
   return 0;
 }
 
-int StimulusBmp::DrawRect(int x1, int y1, int x2, int y2, int r, int g, int b) {
+int StimulusImg::DrawRect(int x1, int y1, int x2, int y2, int r, int g, int b) {
   SDL_Rect r1;
   r1.x = x1; r1.y = y1;
   r1.w = (x2-x1);
@@ -334,13 +335,13 @@ int StimulusBmp::DrawRect(int x1, int y1, int x2, int y2, int r, int g, int b) {
   if (!m_pSurface) {
     g_pErr->Report("surface not initialized!");
   } else {
-    SDL_FillRect(m_pSurface, &r1, SDL_MapRGB(StimulusBmp::m_pScreen->format, r, g, b));
+    SDL_FillRect(m_pSurface, &r1, SDL_MapRGB(StimulusImg::m_pScreen->format, r, g, b));
   }
 
   return 0;
 }
 
-void StimulusBmp::ClearScreen(bool bMem /* = false */) {
+void StimulusImg::ClearScreen(bool bMem /* = false */) {
   SDL_Color backcol = { 0x00, 0x00, 0x00, 0 };
 
   if (bMem) {
@@ -354,7 +355,7 @@ void StimulusBmp::ClearScreen(bool bMem /* = false */) {
   }
 }
 
-int StimulusBmp::Erase(bool bMem) {
+int StimulusImg::Erase(bool bMem) {
   SDL_Color backcol = { 0x00, 0x00, 0x00, 0 };
   
   if (bMem) {
@@ -368,4 +369,8 @@ int StimulusBmp::Erase(bool bMem) {
   }
 
   return 0;
+}
+
+SDL_Surface * StimulusImg::LoadImage(string s1) {
+	return NULL;
 }

@@ -48,6 +48,7 @@ class State
   static OpInt s_nMouseCurY;
 
 	static bool s_bFinished;
+	static bool s_bTimedOut;
   
   WatchMap m_mmapWatch;
   State(long id, const char * pcName, long seq);
