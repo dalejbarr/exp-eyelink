@@ -6,6 +6,7 @@ using std::string;
 
 #include "Stimulus.hpp"
 #include "SDL.h"
+#include "Display_SDL.hpp"
 #include "global.hpp"
 
 #include <map>
@@ -19,9 +20,10 @@ using std::string;
 
 class StimulusImg : public Stimulus {
 protected:
-  SDL_Surface * m_pSurface;
-  static SDL_Surface * m_pScreen;
-  static SDL_Surface * m_pMemSurface;
+	SDL_Surface * m_pSurface;
+  static SDL_Surface * s_pMemSurface;
+	static SDL_mutex * s_pMemMutex;
+	// static Display_SDL * s_pDisplay;
   bool m_bColorKey;
   bool m_bHighlight;
   unsigned int m_nHighlightWidth;
@@ -70,7 +72,8 @@ public:
     return *this;
   }
 
-  StimulusImg(long id, Template * pTemplate, const char * pName, int x1, int y1, int x2 = -1, int y2 = -1, int nLayer = 0);
+  StimulusImg(long id, Template * pTemplate, const char * pName, 
+							int x1, int y1, int x2 = -1, int y2 = -1, int nLayer = 0);
   StimulusImg(long id, Template * pTemplate, long idCmd, ArgMMap mmArgs);
   virtual ~StimulusImg();
   virtual int Prepare();
@@ -81,7 +84,7 @@ public:
   int SetColorkey(int r, int g, int b);
 	int CheckFileType(const char *);
   static void Flip1(bool bMem = 0);
-  static void SetScreen(SDL_Surface * pSurface);
+  static void SetScreen(Display_SDL * pDisplay);
   static void InitMemSurface();
   static void FlipMemoryToScreen();
   static void ClearScreen(bool bMem = false);

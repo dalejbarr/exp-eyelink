@@ -35,7 +35,7 @@ void ScrollTrackGP_SDL::Prepare() {
 }
 
 void ScrollTrackGP_SDL::Start() {  
-  SDL_Surface * pScreen = g_pDisplay->GetSDLScreen();
+  SDL_Surface * pScreen = g_pDisplay->GetScreen();
   SDL_Rect r2;
   r2.x = m_rectViewPort.x-2; r2.y = m_rectViewPort.y-2;
   r2.w = m_rectViewPort.w+4; r2.h = m_rectViewPort.h+4;
@@ -45,7 +45,7 @@ void ScrollTrackGP_SDL::Start() {
 }
 
 void ScrollTrackGP_SDL::Redraw(bool bForce) {
-  static SDL_Surface * pScreen = g_pDisplay->GetSDLScreen();
+  static SDL_Surface * pScreen = g_pDisplay->GetScreen();
   static int distx = 0;
   static int disty = 0;
   static int nsteps = 6;

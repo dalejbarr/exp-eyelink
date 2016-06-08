@@ -6,7 +6,8 @@
 
 class Display_SDL : public Display {
 protected:
-  static SDL_Surface * m_pScreen;
+  static SDL_Surface * s_pScreen;
+	static SDL_mutex * s_pScreenMutex;
   Uint32 m_SDL_mapRGB;
   bool m_bSelfAlloc;
 public:
@@ -16,7 +17,7 @@ public:
   virtual int CreateScreen(int x0, int y0, int w, int h, Uint32 nFlags = 0);
   virtual int SetColorKey(int r, int g, int b);
   virtual int Draw();
-  inline SDL_Surface * GetSDLScreen() { return m_pScreen; }
+  static SDL_Surface * GetScreen();
   static int ClearScreen();
   static int ClearRegion(int x1, int y1, int x2, int y2);
   int Message(const char * pcMessage);

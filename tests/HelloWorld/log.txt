@@ -25,8 +25,8 @@ response/s0000001
 sqlite: SELECT ListID FROM Session WHERE SessionID=1
 ListID is 1 for SessionID 1
 sqlite: UPDATE Session SET Completion='IN PROGRESS' WHERE SessionID=1
-sqlite: UPDATE Session SET Seed=1465421461 WHERE SessionID=1
-established seed of 1465421461
+sqlite: UPDATE Session SET Seed=1465427684 WHERE SessionID=1
+established seed of 1465427684
 sqlite: UPDATE Session SET Completion='IN_PROGRESS' WHERE SessionID=1
 sqlite: UPDATE Session SET Date=datetime('now') WHERE SessionID=1
 LOADING EXPERIMENT CONFIGURATION...
@@ -391,8 +391,8 @@ initializing memory surface
          <--- Exiting State::Start() only (1) --->
    <--- Exiting Trial::Start() 1 --->
 <--- Exiting Experiment::StartNextTrial() 0 --->
-... user event 7 1112
-... user event 8 1112
+... user event 7 1338
+... user event 8 1338
 timeout signaled
             <--- Entering State::Finish() only (1) --->
          <--- Entering Event::Finish() 1 --->
@@ -490,7 +490,7 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=1 AND Ord=1
          <--- Exiting State::Start() done_test (2) --->
    <--- Exiting Trial::Start() 2 --->
 <--- Exiting Experiment::StartNextTrial() 0 --->
-... user event 7 1693
+... user event 7 1918
       <--- Entering WatchDone::CheckCondition() 2 --->
       <--- Exiting WatchDone::CheckCondition() 2 --->
 done signaled
@@ -590,8 +590,8 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=2 AND Ord=2
          <--- Exiting State::Start() only (1) --->
    <--- Exiting Trial::Start() 3 --->
 <--- Exiting Experiment::StartNextTrial() 0 --->
-... user event 7 2277
-... user event 8 2277
+... user event 7 2503
+... user event 8 2503
 timeout signaled
             <--- Entering State::Finish() only (1) --->
          <--- Entering Event::Finish() 1 --->
@@ -689,7 +689,7 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=3 AND Ord=3
          <--- Exiting State::Start() done_test (2) --->
    <--- Exiting Trial::Start() 4 --->
 <--- Exiting Experiment::StartNextTrial() 0 --->
-... user event 7 2871
+... user event 7 3098
       <--- Entering WatchDone::CheckCondition() 2 --->
       <--- Exiting WatchDone::CheckCondition() 2 --->
 done signaled
@@ -742,68 +742,68 @@ END OF TRIALS!
 <--- Exiting Experiment::PrepareNextTrial() 0 --->
 finished experiment
 cleanup
-sqlite: INSERT INTO Trial VALUES (NULL, 1, 1, 1, 1112, 1183, NULL, NULL)
+sqlite: INSERT INTO Trial VALUES (NULL, 1, 1, 1, 1338, 1409, NULL, NULL)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
-NULL, 1, 182
-sqlite: INSERT INTO Response VALUES (NULL, 1, 182)
+NULL, 1, 222
+sqlite: INSERT INTO Response VALUES (NULL, 1, 222)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
 respData has 0 events
       <--- Entering ItemCell::StoreData() 1 --->
 sqlite: BEGIN;
-sqlite: INSERT INTO StateTiming VALUES (182, 1, 612)
+sqlite: INSERT INTO StateTiming VALUES (222, 1, 838)
 sqlite: COMMIT;
 sqlite: BEGIN;
-sqlite: INSERT INTO EventTiming VALUES (182, 7, 620)
-sqlite: INSERT INTO EventTiming VALUES (182, 2, 624)
-sqlite: INSERT INTO EventTiming VALUES (182, 5, 625)
+sqlite: INSERT INTO EventTiming VALUES (222, 7, 846)
+sqlite: INSERT INTO EventTiming VALUES (222, 2, 849)
+sqlite: INSERT INTO EventTiming VALUES (222, 5, 850)
 sqlite: COMMIT;
       <--- Exiting ItemCell::StoreData() 1 --->
-sqlite: INSERT INTO Trial VALUES (NULL, 2, 2, 1, 1693, 1773, NULL, NULL)
+sqlite: INSERT INTO Trial VALUES (NULL, 2, 2, 1, 1918, 1998, NULL, NULL)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
-NULL, 1, 183
-sqlite: INSERT INTO Response VALUES (NULL, 1, 183)
+NULL, 1, 223
+sqlite: INSERT INTO Response VALUES (NULL, 1, 223)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
 respData has 0 events
       <--- Entering ItemCell::StoreData() 2 --->
 sqlite: BEGIN;
-sqlite: INSERT INTO StateTiming VALUES (183, 2, 1192)
+sqlite: INSERT INTO StateTiming VALUES (223, 2, 1417)
 sqlite: COMMIT;
 sqlite: BEGIN;
-sqlite: INSERT INTO EventTiming VALUES (183, 6, 1195)
-sqlite: INSERT INTO EventTiming VALUES (183, 8, 1200)
-sqlite: INSERT INTO EventTiming VALUES (183, 4, 1693)
+sqlite: INSERT INTO EventTiming VALUES (223, 6, 1422)
+sqlite: INSERT INTO EventTiming VALUES (223, 8, 1425)
+sqlite: INSERT INTO EventTiming VALUES (223, 4, 1918)
 sqlite: COMMIT;
       <--- Exiting ItemCell::StoreData() 2 --->
-sqlite: INSERT INTO Trial VALUES (NULL, 3, 3, 1, 2277, 2361, NULL, NULL)
+sqlite: INSERT INTO Trial VALUES (NULL, 3, 3, 1, 2503, 2587, NULL, NULL)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
-NULL, 1, 184
-sqlite: INSERT INTO Response VALUES (NULL, 1, 184)
+NULL, 1, 224
+sqlite: INSERT INTO Response VALUES (NULL, 1, 224)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
 respData has 0 events
       <--- Entering ItemCell::StoreData() 3 --->
 sqlite: BEGIN;
-sqlite: INSERT INTO StateTiming VALUES (184, 1, 1777)
+sqlite: INSERT INTO StateTiming VALUES (224, 1, 2003)
 sqlite: COMMIT;
 sqlite: BEGIN;
-sqlite: INSERT INTO EventTiming VALUES (184, 7, 1785)
-sqlite: INSERT INTO EventTiming VALUES (184, 2, 1788)
-sqlite: INSERT INTO EventTiming VALUES (184, 5, 1789)
+sqlite: INSERT INTO EventTiming VALUES (224, 7, 2011)
+sqlite: INSERT INTO EventTiming VALUES (224, 2, 2014)
+sqlite: INSERT INTO EventTiming VALUES (224, 5, 2015)
 sqlite: COMMIT;
       <--- Exiting ItemCell::StoreData() 3 --->
-sqlite: INSERT INTO Trial VALUES (NULL, 4, 4, 1, 2871, 2962, NULL, NULL)
+sqlite: INSERT INTO Trial VALUES (NULL, 4, 4, 1, 3098, 3187, NULL, NULL)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
-NULL, 1, 185
-sqlite: INSERT INTO Response VALUES (NULL, 1, 185)
+NULL, 1, 225
+sqlite: INSERT INTO Response VALUES (NULL, 1, 225)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
 respData has 0 events
       <--- Entering ItemCell::StoreData() 4 --->
 sqlite: BEGIN;
-sqlite: INSERT INTO StateTiming VALUES (185, 2, 2370)
+sqlite: INSERT INTO StateTiming VALUES (225, 2, 2597)
 sqlite: COMMIT;
 sqlite: BEGIN;
-sqlite: INSERT INTO EventTiming VALUES (185, 6, 2373)
-sqlite: INSERT INTO EventTiming VALUES (185, 8, 2378)
-sqlite: INSERT INTO EventTiming VALUES (185, 4, 2871)
+sqlite: INSERT INTO EventTiming VALUES (225, 6, 2601)
+sqlite: INSERT INTO EventTiming VALUES (225, 8, 2605)
+sqlite: INSERT INTO EventTiming VALUES (225, 4, 3098)
 sqlite: COMMIT;
       <--- Exiting ItemCell::StoreData() 4 --->
 sqlite: UPDATE Session SET Completion='COMPLETED' WHERE SessionID=1
