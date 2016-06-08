@@ -52,6 +52,7 @@ StimulusMap Experiment::s_mapStimulus;
 DeviceMMap Experiment::s_mmapDevice;
 
 SocketListener * Experiment::s_pSockListener = NULL;
+Webcam * Experiment::s_pCam = NULL;
 
 unsigned int Experiment::g_nSeed = 0;
 
@@ -250,6 +251,10 @@ Experiment::~Experiment()
 int Experiment::Cleanup() {
 	if (s_pSockListener) {
 		delete s_pSockListener;
+	}
+
+	if (s_pCam) {
+		delete s_pCam;
 	}
 
   g_pErr->Debug(".Deleting Trials.");

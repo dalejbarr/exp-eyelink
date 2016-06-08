@@ -6,6 +6,7 @@ OBJS = 	Experiment.o Template.o State.o \
 	Webcam.o \
 	Stimulus.o StimulusDisplayOn.o StimulusImg.o \
 	StimulusWav.o StimulusTxt.o \
+	StimulusWebcam.o \
 	Event.o EventGrabAOI.o EventSwapAOI.o EventUpdateAOI.o \
 	EventUpdate.o EventRecord.o EventMsg.o StimulusShowAOI.o \
 	EventRepeatIf.o EventResetCounter.o EventIncrementCounter.o \
@@ -39,6 +40,7 @@ W32OBJS = \
 	$(W32L)/Webcam.o \
 	$(W32L)/Stimulus.o $(W32L)/StimulusDisplayOn.o $(W32L)/StimulusImg.o \
 	$(W32L)/StimulusWav.o $(W32L)/StimulusTxt.o \
+	$(W32L)/StimulusWebcam.o \
 	$(W32L)/Event.o $(W32L)/EventGrabAOI.o $(W32L)/EventSwapAOI.o $(W32L)/EventUpdateAOI.o \
 	$(W32L)/EventUpdate.o $(W32L)/EventRecord.o $(W32L)/EventMsg.o $(W32L)/StimulusShowAOI.o \
 	$(W32L)/EventRepeatIf.o $(W32L)/EventResetCounter.o $(W32L)/EventIncrementCounter.o \

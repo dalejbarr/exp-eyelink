@@ -1,3 +1,6 @@
+#ifndef SBX_WEBCAM_INCLUDED
+#define SBX_WEBCAM_INCLUDED
+
 #include <linux/videodev2.h>
 
 class Webcam {
@@ -7,6 +10,8 @@ protected:
 	void * m_buffer_start;
 	struct v4l2_buffer m_bufferinfo;
 public:
-	Webcam(int width /* = 320*/, int height /*=240*/);
+	Webcam(int width = 320, int height = 240);
 	virtual ~Webcam();
 };
+
+#endif

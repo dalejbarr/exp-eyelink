@@ -7,7 +7,9 @@
 
 #include "Webcam.hpp"
 
-Webcam::Webcam(int width = 320, int height = 240) {
+Webcam::Webcam(int width, int height) {
+	g_pErr->DFI("Webcam::Webcam", 0L, 3);
+
 	if ((m_fd = open("/dev/video0", O_RDWR)) < 0) {
 		g_pErr->Report("error opening webcam device");
 	}
@@ -85,9 +87,13 @@ Webcam::Webcam(int width = 320, int height = 240) {
 	if(ioctl(m_fd, VIDIOC_STREAMON, &m_type) < 0){
     g_pErr->Report("VIDIOC_STREAMON");
 	}	
+
+	g_pErr->DFO("Webcam::Webcam", 0L, 3);
 }
 
 Webcam::~Webcam() {
+	g_pErr->DFI("Webcam::~Webcam", 0L, 3);
+
 	// Deactivate streaming
 	if (m_fd) {
 		if(ioctl(m_fd, VIDIOC_STREAMOFF, &m_type) < 0){
@@ -96,4 +102,6 @@ Webcam::~Webcam() {
 
 		close(m_fd);
 	} else {}
+
+	g_pErr->DFO("Webcam::~Webcam", 0L, 3);
 }

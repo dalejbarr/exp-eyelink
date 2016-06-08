@@ -121,9 +121,9 @@ int Event::Cleanup()
 int Event::Finish() {
   g_pErr->DFI("Event::Finish", m_id, 4);  
 
-  //if (*m_ppStim) {
-  //(*m_ppStim)->Finish();
-  //} else {}
+  if ( (*m_ppStim) ) {
+    (*m_ppStim)->Finish();
+  }
 
   g_pErr->DFO("Event::Finish", m_id, 4);  
 

@@ -17,6 +17,7 @@ using pastestr::paste;
 #include "StimulusWav.hpp"
 #include "StimulusEyeLinkMsg.hpp"
 #include "StimulusTxt.hpp"
+#include "StimulusWebcam.hpp"
 #include "EventGrabAOI.hpp"
 #include "EventSwapAOI.hpp"
 #include "EventUpdateAOI.hpp"
@@ -137,7 +138,6 @@ ORDER BY Msec ASC");
     // handle "stimulus" events
     switch (idCmd) {
     case SBX_EVENT_SHOW_BITMAP :
-      //pStim = StimulusPtr(new StimulusImg(0, idCmd, mmArgs));
       pStim = StimulusPtr(new StimulusImg(0, pTemplate, idCmd, mmArgs));
       break;
     case SBX_EVENT_DISPLAY_ON :
@@ -156,6 +156,13 @@ ORDER BY Msec ASC");
     case SBX_EVENT_SHOW_AOI :
       pStim = StimulusPtr(new StimulusShowAOI(idEvent, msec, idCmd, mmArgs, pTemplate));
       break;
+		case SBX_EVENT_WEBCAM_START :
+			if (!Experiment::s_pCam) {
+				g_pErr->Debug("creating new webcam instance...");
+				Experiment::s_pCam = new Webcam();
+			} 
+			pStim = StimulusPtr(new StimulusWebcam(idEvent, pTemplate, Experiment::s_pCam));
+			break;
     }
 
     if (pStim.get()) {
