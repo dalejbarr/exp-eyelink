@@ -525,7 +525,7 @@ int State::Update() {
 		if (!State::s_bFinished) {
 			pEvent = (*m_pCurEvent).second.get();
 			if ( (msDiff > pEvent->Msec()) || ((msDiff - pEvent->Msec()) < EXP_EVENT_TIMER_RESOLUTION) ) {
-				g_pErr->Debug(pastestr::paste("dd", ":", (long) pEvent->Msec(), (long) msDiff));
+				//g_pErr->Debug(pastestr::paste("dd", ":", (long) pEvent->Msec(), (long) msDiff));
 				pEvent->Action();
 				m_pCurEvent++;
 				if (m_pCurEvent == m_mmapEvent.end()) { // that was last event

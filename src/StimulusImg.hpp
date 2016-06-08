@@ -79,6 +79,7 @@ public:
   virtual int Erase(bool bMem = false);
   int Draw(bool bMem = 0);
   int SetColorkey(int r, int g, int b);
+	int CheckFileType(const char *);
   static void Flip1(bool bMem = 0);
   static void SetScreen(SDL_Surface * pSurface);
   static void InitMemSurface();

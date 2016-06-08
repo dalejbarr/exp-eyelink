@@ -1,6 +1,11 @@
 #include "StimulusImg.hpp"
 #include "global.hpp"
 #include "pastestr.hpp"
+#include <algorithm>
+#include <SDL_image.h>
+
+#define FTYPE_BMP 1
+#define FTYPE_JPG 2
 
 SDL_Surface * StimulusImg::m_pScreen = NULL;
 SDL_Surface * StimulusImg::m_pMemSurface = NULL;
@@ -281,8 +286,36 @@ void StimulusImg::FlipMemoryToScreen() {
   SDL_Flip(m_pScreen);
 }
 
-int StimulusImg::Load(string s1) {
+int StimulusImg::CheckFileType(const char *pFile) {
+	int ftype = 0;
+	/*
+	string s1;
+	s1.assign(pFile);
+	
+	size_t last_dot = s1.find_last_of('.');
+	if ((last_dot == string::npos) || (last_dot == s1.size())) {
+		g_pErr->Report(pastestr::paste("sss", " ", "file", s1.c_str(), "missing file extension"));
+	}
 
+	string strExtension = s1.substr(last_dot + 1, s1.size() - last_dot);
+	std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
+	g_pErr->Debug(pastestr::paste("ss", "", "file extension was ", strExtension.c_str()));
+
+	if (strExtension == "bmp") {
+		ftype = FTYPE_BMP;
+	} else if ((strExtension == "jpg") || (strExtension == "jpeg")) {
+		ftype = FTYPE_JPG;
+	} else {
+		g_pErr->Report(pastestr::paste("sssss", "", "error with ", s1.c_str(), 
+																	 ": filetype '", strExtension.c_str(), "' not supported"));
+	}
+	*/
+
+	return ftype;
+}
+
+int StimulusImg::Load(string s1) {
+	SDL_Surface * psTemp0;
   SDL_Surface * psTemp;
 
   if (m_pSurface) {
@@ -291,7 +324,14 @@ int StimulusImg::Load(string s1) {
     //return 0;
   } else {}
 
-  psTemp = SDL_LoadBMP(s1.c_str());
+	int ftype = CheckFileType(s1.c_str());
+	// TODO: do something?
+	psTemp0 = IMG_Load(s1.c_str());
+	if (psTemp0 == NULL) {
+		g_pErr->Report(pastestr::paste("ss", " ", "could not load file", s1.c_str()));
+	}
+	psTemp = SDL_DisplayFormatAlpha(psTemp0);
+	SDL_FreeSurface(psTemp0);
 	// psTemp = LoadImage(s1.c_str());
   if (psTemp == NULL) {
     g_pErr->Report(pastestr::paste("ss", "",
