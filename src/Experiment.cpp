@@ -1,4 +1,5 @@
 #include <iostream>
+#include <X11/Xlib.h>
 using std::cout;
 using std::endl;
 
@@ -77,6 +78,9 @@ void Experiment::InitReport() {
 }
 
 Experiment::Experiment() {
+	if (XInitThreads() == 0) {
+		g_pErr->Report("Couldn't initialize threads");
+	}
   InitReport();
   g_pErr->DFI("Experiment::Experiment", 0L, 1);
   m_pCurTrial = NULL;

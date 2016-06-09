@@ -58,6 +58,9 @@ OpInt State::s_nMouseCurY(0);
 
 bool State::s_bFinished = false;
 bool State::s_bTimedOut = false;
+bool State::s_bContinue = false;
+
+SDL_Thread * State::s_pThread = NULL;
 
 State::State(long id, const char * pcName, long seq) {
 
@@ -161,7 +164,7 @@ ORDER BY Msec ASC");
 				g_pErr->Debug("creating new webcam instance...");
 				Experiment::s_pCam = new Webcam();
 			} 
-			pStim = StimulusPtr(new StimulusWebcam(idEvent, pTemplate, Experiment::s_pCam));
+			pStim = StimulusPtr(new StimulusWebcam(idEvent, mmArgs, pTemplate, Experiment::s_pCam));
 			break;
     }
 
@@ -465,6 +468,11 @@ int State::Prepare() {
 
 int State::Finish() {
   g_pErr->DFI("State::Finish", m_strDebug.c_str(), 5);
+
+	State::s_bContinue = false;
+	int nStatus;
+	SDL_WaitThread(s_pThread, &nStatus);
+	State::s_pThread = NULL;
   // finish events
   EventMap::iterator ei;
   for (ei = m_mmapEvent.begin(); ei != m_mmapEvent.end(); ei++) {
@@ -482,16 +490,26 @@ int State::Finish() {
   g_pErr->DFO("State::Finish", m_strDebug.c_str(), 5);
 }
 
+int State::main(void * pVoid) { // static
+	State * pThis = (State *) pVoid;
+	pThis->Main();
+}
+
 int State::Start() {
   g_pErr->DFI("State::Start", m_strDebug.c_str(), 4);
 
 	State::s_bFinished = false;
 	State::s_bTimedOut = false;
+	State::s_bContinue = true;
 
   //m_bVisited = 1;
   m_pCurEvent = m_mmapEvent.begin();
   m_vMsBegin.push_back(ClockFn());
-  Update();
+	if (s_pThread) {
+		g_pErr->Report("thread already running!");
+	}
+	State::s_pThread = SDL_CreateThread(State::main, this);
+  //Update();
   UnlockWatches();
 
   // TO DO: do something about timeouts
@@ -499,8 +517,8 @@ int State::Start() {
   return 0;
 }
 
-int State::Update() {
-  g_pErr->DFI("State::Update", m_strDebug.c_str(), 4);  
+int State::Main() {
+  g_pErr->DFI("State::Main", m_strDebug.c_str(), 4);  
 
   static Event * pEvent = NULL;
   static SDL_Event sdlEvent;  
@@ -510,7 +528,7 @@ int State::Update() {
   static SDL_UserEvent userevent;
 	bool bExit = false;
 
-  while (!bExit) {
+  while (State::s_bContinue) {
 		msDiff = ClockFn() - m_vMsBegin.back();
 		if (m_nTimeout && !State::s_bTimedOut) {
 			if (msDiff >= m_nTimeout) {
@@ -531,7 +549,7 @@ int State::Update() {
 
 		if (!State::s_bFinished) {
 			pEvent = (*m_pCurEvent).second.get();
-			if ( (msDiff > pEvent->Msec()) || ((msDiff - pEvent->Msec()) < EXP_EVENT_TIMER_RESOLUTION) ) {
+			if ((msDiff > pEvent->Msec()) || ((msDiff - pEvent->Msec()) < EXP_EVENT_TIMER_RESOLUTION)) {
 				//g_pErr->Debug(pastestr::paste("dd", ":", (long) pEvent->Msec(), (long) msDiff));
 				pEvent->Action();
 				m_pCurEvent++;
@@ -549,9 +567,10 @@ int State::Update() {
 				}
 			}
 		}
+		SDL_Delay(2);
 	}
 
-  g_pErr->DFO("State::Update", m_strDebug.c_str(), 4);  
+  g_pErr->DFO("State::Main", m_strDebug.c_str(), 4);  
 
   return State::s_bFinished;
 }

@@ -29,6 +29,11 @@ int exp_init(int argc, char * argv[]) {
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) == -1) {
     g_pErr->Report("Could not initialize Simple DirectMedia Layer.");
   } else {}
+	
+	int flags = IMG_INIT_JPG | IMG_INIT_PNG;
+	if (IMG_Init(flags) != flags) {
+		g_pErr->Report("image support not built in :(");
+	} else {}
 
   if (parseArgs(argc, argv)==1) {
     exit(1);
@@ -67,9 +72,10 @@ int exp_cleanup() {
   //g_pExperiment->WaitKey();
 
   delete g_pExperiment;
-  if (!g_nMainResult == SBX_ABORT_EXPERIMENT) {
+  if (!(g_nMainResult == SBX_ABORT_EXPERIMENT)) {
     SDL_Quit();
   } else {}
+	IMG_Quit();
 }
 
 int main(int argc, char *argv[]){

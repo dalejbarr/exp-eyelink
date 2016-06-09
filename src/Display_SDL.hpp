@@ -1,10 +1,10 @@
 #ifndef EXP_DISPLAY_SDL_INCLUDED
 #define EXP_DISPLAY_SDL_INCLUDED
 
-#include "Display.hpp"
+#include "MyDisplay.hpp"
 #include "SDL.h"
 
-class Display_SDL : public Display {
+class Display_SDL : public MyDisplay {
 protected:
   static SDL_Surface * s_pScreen;
 	static SDL_mutex * s_pScreenMutex;

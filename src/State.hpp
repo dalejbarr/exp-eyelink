@@ -32,6 +32,8 @@ class State
   string m_strDebug;
   long m_lSeq;
   Uint32 m_nTimeout;
+	static SDL_Thread * s_pThread;
+	static bool s_bContinue;
   //bool m_bVisited;
 
   EventGrabAOI * m_pEvtMove;
@@ -60,7 +62,7 @@ class State
   int LoadWatches(Template * pTemplate);
   int Prepare();
   int Start();
-  int Update();
+  int Main();
   int Run();
   int Finish();
   int PostTrial(); // when the trial ends
@@ -68,6 +70,7 @@ class State
   EventPtr FindEventByCmdID(long id);
 
   static Uint32 timeoutFn(Uint32 interval, void *param);
+	static int main(void * pVoid);
   Watch * HandleEvent(SDL_Event * pEvt, Template * pThis);
   Watch * ProcessMouseButton(SDL_Event * pEvt);
   inline long GetSeq() { return m_lSeq; }

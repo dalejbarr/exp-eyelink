@@ -59,7 +59,7 @@ int Display_SDL::UnlockMemScreen() {
 	return n;
 }
 
-Display_SDL::Display_SDL(long id) : Display(id) {
+Display_SDL::Display_SDL(long id) : MyDisplay(id) {
   m_bSelfAlloc = false;
 }
 
@@ -100,13 +100,15 @@ int Display_SDL::SetColorKey(int r, int g, int b) {
 }
 
 int Display_SDL::Draw() {
-  Display::Draw();
+  MyDisplay::Draw();
 }
 
 int Display_SDL::CreateScreen(int x0, int y0, int w, int h, Uint32 nFlags) {
   char pc[256] = "SDL_VIDEO_CENTERED=1";
   SDL_putenv(pc);
   Display_SDL::s_pScreen = SDL_SetVideoMode(w, h, 0, nFlags);
+	m_nWidth = w;
+	m_nHeight = h;
   // StimulusImg::SetScreen(this);
   m_bSelfAlloc = true;
 }

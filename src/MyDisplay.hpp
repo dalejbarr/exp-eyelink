@@ -7,14 +7,14 @@
 #include <vector>
 using std::vector;
 
-class Display : public Device {
+class MyDisplay : public Device {
 protected:
   vector<Stimulus *> m_vpStim;
 public:
   int m_nWidth;
   int m_nHeight;
-  Display(long id = 0);
-  virtual ~Display();
+  MyDisplay(long id = 0);
+  virtual ~MyDisplay();
   virtual int SetColorKey(int r, int g, int b) = 0;
   virtual int Draw();
 };

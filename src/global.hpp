@@ -6,6 +6,7 @@
 #include "EXPConfig.hpp"
 #include "SDL.h"
 #include "SDL_ttf.h"
+#include "SDL_image.h"
 
 #define SBX_ABORT_EXPERIMENT 2
 #define SBX_NO_EVENT 3

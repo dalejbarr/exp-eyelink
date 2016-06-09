@@ -5,10 +5,6 @@
 
 bool SocketListener::m_bContinue = false;
 
-static void sigaction_handler(int sig, siginfo_t *siginfo, void * context) {
-	g_pErr->Debug("in sigaction handler");
-}
-
 SocketListener::SocketListener(InputDevPtr pDev) {
 	SocketListener::m_bContinue = true;
 	m_pDev = pDev;

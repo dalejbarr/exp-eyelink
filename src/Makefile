@@ -1,6 +1,6 @@
 OBJS = 	Experiment.o Template.o State.o \
   EXPConfig.o \
-	ItemCell.o Trial.o Display.o Device.o Display_SDL.o \
+	ItemCell.o Trial.o MyDisplay.o Device.o Display_SDL.o \
 	Audio.o Audio_SDL.o \
 	InputDev.o Mouse_SDL.o \
 	Webcam.o \
@@ -34,7 +34,7 @@ HDIR=$(shell cd;pwd)
 
 W32OBJS = \
 	$(W32L)/Experiment.o $(W32L)/Template.o $(W32L)/State.o \
-	$(W32L)/ItemCell.o $(W32L)/Trial.o $(W32L)/Display.o $(W32L)/Device.o $(W32L)/Display_SDL.o \
+	$(W32L)/ItemCell.o $(W32L)/Trial.o $(W32L)/MyDisplay.o $(W32L)/Device.o $(W32L)/Display_SDL.o \
 	$(W32L)/Audio.o $(W32L)/Audio_SDL.o \
 	$(W32L)/InputDev.o $(W32L)/Mouse_SDL.o \
 	$(W32L)/Webcam.o \
@@ -77,7 +77,7 @@ SDL_CFLAGS := $(shell sdl-config --cflags)
 RTAFLAGS = -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__
 #SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer
 #SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_mixer -lSDL_ttf
-SDL_LDFLAGS = $(shell sdl-config --libs) -lSDL -lpthread -lSDL_image -lSDL_mixer -lSDL_ttf
+SDL_LDFLAGS = $(shell sdl-config --libs) -lSDL -lpthread -lSDL_image -lSDL_mixer -lSDL_ttf -lX11
 ELINK_CFLAGS := -I$(HDIR)/include
 #ELINK_LDFLAGS := -L$(HDIR)/libs -leyelink_core -leyelink_core_graphics  -lsdl_util `sdl-config --libs`   -lSDL_image -lSDL_mixer -lrt -lSDL_ttf -lSDL_gfx -lSDL_image
 ELINK_LDFLAGS := -L$(HDIR)/libs -leyelink_core -leyelink_core_graphics  -lsdl_util `sdl-config --libs`   -lSDL_image -lSDL_mixer -lrt -lSDL_gfx -lSDL_image -lSDL_ttf

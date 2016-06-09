@@ -545,8 +545,8 @@ int Template::Update() {
   }
 
   //g_pErr->DFO("Template::Update", GetID(), 1);
-
-  return m_pCurState->Update();
+  //return m_pCurState->Update();
+	return 0;
 }
 
 int Template::Start() {
