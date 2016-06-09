@@ -379,21 +379,13 @@ int Template::Redraw(setStimulus setExcluding, bool bMem /* = FALSE */) {
 }
 
 int Template::Redraw(bool bMem /* = FALSE */) {
-  /*
-  if (bMem) {
-    g_pErr->Debug("redraw to memory");
-  } else {
-    g_pErr->Debug("redraw to screen");
-  }
-  */
-
   StimulusPtr pAOI;
   StimulusPtrMMap2::iterator ii;
   for (ii = m_mmapAllAOI2.begin(); ii != m_mmapAllAOI2.end(); ii++) {
     pAOI = (*ii).second;
     ((StimulusImg *) pAOI.get())->Draw(bMem);
   }
-  StimulusImg::Flip1(bMem);
+  Display_SDL::Flip1(bMem);
 
   return 0;
 }

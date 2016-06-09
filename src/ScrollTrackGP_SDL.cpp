@@ -35,17 +35,18 @@ void ScrollTrackGP_SDL::Prepare() {
 }
 
 void ScrollTrackGP_SDL::Start() {  
-  SDL_Surface * pScreen = g_pDisplay->GetScreen();
+  SDL_Surface * pScreen = Display_SDL::LockScreen();
   SDL_Rect r2;
   r2.x = m_rectViewPort.x-2; r2.y = m_rectViewPort.y-2;
   r2.w = m_rectViewPort.w+4; r2.h = m_rectViewPort.h+4;
   SDL_FillRect(pScreen, &r2, SDL_MapRGB(pScreen->format, 255, 255, 255));
+	Display_SDL::UnlockScreen();
   Redraw(true);
   GamePad_SDL::Start();
 }
 
 void ScrollTrackGP_SDL::Redraw(bool bForce) {
-  static SDL_Surface * pScreen = g_pDisplay->GetScreen();
+  static SDL_Surface * pScreen  =NULL;
   static int distx = 0;
   static int disty = 0;
   static int nsteps = 6;
@@ -63,8 +64,10 @@ void ScrollTrackGP_SDL::Redraw(bool bForce) {
     for (int i = 1; i <= 6; i++) {
       r1.x = (int) (m_rectOld.x + i*fx);
       r1.y = (int) (m_rectOld.y + i*fy);
+			pScreen = Display_SDL::LockScreen();
       SDL_BlitSurface(m_pDisp->GetSurface(), &r1, pScreen, &m_rectViewPort);
-      StimulusImg::Flip1();
+			Display_SDL::UnlockScreen();
+      Display_SDL::Flip1();
       SDL_Delay(frameint);
     }
   } else {

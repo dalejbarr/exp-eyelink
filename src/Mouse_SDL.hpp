@@ -72,6 +72,6 @@ public:
 	int Truncate(int z, int z0, int z1);
 };
 
-extern Display_SDL * g_pDisplay;
+// extern Display_SDL * g_pDisplay;
 
 #endif

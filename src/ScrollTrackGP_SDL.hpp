@@ -25,6 +25,6 @@ public:
   virtual void Redraw(bool bForce = false);
 };
 
-extern Display_SDL * g_pDisplay;
+// extern Display_SDL * g_pDisplay;
 
 #endif

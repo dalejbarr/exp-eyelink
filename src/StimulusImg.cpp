@@ -7,17 +7,15 @@
 #define FTYPE_BMP 1
 #define FTYPE_JPG 2
 
-SDL_Surface * StimulusImg::s_pMemSurface = NULL;
-SDL_mutex * StimulusImg::s_pMemMutex = NULL;
 // Display_SDL * StimulusImg::s_pDisplay = NULL;
 
 StimulusImg::StimulusImg(long id, Template * pTemplate,
 			 long idCmd, ArgMMap mmArgs) :
   Stimulus(id, pTemplate) {
 
-  if (!StimulusImg::s_pMemSurface && Display_SDL::GetScreen()) {
+  if (!Display_SDL::GetMemScreen() && Display_SDL::GetScreen()) {
     // only initialize the memory surface once
-    InitMemSurface();
+		Display_SDL::InitMemSurface();
   } else {}
 
   // parse out all common arguments
@@ -100,16 +98,11 @@ void StimulusImg::Initialize() {
 StimulusImg::~StimulusImg() {
   g_pErr->DFI("StimulusImg::~StimulusImg", m_sResource.c_str(), 3);
   g_pErr->DFO("StimulusImg::~StimulusImg", m_sResource.c_str(), 3);
-
-  if (StimulusImg::s_pMemSurface) {
-    SDL_FreeSurface(StimulusImg::s_pMemSurface);
-    StimulusImg::s_pMemSurface = NULL;
-  } else {}
 }
 
 int StimulusImg::Prepare() {
   Stimulus::Prepare();
-  InitMemSurface();
+	Display_SDL::InitMemSurface();
   // load it in
   g_pErr->DFI("StimulusImg::Prepare", m_sResource.c_str(), 3);
   if (m_sFileName == "") {
@@ -139,31 +132,42 @@ int StimulusImg::Finish() {
 }
 
 int StimulusImg::Draw(bool bMem /*=0*/) {
-  //g_pErr->DFI("StimulusImg::Draw", m_sFileName.c_str(), 3);
+  // g_pErr->DFI("StimulusImg::Draw", m_sFileName.c_str(), 3);
+	SDL_Surface * pSurf = NULL;
   SDL_Rect r1;
-  SDL_Surface * pSurf = Display_SDL::GetScreen();// StimulusImg::s_pScreen;
-  r1.w = m_rect.w; r1.h = m_rect.h;
-  r1.x = m_rect.x; r1.y = m_rect.y;
-
-  if (bMem) {
-    pSurf = StimulusImg::s_pMemSurface;
-  } else {}
+  //r1.x = m_rect.x; r1.y = m_rect.y;
 
   if (m_pSurface) {
+		if (bMem) {
+			// TODO: lock memory surface too
+			pSurf = Display_SDL::LockMemScreen();
+		} else {
+			pSurf = Display_SDL::LockScreen();
+		}
+
     if (m_bHighlight) {
       r1.w = m_rect.w + 2*m_nHighlightWidth;
       r1.h = m_rect.h + 2*m_nHighlightWidth;  
       r1.x = m_rect.x - m_nHighlightWidth;
       r1.y = m_rect.y - m_nHighlightWidth;
-      SDL_FillRect(Display_SDL::GetScreen(), &r1, SDL_MapRGB(Display_SDL::GetScreen()->format, 
-					      m_nHR, m_nHG, m_nHB));
+      SDL_FillRect(pSurf, &r1, SDL_MapRGB(pSurf->format, m_nHR, m_nHG, m_nHB));
     } else {
       r1.x = m_rect.x = m_CurX.Get();
       r1.y = m_rect.y = m_CurY.Get();
+			r1.w = m_rect.w; 
+			r1.h = m_rect.h;
     }
-    
+
     SDL_BlitSurface(m_pSurface, NULL, pSurf, &m_rect);
+		if (bMem) {
+			Display_SDL::UnlockMemScreen();
+		} else {
+			Display_SDL::UnlockScreen();
+		}    
+
   } else {}
+
+  // g_pErr->DFO("StimulusImg::Draw", m_sFileName.c_str(), 3);
   return 0;
 }
 
@@ -181,33 +185,12 @@ int StimulusImg::Action() {
   } else {}
 
   Draw();
-  StimulusImg::Flip1();
+  Display_SDL::Flip1();
 
   g_pErr->DFO("StimulusImg::Action", m_sResource.c_str(), 3);
   return 0;
 }
 
-void StimulusImg::Flip1(bool bMem) {
-  if (!Display_SDL::GetScreen()) {
-    g_pErr->Report("SDL screen not initialized.");
-    return;
-  } else {}
-
-  if (bMem) {
-    if (StimulusImg::s_pMemSurface) {
-      SDL_Flip(StimulusImg::s_pMemSurface);
-    } else {
-      g_pErr->Debug("memory surface not initialized");
-    }
-  } else {
-    SDL_Flip(Display_SDL::GetScreen());
-  }
-}
-
-void StimulusImg::SetScreen(Display_SDL * pDisplay) {
-  // StimulusImg::s_pDisplay = pDisplay;
-  // StimulusImg::s_pScreen = pDisplay->GetScreen();
-}
 
 int StimulusImg::SetColorkey(int r, int g, int b) {
   m_r = r; m_g = g; m_b = b; m_bColorKey = 1;
@@ -251,70 +234,6 @@ void StimulusImg::Highlight(const char * pHinfo) {
   g_pErr->DFO("StimulusImg::Highlight", m_id, 5);
 }
 
-/*
-Oplist * StimulusImg::GetAttr(string s) {
-  if (s == "x1") {
-    return &m_CurX;
-  } else if (s == "y1") {
-    return &m_CurY;
-  }
-  return NULL;
-}
-*/
-
-void StimulusImg::InitMemSurface() {
-
-  g_pErr->DFI("StimulusImg::InitMemSurface", 4, 0);
-  if (!StimulusImg::s_pMemSurface) {
-    g_pErr->Debug("initializing memory surface");
-    if (Display_SDL::GetScreen()) {
-      StimulusImg::s_pMemSurface = SDL_ConvertSurface(Display_SDL::GetScreen(), 
-																											Display_SDL::GetScreen()->format, 
-																											Display_SDL::GetScreen()->flags);
-      if (!StimulusImg::s_pMemSurface) {
-				g_pErr->Report("StimulusImg::InitMemSurface, couldn't initialize");
-       } else {}
-    } else {
-      g_pErr->Report("In StimulusImg::InitMemSurface; couldn't initialize memory surface");
-    }
-  } else {}
-  g_pErr->DFO("StimulusImg::InitMemSurface", 4, 0);
-
-}
-
-void StimulusImg::FlipMemoryToScreen() {
-  SDL_BlitSurface(StimulusImg::s_pMemSurface, NULL, Display_SDL::GetScreen(), NULL);
-  SDL_Flip(Display_SDL::GetScreen());
-}
-
-int StimulusImg::CheckFileType(const char *pFile) {
-	int ftype = 0;
-	/*
-	string s1;
-	s1.assign(pFile);
-	
-	size_t last_dot = s1.find_last_of('.');
-	if ((last_dot == string::npos) || (last_dot == s1.size())) {
-		g_pErr->Report(pastestr::paste("sss", " ", "file", s1.c_str(), "missing file extension"));
-	}
-
-	string strExtension = s1.substr(last_dot + 1, s1.size() - last_dot);
-	std::transform(strExtension.begin(), strExtension.end(), strExtension.begin(), ::tolower);
-	g_pErr->Debug(pastestr::paste("ss", "", "file extension was ", strExtension.c_str()));
-
-	if (strExtension == "bmp") {
-		ftype = FTYPE_BMP;
-	} else if ((strExtension == "jpg") || (strExtension == "jpeg")) {
-		ftype = FTYPE_JPG;
-	} else {
-		g_pErr->Report(pastestr::paste("sssss", "", "error with ", s1.c_str(), 
-																	 ": filetype '", strExtension.c_str(), "' not supported"));
-	}
-	*/
-
-	return ftype;
-}
-
 int StimulusImg::Load(string s1) {
   SDL_Surface * psTemp;
 
@@ -324,7 +243,7 @@ int StimulusImg::Load(string s1) {
     //return 0;
   } else {}
 
-	int ftype = CheckFileType(s1.c_str());
+	//int ftype = CheckFileType(s1.c_str());
 	// TODO: do something?
 	psTemp = IMG_Load(s1.c_str());
 	if (psTemp == NULL) {
@@ -352,7 +271,8 @@ int StimulusImg::Load(string s1) {
   if (m_bColorKey) {
 		g_pErr->Debug(pastestr::paste("sddd", " ", "colorkey", (long) m_r, (long) m_g, (long) m_b));
     SDL_SetColorKey( m_pSurface, SDL_SRCCOLORKEY | SDL_RLEACCEL,
-										 SDL_MapRGB(Display_SDL::GetScreen()->format, m_r, m_g, m_b) );  // here
+										 SDL_MapRGB(Display_SDL::LockScreen()->format, m_r, m_g, m_b) );  // here
+ 		Display_SDL::UnlockScreen();
   } else {}
 
   return 0;
@@ -367,35 +287,27 @@ int StimulusImg::DrawRect(int x1, int y1, int x2, int y2, int r, int g, int b) {
   if (!m_pSurface) {
     g_pErr->Report("surface not initialized!");
   } else {
-    SDL_FillRect(m_pSurface, &r1, SDL_MapRGB(Display_SDL::GetScreen()->format, r, g, b));
+    SDL_FillRect(m_pSurface, &r1, SDL_MapRGB(Display_SDL::LockScreen()->format, r, g, b));
+		Display_SDL::UnlockScreen();
   }
 
   return 0;
 }
 
-void StimulusImg::ClearScreen(bool bMem /* = false */) {
-  SDL_Color backcol = { 0x00, 0x00, 0x00, 0 };
-
-  if (bMem) {
-    SDL_FillRect(StimulusImg::s_pMemSurface, NULL,
-		 SDL_MapRGB(StimulusImg::s_pMemSurface->format, backcol.r, backcol.g, backcol.b));
-    SDL_Flip(StimulusImg::s_pMemSurface);
-  } else {
-    SDL_FillRect(Display_SDL::GetScreen(), NULL,
-		 SDL_MapRGB(Display_SDL::GetScreen()->format, backcol.r, backcol.g, backcol.b));
-    SDL_Flip(Display_SDL::GetScreen());
-  }
-}
 
 int StimulusImg::Erase(bool bMem) {
   SDL_Color backcol = { 0x00, 0x00, 0x00, 0 };
   
   if (bMem) {
-    SDL_FillRect(StimulusImg::s_pMemSurface, &m_rect,
-		 SDL_MapRGB(StimulusImg::s_pMemSurface->format, backcol.r, backcol.g, backcol.b));
+		SDL_Surface * pScreen = Display_SDL::LockMemScreen();
+    SDL_FillRect(pScreen, &m_rect,
+								 SDL_MapRGB(pScreen->format, backcol.r, backcol.g, backcol.b));
+		Display_SDL::UnlockMemScreen();
   } else {
-    SDL_FillRect(Display_SDL::GetScreen(), &m_rect,
-		 SDL_MapRGB(Display_SDL::GetScreen()->format, backcol.r, backcol.g, backcol.b));
+		SDL_Surface * pScreen = Display_SDL::LockScreen();
+    SDL_FillRect(pScreen, &m_rect,
+								 SDL_MapRGB(pScreen->format, backcol.r, backcol.g, backcol.b));
+		Display_SDL::UnlockScreen();
   }
 
   return 0;

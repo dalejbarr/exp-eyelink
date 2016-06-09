@@ -10,15 +10,14 @@ StimulusDisplayOn::~StimulusDisplayOn() {
 
 int StimulusDisplayOn::Action() {
   g_pErr->DFI("StimulusDisplayOn::Action", 0L, 2);
-  //StimulusImg::Flip1();
-  StimulusImg::FlipMemoryToScreen();
+  Display_SDL::FlipMemoryToScreen();
   g_pErr->DFO("StimulusDisplayOn::Action", 0L, 2);
   return Stimulus::Action();
 }
 
 int StimulusDisplayOn::Prepare() {
   g_pErr->DFI("StimulusDisplayOn::Prepare", 0L, 2);
-  StimulusImg::ClearScreen(true);
+  Display_SDL::ClearScreen(true);
   m_pTemplate->Redraw(1);
   g_pErr->DFO("StimulusDisplayOn::Prepare", 0L, 2);
 }

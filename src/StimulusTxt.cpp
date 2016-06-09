@@ -46,7 +46,7 @@ int StimulusTxt::Action() {
 
   //g_pErr->Debug(pastestr::paste("sssdd", " ", "*", s1.c_str(), "*", m_x1, m_y1));
   if (s1.length()>0) {
-    g_pDisplay->MessageXY(m_x1, m_y1, s1.c_str());
+		Display_SDL::MessageXY(m_x1, m_y1, s1.c_str());
   } else {}
   g_pErr->DFO("StimulusTxt::Action", 0L, 2);
   return Stimulus::Action();

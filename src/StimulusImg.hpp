@@ -21,8 +21,6 @@ using std::string;
 class StimulusImg : public Stimulus {
 protected:
 	SDL_Surface * m_pSurface;
-  static SDL_Surface * s_pMemSurface;
-	static SDL_mutex * s_pMemMutex;
 	// static Display_SDL * s_pDisplay;
   bool m_bColorKey;
   bool m_bHighlight;
@@ -82,12 +80,7 @@ public:
   virtual int Erase(bool bMem = false);
   int Draw(bool bMem = 0);
   int SetColorkey(int r, int g, int b);
-	int CheckFileType(const char *);
-  static void Flip1(bool bMem = 0);
-  static void SetScreen(Display_SDL * pDisplay);
-  static void InitMemSurface();
-  static void FlipMemoryToScreen();
-  static void ClearScreen(bool bMem = false);
+	// int CheckFileType(const char *);
   int InAOI(Uint16 x, Uint16 y);
   //inline void SetpXY(int *px, int *py) { m_x = px; m_y = py; }
   int SetLayer(int nLayer);

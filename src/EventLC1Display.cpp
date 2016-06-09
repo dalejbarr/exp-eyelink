@@ -61,7 +61,7 @@ int EventLC1Display::Action() {
     ppBack[vOrd[i]]->Draw(false);
     ppMain[vOrd[i]]->Draw(false);
   }
-  StimulusImg::Flip1();
+  Display_SDL::Flip1();
 
   // TO DO : change this to "pump_delay"
   SDL_Delay(3000);
@@ -83,7 +83,7 @@ int EventLC1Display::Action() {
       ppBack[vOrd[j]]->Draw(false);
       ppMain[vOrd[j]]->Draw(false);
     }
-    StimulusImg::Flip1();
+    Display_SDL::Flip1();
     // TO DO : change this to "pump_delay"
     SDL_Delay(msDelay);
   }
