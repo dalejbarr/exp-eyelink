@@ -53,7 +53,14 @@ int Webcam::Initialize() {
 		m_height = g_pDisplay->m_nHeight;
 
 		m_bInitialized = true;
-		if ((m_fd = open("/dev/video0", O_RDWR)) < 0) {
+
+		string strDev;
+		if (!g_pConfig->GetConfig("Video_Dev", &strDev)) {
+			strDev.assign("/dev/video0");
+		}
+		g_pErr->Debug(pastestr::paste("ss", " ", "using video device", strDev.c_str()));
+		
+		if ((m_fd = open(strDev.c_str(), O_RDWR)) < 0) {
 			g_pErr->Report("error opening webcam device");
 		}
 
