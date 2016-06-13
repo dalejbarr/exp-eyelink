@@ -9,7 +9,7 @@ Uint32 StimulusWebcam::s_msFrameInterval = 25;
 
 extern Display_SDL * g_pDisplay;
 
-StimulusWebcam::StimulusWebcam(long id, ArgMMap mmArgs, Template * pTemplate, Webcam * pCam) : 
+StimulusWebcam::StimulusWebcam(long id, ArgMMap mmArgs, Template * pTemplate, Webcam2 * pCam) : 
 	Stimulus(id, pTemplate) {
 	m_pThread = NULL;
 	m_pCam = pCam;

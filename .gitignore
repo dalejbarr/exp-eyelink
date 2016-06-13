@@ -9,3 +9,5 @@ tests/*/response
 /tools/audioprobe
 *.wav
 log.txt
+/tests/webcam
+.gitignore

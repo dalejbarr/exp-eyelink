@@ -2,7 +2,7 @@
 #define EXP_STIMULUSWEBCAM_INCLUDED
 
 #include "Stimulus.hpp"
-#include "Webcam.hpp"
+#include "Webcam2.hpp"
 
 class StimulusWebcam : public Stimulus {
 protected:
@@ -10,10 +10,10 @@ protected:
 	SDL_Rect m_rect;
 	static bool s_bContinue;
 	static Uint32 s_msFrameInterval; // number of milliseconds between frames
-	Webcam * m_pCam;
+	Webcam2 * m_pCam;
 	Template * m_pTemplate;
 public:
-	StimulusWebcam(long id, ArgMMap mmArgs, Template * pTemplate, Webcam * pCam);
+	StimulusWebcam(long id, ArgMMap mmArgs, Template * pTemplate, Webcam2 * pCam);
 	virtual ~StimulusWebcam();
 	virtual int Prepare();
 	virtual int Action();

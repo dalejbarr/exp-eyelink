@@ -53,7 +53,7 @@ StimulusMap Experiment::s_mapStimulus;
 DeviceMMap Experiment::s_mmapDevice;
 
 SocketListener * Experiment::s_pSockListener = NULL;
-Webcam * Experiment::s_pCam = NULL;
+Webcam2 * Experiment::s_pCam = NULL;
 
 unsigned int Experiment::g_nSeed = 0;
 

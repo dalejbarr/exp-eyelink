@@ -15,7 +15,7 @@
 #include "Trial.hpp"
 #include "Stimulus.hpp"
 #include "SocketListener.hpp"
-#include "Webcam.hpp"
+#include "Webcam2.hpp"
 
 class listordinfo {
 public:
@@ -116,7 +116,7 @@ public:
   static StimulusMap s_mapStimulus;
   static DeviceMMap s_mmapDevice;
 	static SocketListener * s_pSockListener;
-	static Webcam * s_pCam;
+	static Webcam2 * s_pCam;
 
   static Device * FindOrCreateDevice(long, long);
   static Stimulus * FindOrCreateStimulus(long id, 

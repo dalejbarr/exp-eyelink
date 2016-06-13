@@ -45,6 +45,7 @@ using pastestr::paste;
 #include "WatchGamePadButton.hpp"
 #include "WatchGamePadMove.hpp"
 #include "WatchSocketMsg.hpp"
+//#include "boost/lexical_cast.hpp"
 
 //#include "WatchGSC1Button.hpp"
 //#include "WatchGSC1Move.hpp"
@@ -162,7 +163,23 @@ ORDER BY Msec ASC");
 		case SBX_EVENT_WEBCAM_START :
 			if (!Experiment::s_pCam) {
 				g_pErr->Debug("creating new webcam instance...");
-				Experiment::s_pCam = new Webcam();
+				string strDev;
+				if (!g_pConfig->GetConfig("Video_Device", &strDev)) {
+					strDev.assign("/dev/video0");
+				}
+				int w, h;
+				string str1;
+				if (g_pConfig->GetConfig("Webcam_Width", &str1)) {
+					w = boost::lexical_cast<int>(str1.c_str());
+				} else {
+					w = -1;
+				}
+				if (g_pConfig->GetConfig("Webcam_Height", &str1)) {
+					h = boost::lexical_cast<int>(str1.c_str());
+				} else {
+					h = -1;
+				}
+				Experiment::s_pCam = new Webcam2(strDev.c_str(), w, h);
 			} 
 			pStim = StimulusPtr(new StimulusWebcam(idEvent, mmArgs, pTemplate, Experiment::s_pCam));
 			break;
