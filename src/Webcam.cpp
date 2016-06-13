@@ -71,9 +71,11 @@ int Webcam::Initialize() {
 		if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
 			g_pErr->Report("webcam does not support streaming i/o");
 		} else {
+			/*
 			if (!(cap.capabilities & V4L2_CAP_READWRITE)) {
 				g_pErr->Report("webcam does not support read i/o");
 			}
+			*/
 		}
 
 		// choose format
