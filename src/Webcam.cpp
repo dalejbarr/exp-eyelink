@@ -59,12 +59,21 @@ int Webcam::Initialize() {
 
 		// get device capabilities
 		struct v4l2_capability cap;
+		memset (&cap, 0, sizeof (struct v4l2_capability));
 		if (ioctl(m_fd, VIDIOC_QUERYCAP, &cap) < 0) {
 			g_pErr->Report("error with VIDIOC_QUERYCAP");
 		}
 
 		if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
 			g_pErr->Report("The device does not handle single-planar video capture.\n");
+		}
+
+		if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
+			g_pErr->Report("webcam does not support streaming i/o");
+		} else {
+			if (!(cap.capabilities & V4L2_CAP_READWRITE)) {
+				g_pErr->Report("webcam does not support read i/o");
+			}
 		}
 
 		// choose format
