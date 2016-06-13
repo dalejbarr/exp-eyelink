@@ -247,7 +247,7 @@ int StimulusImg::Load(string s1) {
 	// TODO: do something?
 	psTemp = IMG_Load(s1.c_str());
 	if (psTemp == NULL) {
-		g_pErr->Report(pastestr::paste("ss", " ", "could not load file", s1.c_str()));
+		g_pErr->Report(pastestr::paste("ssss", " ", "could not load file", s1.c_str(), ": ", IMG_GetError()));
 	}
 
   m_pSurface = SDL_DisplayFormatAlpha(psTemp);

@@ -176,12 +176,25 @@ SDL_Surface * Webcam::GrabFrame() {
 	if(ioctl(m_fd, VIDIOC_DQBUF, &m_bufferinfo) < 0){
 		g_pErr->Report("Webcam::GrabFrame: VIDIOC_QBUF");
 	}
+
+	/*
+#define HEADERFRAME1 0xaf
+
+    memcpy (vd->tmpbuffer, vd->mem[vd->buf.index], HEADERFRAME1);
+    memcpy (vd->tmpbuffer + HEADERFRAME1, dht_data, DHT_SIZE);
+    memcpy (vd->tmpbuffer + HEADERFRAME1 + DHT_SIZE,
+	    vd->mem[vd->buf.index] + HEADERFRAME1,
+	    (vd->buf.bytesused - HEADERFRAME1));
+	 */
  
 	// Create a stream based on our buffer.
 	m_buffer_stream = SDL_RWFromMem(m_buffer_start, m_bufferinfo.length);
  
 	// Create a surface using the data coming out of the above stream.
 	m_frame = IMG_Load_RW(m_buffer_stream, 0);
+	if (m_frame == NULL) {
+		g_pErr->Report(pastestr::paste("ss", "", "couldn't grab frame: ", IMG_GetError()));
+	}
 
 	return m_frame;
 }

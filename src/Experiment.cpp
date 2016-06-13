@@ -761,9 +761,7 @@ Trial * Experiment::NextTrial() {
 int Experiment::Prepare(SDL_Surface * pDisplay /* = null */, bool bFullScreen /* = 0 */) {
   g_pErr->DFI("Experiment::Prepare", 0L, 1);
 
-  g_pErr->Debug("here1");
   g_pDisplay = new Display_SDL(pDisplay);
-  g_pErr->Debug("here2");
 
   if (pDisplay == NULL) {
     g_pErr->Debug("display not initialized");
