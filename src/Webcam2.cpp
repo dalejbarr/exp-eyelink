@@ -297,3 +297,15 @@ SDL_Surface * Webcam2::GrabFrame() {
 	*/
 	return m_frame;
 }
+
+int Webcam2::GetWidth() {
+	return m_vd.width;
+}
+
+int Webcam2::GetHeight() {
+	return m_vd.height;
+}
+
+bool Webcam2::IsVisible() {
+	return m_bIsVisible;
+}

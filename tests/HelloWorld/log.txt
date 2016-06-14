@@ -25,13 +25,16 @@ response/s0000001
 sqlite: SELECT ListID FROM Session WHERE SessionID=1
 ListID is 1 for SessionID 1
 sqlite: UPDATE Session SET Completion='IN PROGRESS' WHERE SessionID=1
-sqlite: UPDATE Session SET Seed=1465496101 WHERE SessionID=1
-established seed of 1465496101
+sqlite: UPDATE Session SET Seed=1465910516 WHERE SessionID=1
+established seed of 1465910516
 sqlite: UPDATE Session SET Completion='IN_PROGRESS' WHERE SessionID=1
 sqlite: UPDATE Session SET Date=datetime('now') WHERE SessionID=1
 LOADING EXPERIMENT CONFIGURATION...
 sqlite: SELECT COUNT(*) FROM sqlite_master WHERE type='table' and name='EXPConfig'
 sqlite: SELECT Var, Data FROM EXPConfig
+Display_Width = 1280
+Display_Height = 1024
+Video_Device = /dev/video0
 sqlite: SELECT SubjID FROM Subject WHERE SessionID=1
 Subject ID is 1
 <--- Entering Experiment::LoadTemplates() --->
@@ -63,60 +66,66 @@ FROM State
 WHERE TemplateID= 1 
 ORDER BY Sequence;
 
-TemplateID 1 has 1 states.
+TemplateID 1 has 2 states.
 
-      <--- Entering State::State() only (1) --->
-      <--- Exiting State::State() only (1) --->
-      <--- Entering LoadEvents() only (1) --->
+      <--- Entering State::State() prep (1) --->
+      <--- Exiting State::State() prep (1) --->
+      <--- Entering State::State() main (2) --->
+      <--- Exiting State::State() main (2) --->
+      <--- Entering LoadEvents() prep (1) --->
 sqlite: SELECT EventID, EvtCmdID, Msec 
 FROM Event 
 WHERE StateID=1
 ORDER BY Msec ASC
-         <--- Entering State::GetArgs() only (1) --->
-sqlite: SELECT ArgID, Info 
-FROM EventArgs
-WHERE EventID=1
-         <--- Exiting State::GetArgs() only (1) --->
-the EvtCmdID was 12
-         <--- Entering State::GetArgs() only (1) --->
+         <--- Entering State::GetArgs() prep (1) --->
 sqlite: SELECT ArgID, Info 
 FROM EventArgs
 WHERE EventID=7
-         <--- Exiting State::GetArgs() only (1) --->
+         <--- Exiting State::GetArgs() prep (1) --->
 the EvtCmdID was 400
 creating new webcam instance...
-      <--- Entering Webcam::Webcam() 0 --->
-      <--- Exiting Webcam::Webcam() 0 --->
-         <--- Entering State::GetArgs() only (1) --->
-sqlite: SELECT ArgID, Info 
-FROM EventArgs
-WHERE EventID=9
-         <--- Exiting State::GetArgs() only (1) --->
-the EvtCmdID was 15
-<--- Entering Template::FindOrCreateInputDev() 0 --->
-creating mouse device
-      <--- Entering Mouse_SDL::Mouse_SDL() 0 --->
-      <--- Exiting Mouse_SDL::Mouse_SDL() 0 --->
-<--- Exiting Template::FindOrCreateInputDev() 0 --->
-   <--- Entering Event::Event() 9 --->
-   <--- Exiting Event::Event() 9 --->
-      <--- Entering EventRecord::EventRecord() 9 --->
-      <--- Exiting EventRecord::EventRecord() 9 --->
-      <--- Exiting LoadEvents() only (1) --->
-      <--- Entering LoadWatches() only (1) --->
+      <--- Entering Webcam2::Webcam2() 0 --->
+      <--- Exiting Webcam2::Webcam2() 0 --->
+      <--- Exiting LoadEvents() prep (1) --->
+      <--- Entering LoadWatches() prep (1) --->
 sqlite: SELECT WatchID, WCmdID, NextStateID 
 FROM Watch 
 WHERE StateID=1
 ORDER BY WatchID ASC
-         <--- Entering State::GetArgs() only (1) --->
+         <--- Entering State::GetArgs() prep (1) --->
+sqlite: SELECT ArgID, Info 
+FROM WatchArgs
+WHERE WatchID=2
+         <--- Exiting State::GetArgs() prep (1) --->
+      <--- Entering WatchDone::WatchDone() 2 --->
+      <--- Exiting WatchDone::WatchDone() 2 --->
+      <--- Exiting LoadWatches() prep (1) --->
+      <--- Entering LoadEvents() main (2) --->
+sqlite: SELECT EventID, EvtCmdID, Msec 
+FROM Event 
+WHERE StateID=2
+ORDER BY Msec ASC
+         <--- Entering State::GetArgs() main (2) --->
+sqlite: SELECT ArgID, Info 
+FROM EventArgs
+WHERE EventID=1
+         <--- Exiting State::GetArgs() main (2) --->
+the EvtCmdID was 12
+      <--- Exiting LoadEvents() main (2) --->
+      <--- Entering LoadWatches() main (2) --->
+sqlite: SELECT WatchID, WCmdID, NextStateID 
+FROM Watch 
+WHERE StateID=2
+ORDER BY WatchID ASC
+         <--- Entering State::GetArgs() main (2) --->
 sqlite: SELECT ArgID, Info 
 FROM WatchArgs
 WHERE WatchID=1
-         <--- Exiting State::GetArgs() only (1) --->
+         <--- Exiting State::GetArgs() main (2) --->
          <--- Entering WatchMouse::WatchMouse() 1 --->
 watching for ANYBUTTON down
          <--- Exiting WatchMouse::WatchMouse() 1 --->
-      <--- Exiting LoadWatches() only (1) --->
+      <--- Exiting LoadWatches() main (2) --->
 <--- Exiting Experiment::LoadTemplates() --->
 <--- Entering Experiment::LoadItems() --->
 sqlite: SELECT Item.ItemCellID, Item.TemplateID 
@@ -135,9 +144,9 @@ sqlite: SELECT AOI.AOIID, Name, Resource, x1, y1, Layer
 FROM AOI 
 WHERE ID=1 AND Link='itemcell' 
 ORDER BY Layer, AOI.AOIID ASC
-sg.png
-      <--- Entering StimulusImg::StimulusImg() sg.png --->
-      <--- Exiting StimulusImg::StimulusImg() sg.png --->
+sg.jpg
+      <--- Entering StimulusImg::StimulusImg() sg.jpg --->
+      <--- Exiting StimulusImg::StimulusImg() sg.jpg --->
 dk.png
       <--- Entering StimulusImg::StimulusImg() dk.png --->
       <--- Exiting StimulusImg::StimulusImg() dk.png --->
@@ -282,10 +291,8 @@ There are 4 trials in all
 <--- Exiting Experiment::CreateTrialObjects() --->
 <--- Exiting Experiment::InitializeExp() --->
 <--- Entering Experiment::Prepare() 0 --->
-here1
-here2
 display not initialized
-Display size is 1366 768
+Display size is 1280 1024
 display initialized
 ttf initialized
 <--- Entering Audio_SDL::Audio_SDL() 0 --->
@@ -301,40 +308,31 @@ audio initialized
 <--- Entering Display_SDL::InitMemSurface() 4 --->
 initializing memory surface
 <--- Exiting Display_SDL::InitMemSurface() 4 --->
-      <--- Entering StimulusImg::Prepare() sg.png --->
-      <--- Exiting StimulusImg::Prepare() sg.png --->
+      <--- Entering StimulusImg::Prepare() sg.jpg --->
+      <--- Exiting StimulusImg::Prepare() sg.jpg --->
    <--- Entering Stimulus::Prepare() 18 --->
    <--- Exiting Stimulus::Prepare() 18 --->
 <--- Entering Display_SDL::InitMemSurface() 4 --->
 <--- Exiting Display_SDL::InitMemSurface() 4 --->
       <--- Entering StimulusImg::Prepare() dk.png --->
       <--- Exiting StimulusImg::Prepare() dk.png --->
-   <--- Entering State::Prepare() only (1) --->
+   <--- Entering State::Prepare() prep (1) --->
+         <--- Entering Event::Prepare() 7 --->
+         <--- Entering StimulusWebcam::Prepare() 0 --->
+format requested unavailable, got width 1280 height 800
+x: 1280 1280 1280
+y: 112 1024 800
+         <--- Exiting StimulusWebcam::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 7 --->
+   <--- Exiting State::Prepare() prep (1) --->
+   <--- Entering State::Prepare() main (2) --->
          <--- Entering Event::Prepare() 1 --->
    <--- Entering StimulusDisplayOn::Prepare() 0 --->
    <--- Exiting StimulusDisplayOn::Prepare() 0 --->
          <--- Exiting Event::Prepare() 1 --->
-         <--- Entering Event::Prepare() 7 --->
-         <--- Entering StimulusWebcam::Prepare() 0 --->
-warning: requested webcam width was 1366 closest acceptable was 1280
-warning: requested webcam height was 768 closest acceptable was 720
-x: -32084 1366 65535
-y: -32383 768 65535
-         <--- Exiting StimulusWebcam::Prepare() 0 --->
-         <--- Exiting Event::Prepare() 7 --->
-      <--- Entering EventRecord::Prepare() 9 --->
-      <--- Exiting EventRecord::Prepare() 9 --->
-         <--- Entering Event::Prepare() 9 --->
-         <--- Exiting Event::Prepare() 9 --->
-   <--- Exiting State::Prepare() only (1) --->
+   <--- Exiting State::Prepare() main (2) --->
 <--- Entering Template::AttachState() 1 --->
 <--- Exiting Template::AttachState() 1 --->
-      <--- Entering Mouse_SDL::Prepare() 0 --->
-      <--- Entering StimulusImg::StimulusImg() mouse --->
-      <--- Exiting StimulusImg::StimulusImg() mouse --->
-      <--- Entering Mouse_SDL::Cleanup() 0 --->
-      <--- Exiting Mouse_SDL::Cleanup() 0 --->
-      <--- Exiting Mouse_SDL::Prepare() 0 --->
    <--- Exiting Template::Prepare() only (1) --->
 <--- Exiting Experiment::PrepareNextTrial() 0 --->
 <--- Entering Experiment::StartNextTrial() 0 --->
@@ -342,69 +340,73 @@ y: -32383 768 65535
    <--- Entering ItemCell::Start() 1 --->
       <--- Entering Template::Start() 1 --->
       <--- Exiting Template::Start() 1 --->
-         <--- Entering State::Start() only (1) --->
-         <--- Exiting State::Start() only (1) --->
+         <--- Entering State::Start() prep (1) --->
+         <--- Entering State::Main() prep (1) --->
+         <--- Exiting State::Start() prep (1) --->
    <--- Exiting Trial::Start() 1 --->
-         <--- Entering State::Main() only (1) --->
-<--- Exiting Experiment::StartNextTrial() 0 --->         <--- Entering Event::Action() 1 --->
-
+<--- Exiting Experiment::StartNextTrial() 0 --->
+         <--- Entering Event::Action() 7 --->
+         <--- Entering StimulusWebcam::Action() 0 --->
+         <--- Exiting StimulusWebcam::Action() 0 --->
+         <--- Exiting Event::Action() 7 --->
+... user event 7 614
+      <--- Entering WatchDone::CheckCondition() 2 --->
+      <--- Exiting WatchDone::CheckCondition() 2 --->
+done signaled
+            <--- Entering State::Finish() prep (1) --->
+         <--- Exiting State::Main() prep (1) --->
+         <--- Entering Event::Finish() 7 --->
+         <--- Entering StimulusWebcam::Finish() 0 --->
+         <--- Exiting StimulusWebcam::Finish() 0 --->
+         <--- Exiting Event::Finish() 7 --->
+            <--- Exiting State::Finish() prep (1) --->
+<--- Entering Template::HandleEvent() 1 --->
+<--- Entering Template::AttachState() 1 --->
+<--- Exiting Template::AttachState() 1 --->
+         <--- Entering State::Start() main (2) --->
+         <--- Entering State::Main() main (2) --->
+         <--- Exiting State::Start() main (2) --->
+         <--- Entering Event::Action() 1 --->
+<--- Exiting Template::HandleEvent() 1 --->
    <--- Entering StimulusDisplayOn::Action() 0 --->
    <--- Exiting StimulusDisplayOn::Action() 0 --->
    <--- Entering Stimulus::Action() 0 --->
    <--- Exiting Stimulus::Action() 0 --->
          <--- Exiting Event::Action() 1 --->
-         <--- Entering Event::Action() 7 --->
-         <--- Entering StimulusWebcam::Action() 0 --->
-         <--- Exiting StimulusWebcam::Action() 0 --->
-         <--- Exiting Event::Action() 7 --->
-   <--- Entering InputDev::Start() 1 --->
-   <--- Exiting InputDev::Start() 1 --->
-         <--- Entering Event::Action() 9 --->
-stimulus associated w/EventID=9 was not defined
-         <--- Exiting Event::Action() 9 --->
-... user event 7 1025
-   <--- Entering State::ProcessMouseButton() only (1) --->
+... user event 7 621
+   <--- Entering State::ProcessMouseButton() main (2) --->
          <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140733193388033
+1 watch 1 140720308486145
 1 result 1
          <--- Exiting WatchMouse::CheckCondition() 1 --->
 mouse button signaled (WatchID=1)
-   <--- Exiting State::ProcessMouseButton() only (1) --->
-            <--- Entering State::Finish() only (1) --->
-         <--- Exiting State::Main() only (1) --->
+   <--- Exiting State::ProcessMouseButton() main (2) --->
+            <--- Entering State::Finish() main (2) --->
+         <--- Exiting State::Main() main (2) --->
          <--- Entering Event::Finish() 1 --->
          <--- Exiting Event::Finish() 1 --->
-         <--- Entering Event::Finish() 7 --->
-         <--- Entering StimulusWebcam::Finish() 0 --->
-         <--- Exiting StimulusWebcam::Finish() 0 --->
-         <--- Exiting Event::Finish() 7 --->
-         <--- Entering Event::Finish() 9 --->
-         <--- Exiting Event::Finish() 9 --->
-            <--- Exiting State::Finish() only (1) --->
+            <--- Exiting State::Finish() main (2) --->
 <--- Entering Template::HandleEvent() 1 --->
 ending trial
    <--- Entering Template::Finish() only (1) --->
-   <--- Entering InputDev::Stop() 1 --->
-   <--- Exiting InputDev::Stop() 1 --->
-   <--- Entering Trial::SaveRespData() 1 --->
-0 events saved
-   <--- Exiting Trial::SaveRespData() 1 --->
-      <--- Entering StimulusImg::Finish() sg.png --->
-      <--- Exiting StimulusImg::Finish() sg.png --->
+      <--- Entering StimulusImg::Finish() sg.jpg --->
+      <--- Exiting StimulusImg::Finish() sg.jpg --->
       <--- Entering StimulusImg::Finish() dk.png --->
       <--- Exiting StimulusImg::Finish() dk.png --->
-            <--- Entering State::Finish() only (1) --->
-         <--- Entering Event::Finish() 1 --->
-         <--- Exiting Event::Finish() 1 --->
+            <--- Entering State::Finish() prep (1) --->
          <--- Entering Event::Finish() 7 --->
          <--- Entering StimulusWebcam::Finish() 0 --->
          <--- Exiting StimulusWebcam::Finish() 0 --->
          <--- Exiting Event::Finish() 7 --->
-         <--- Entering Event::Finish() 9 --->
-         <--- Exiting Event::Finish() 9 --->
-            <--- Exiting State::Finish() only (1) --->
-            <--- Entering State::PostTrial() only (1) --->
-            <--- Exiting State::Finish() only (1) --->
+            <--- Exiting State::Finish() prep (1) --->
+            <--- Entering State::PostTrial() prep (1) --->
+            <--- Exiting State::Finish() prep (1) --->
+            <--- Entering State::Finish() main (2) --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+            <--- Exiting State::Finish() main (2) --->
+            <--- Entering State::PostTrial() main (2) --->
+            <--- Exiting State::Finish() main (2) --->
    <--- Exiting Template::Finish() only (1) --->
 <--- Exiting Template::HandleEvent() 1 --->
 trial completed
@@ -414,9 +416,6 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=1 AND Ord=1
    <--- Entering Trial::Finish() 1 --->
       <--- Entering ItemCell::Finish() 1 --->
       <--- Exiting ItemCell::Finish() 1 --->
-<--- Entering Template::FindOrCreateInputDev() 0 --->
-<--- Exiting Template::FindOrCreateInputDev() 0 --->
-49 mouse samples copied
 <--- Exiting Trial::Finish() 1 --->
 <--- Exiting Experiment::FinishTrial() 0 --->
 <--- Entering Experiment::PrepareNextTrial() 0 --->
@@ -435,27 +434,20 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=1 AND Ord=1
 <--- Exiting Display_SDL::InitMemSurface() 4 --->
       <--- Entering StimulusImg::Prepare() sg.png --->
       <--- Exiting StimulusImg::Prepare() sg.png --->
-   <--- Entering State::Prepare() only (1) --->
-         <--- Entering Event::Prepare() 1 --->
-   <--- Entering StimulusDisplayOn::Prepare() 0 --->
-   <--- Exiting StimulusDisplayOn::Prepare() 0 --->
-         <--- Exiting Event::Prepare() 1 --->
+   <--- Entering State::Prepare() prep (1) --->
          <--- Entering Event::Prepare() 7 --->
          <--- Entering StimulusWebcam::Prepare() 0 --->
          <--- Exiting StimulusWebcam::Prepare() 0 --->
          <--- Exiting Event::Prepare() 7 --->
-      <--- Entering EventRecord::Prepare() 9 --->
-      <--- Exiting EventRecord::Prepare() 9 --->
-         <--- Entering Event::Prepare() 9 --->
-         <--- Exiting Event::Prepare() 9 --->
-   <--- Exiting State::Prepare() only (1) --->
+   <--- Exiting State::Prepare() prep (1) --->
+   <--- Entering State::Prepare() main (2) --->
+         <--- Entering Event::Prepare() 1 --->
+   <--- Entering StimulusDisplayOn::Prepare() 0 --->
+   <--- Exiting StimulusDisplayOn::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 1 --->
+   <--- Exiting State::Prepare() main (2) --->
 <--- Entering Template::AttachState() 1 --->
 <--- Exiting Template::AttachState() 1 --->
-      <--- Entering Mouse_SDL::Prepare() 0 --->
-error surface already defined: erasing
-      <--- Entering Mouse_SDL::Cleanup() 0 --->
-      <--- Exiting Mouse_SDL::Cleanup() 0 --->
-      <--- Exiting Mouse_SDL::Prepare() 0 --->
    <--- Exiting Template::Prepare() only (1) --->
 <--- Exiting Experiment::PrepareNextTrial() 0 --->
 <--- Entering Experiment::StartNextTrial() 0 --->
@@ -463,75 +455,79 @@ error surface already defined: erasing
    <--- Entering ItemCell::Start() 2 --->
       <--- Entering Template::Start() 1 --->
       <--- Exiting Template::Start() 1 --->
-         <--- Entering State::Start() only (1) --->
-         <--- Entering State::Main() only (1) --->
-         <--- Exiting State::Start() only (1) --->
-         <--- Entering Event::Action() 1 --->
+         <--- Entering State::Start() prep (1) --->
+         <--- Entering State::Main() prep (1) --->
+         <--- Exiting State::Start() prep (1) --->
    <--- Exiting Trial::Start() 2 --->
 <--- Exiting Experiment::StartNextTrial() 0 --->
+         <--- Entering Event::Action() 7 --->
+         <--- Entering StimulusWebcam::Action() 0 --->
+StimulusWebcam::Prepare(): Thread already active
+         <--- Exiting Event::Action() 7 --->
+... user event 7 2281
+      <--- Entering WatchDone::CheckCondition() 2 --->
+      <--- Exiting WatchDone::CheckCondition() 2 --->
+done signaled
+            <--- Entering State::Finish() prep (1) --->
+         <--- Exiting State::Main() prep (1) --->
+         <--- Entering Event::Finish() 7 --->
+         <--- Entering StimulusWebcam::Finish() 0 --->
+         <--- Exiting StimulusWebcam::Finish() 0 --->
+         <--- Exiting Event::Finish() 7 --->
+            <--- Exiting State::Finish() prep (1) --->
+<--- Entering Template::HandleEvent() 1 --->
+<--- Entering Template::AttachState() 1 --->
+<--- Exiting Template::AttachState() 1 --->
+         <--- Entering State::Start() main (2) --->
+         <--- Entering State::Main() main (2) --->
+         <--- Entering Event::Action() 1 --->
+         <--- Exiting State::Start() main (2) --->
    <--- Entering StimulusDisplayOn::Action() 0 --->
-   <--- Entering State::ProcessMouseButton() only (1) --->
-         <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140733193388032
-1 result 0
-         <--- Exiting WatchMouse::CheckCondition() 1 --->
-   <--- Exiting State::ProcessMouseButton() only (1) --->
+<--- Exiting Template::HandleEvent() 1 --->
    <--- Exiting StimulusDisplayOn::Action() 0 --->
    <--- Entering Stimulus::Action() 0 --->
    <--- Exiting Stimulus::Action() 0 --->
          <--- Exiting Event::Action() 1 --->
-         <--- Entering Event::Action() 7 --->
-         <--- Entering StimulusWebcam::Action() 0 --->
-         <--- Exiting StimulusWebcam::Action() 0 --->
-         <--- Exiting Event::Action() 7 --->
-   <--- Entering InputDev::Start() 1 --->
-   <--- Exiting InputDev::Start() 1 --->
-         <--- Entering Event::Action() 9 --->
-stimulus associated w/EventID=9 was not defined
-         <--- Exiting Event::Action() 9 --->
-... user event 7 15372
-   <--- Entering State::ProcessMouseButton() only (1) --->
+... user event 7 2288
+   <--- Entering State::ProcessMouseButton() main (2) --->
          <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140733193388033
+1 watch 1 140720308486144
+1 result 0
+         <--- Exiting WatchMouse::CheckCondition() 1 --->
+   <--- Exiting State::ProcessMouseButton() main (2) --->
+   <--- Entering State::ProcessMouseButton() main (2) --->
+         <--- Entering WatchMouse::CheckCondition() 1 --->
+1 watch 1 140720308486145
 1 result 1
          <--- Exiting WatchMouse::CheckCondition() 1 --->
 mouse button signaled (WatchID=1)
-   <--- Exiting State::ProcessMouseButton() only (1) --->
-            <--- Entering State::Finish() only (1) --->
-         <--- Exiting State::Main() only (1) --->
+   <--- Exiting State::ProcessMouseButton() main (2) --->
+            <--- Entering State::Finish() main (2) --->
+         <--- Exiting State::Main() main (2) --->
          <--- Entering Event::Finish() 1 --->
          <--- Exiting Event::Finish() 1 --->
-         <--- Entering Event::Finish() 7 --->
-         <--- Entering StimulusWebcam::Finish() 0 --->
-         <--- Exiting StimulusWebcam::Finish() 0 --->
-         <--- Exiting Event::Finish() 7 --->
-         <--- Entering Event::Finish() 9 --->
-         <--- Exiting Event::Finish() 9 --->
-            <--- Exiting State::Finish() only (1) --->
+            <--- Exiting State::Finish() main (2) --->
 <--- Entering Template::HandleEvent() 1 --->
 ending trial
    <--- Entering Template::Finish() only (1) --->
-   <--- Entering InputDev::Stop() 1 --->
-   <--- Exiting InputDev::Stop() 1 --->
-   <--- Entering Trial::SaveRespData() 2 --->
-0 events saved
-   <--- Exiting Trial::SaveRespData() 2 --->
       <--- Entering StimulusImg::Finish() dk.png --->
       <--- Exiting StimulusImg::Finish() dk.png --->
       <--- Entering StimulusImg::Finish() sg.png --->
       <--- Exiting StimulusImg::Finish() sg.png --->
-            <--- Entering State::Finish() only (1) --->
-         <--- Entering Event::Finish() 1 --->
-         <--- Exiting Event::Finish() 1 --->
+            <--- Entering State::Finish() prep (1) --->
          <--- Entering Event::Finish() 7 --->
          <--- Entering StimulusWebcam::Finish() 0 --->
          <--- Exiting StimulusWebcam::Finish() 0 --->
          <--- Exiting Event::Finish() 7 --->
-         <--- Entering Event::Finish() 9 --->
-         <--- Exiting Event::Finish() 9 --->
-            <--- Exiting State::Finish() only (1) --->
-            <--- Entering State::PostTrial() only (1) --->
-            <--- Exiting State::Finish() only (1) --->
+            <--- Exiting State::Finish() prep (1) --->
+            <--- Entering State::PostTrial() prep (1) --->
+            <--- Exiting State::Finish() prep (1) --->
+            <--- Entering State::Finish() main (2) --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+            <--- Exiting State::Finish() main (2) --->
+            <--- Entering State::PostTrial() main (2) --->
+            <--- Exiting State::Finish() main (2) --->
    <--- Exiting Template::Finish() only (1) --->
 <--- Exiting Template::HandleEvent() 1 --->
 trial completed
@@ -541,9 +537,6 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=2 AND Ord=2
    <--- Entering Trial::Finish() 2 --->
       <--- Entering ItemCell::Finish() 2 --->
       <--- Exiting ItemCell::Finish() 2 --->
-<--- Entering Template::FindOrCreateInputDev() 0 --->
-<--- Exiting Template::FindOrCreateInputDev() 0 --->
-45 mouse samples copied
 <--- Exiting Trial::Finish() 2 --->
 <--- Exiting Experiment::FinishTrial() 0 --->
 <--- Entering Experiment::PrepareNextTrial() 0 --->
@@ -562,27 +555,20 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=2 AND Ord=2
 <--- Exiting Display_SDL::InitMemSurface() 4 --->
       <--- Entering StimulusImg::Prepare() dk.png --->
       <--- Exiting StimulusImg::Prepare() dk.png --->
-   <--- Entering State::Prepare() only (1) --->
-         <--- Entering Event::Prepare() 1 --->
-   <--- Entering StimulusDisplayOn::Prepare() 0 --->
-   <--- Exiting StimulusDisplayOn::Prepare() 0 --->
-         <--- Exiting Event::Prepare() 1 --->
+   <--- Entering State::Prepare() prep (1) --->
          <--- Entering Event::Prepare() 7 --->
          <--- Entering StimulusWebcam::Prepare() 0 --->
          <--- Exiting StimulusWebcam::Prepare() 0 --->
          <--- Exiting Event::Prepare() 7 --->
-      <--- Entering EventRecord::Prepare() 9 --->
-      <--- Exiting EventRecord::Prepare() 9 --->
-         <--- Entering Event::Prepare() 9 --->
-         <--- Exiting Event::Prepare() 9 --->
-   <--- Exiting State::Prepare() only (1) --->
+   <--- Exiting State::Prepare() prep (1) --->
+   <--- Entering State::Prepare() main (2) --->
+         <--- Entering Event::Prepare() 1 --->
+   <--- Entering StimulusDisplayOn::Prepare() 0 --->
+   <--- Exiting StimulusDisplayOn::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 1 --->
+   <--- Exiting State::Prepare() main (2) --->
 <--- Entering Template::AttachState() 1 --->
 <--- Exiting Template::AttachState() 1 --->
-      <--- Entering Mouse_SDL::Prepare() 0 --->
-error surface already defined: erasing
-      <--- Entering Mouse_SDL::Cleanup() 0 --->
-      <--- Exiting Mouse_SDL::Cleanup() 0 --->
-      <--- Exiting Mouse_SDL::Prepare() 0 --->
    <--- Exiting Template::Prepare() only (1) --->
 <--- Exiting Experiment::PrepareNextTrial() 0 --->
 <--- Entering Experiment::StartNextTrial() 0 --->
@@ -590,75 +576,79 @@ error surface already defined: erasing
    <--- Entering ItemCell::Start() 3 --->
       <--- Entering Template::Start() 1 --->
       <--- Exiting Template::Start() 1 --->
-         <--- Entering State::Start() only (1) --->
-         <--- Entering State::Main() only (1) --->
-         <--- Entering Event::Action() 1 --->
-         <--- Exiting State::Start() only (1) --->   <--- Entering StimulusDisplayOn::Action() 0 --->
-
+         <--- Entering State::Start() prep (1) --->
+         <--- Entering State::Main() prep (1) --->
+         <--- Exiting State::Start() prep (1) --->
    <--- Exiting Trial::Start() 3 --->
 <--- Exiting Experiment::StartNextTrial() 0 --->
-   <--- Entering State::ProcessMouseButton() only (1) --->
-         <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140733193388032
-1 result 0
-         <--- Exiting WatchMouse::CheckCondition() 1 --->
-   <--- Exiting State::ProcessMouseButton() only (1) --->
+         <--- Entering Event::Action() 7 --->
+         <--- Entering StimulusWebcam::Action() 0 --->
+StimulusWebcam::Prepare(): Thread already active
+         <--- Exiting Event::Action() 7 --->
+... user event 7 2990
+      <--- Entering WatchDone::CheckCondition() 2 --->
+      <--- Exiting WatchDone::CheckCondition() 2 --->
+done signaled
+            <--- Entering State::Finish() prep (1) --->
+         <--- Exiting State::Main() prep (1) --->
+         <--- Entering Event::Finish() 7 --->
+         <--- Entering StimulusWebcam::Finish() 0 --->
+         <--- Exiting StimulusWebcam::Finish() 0 --->
+         <--- Exiting Event::Finish() 7 --->
+            <--- Exiting State::Finish() prep (1) --->
+<--- Entering Template::HandleEvent() 1 --->
+<--- Entering Template::AttachState() 1 --->
+<--- Exiting Template::AttachState() 1 --->
+         <--- Entering State::Start() main (2) --->
+         <--- Exiting State::Start() main (2) --->
+<--- Exiting Template::HandleEvent() 1 --->
+         <--- Entering State::Main() main (2) --->
+         <--- Entering Event::Action() 1 --->
+   <--- Entering StimulusDisplayOn::Action() 0 --->
    <--- Exiting StimulusDisplayOn::Action() 0 --->
    <--- Entering Stimulus::Action() 0 --->
    <--- Exiting Stimulus::Action() 0 --->
          <--- Exiting Event::Action() 1 --->
-         <--- Entering Event::Action() 7 --->
-         <--- Entering StimulusWebcam::Action() 0 --->
-         <--- Exiting StimulusWebcam::Action() 0 --->
-         <--- Exiting Event::Action() 7 --->
-   <--- Entering InputDev::Start() 1 --->
-   <--- Exiting InputDev::Start() 1 --->
-         <--- Entering Event::Action() 9 --->
-stimulus associated w/EventID=9 was not defined
-         <--- Exiting Event::Action() 9 --->
-... user event 7 17003
-   <--- Entering State::ProcessMouseButton() only (1) --->
+... user event 7 2997
+   <--- Entering State::ProcessMouseButton() main (2) --->
          <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140733193388033
+1 watch 1 140720308486144
+1 result 0
+         <--- Exiting WatchMouse::CheckCondition() 1 --->
+   <--- Exiting State::ProcessMouseButton() main (2) --->
+   <--- Entering State::ProcessMouseButton() main (2) --->
+         <--- Entering WatchMouse::CheckCondition() 1 --->
+1 watch 1 140720308486145
 1 result 1
          <--- Exiting WatchMouse::CheckCondition() 1 --->
 mouse button signaled (WatchID=1)
-   <--- Exiting State::ProcessMouseButton() only (1) --->
-            <--- Entering State::Finish() only (1) --->
-         <--- Exiting State::Main() only (1) --->
+   <--- Exiting State::ProcessMouseButton() main (2) --->
+            <--- Entering State::Finish() main (2) --->
+         <--- Exiting State::Main() main (2) --->
          <--- Entering Event::Finish() 1 --->
          <--- Exiting Event::Finish() 1 --->
-         <--- Entering Event::Finish() 7 --->
-         <--- Entering StimulusWebcam::Finish() 0 --->
-         <--- Exiting StimulusWebcam::Finish() 0 --->
-         <--- Exiting Event::Finish() 7 --->
-         <--- Entering Event::Finish() 9 --->
-         <--- Exiting Event::Finish() 9 --->
-            <--- Exiting State::Finish() only (1) --->
+            <--- Exiting State::Finish() main (2) --->
 <--- Entering Template::HandleEvent() 1 --->
 ending trial
    <--- Entering Template::Finish() only (1) --->
-   <--- Entering InputDev::Stop() 1 --->
-   <--- Exiting InputDev::Stop() 1 --->
-   <--- Entering Trial::SaveRespData() 3 --->
-0 events saved
-   <--- Exiting Trial::SaveRespData() 3 --->
       <--- Entering StimulusImg::Finish() sg.png --->
       <--- Exiting StimulusImg::Finish() sg.png --->
       <--- Entering StimulusImg::Finish() dk.png --->
       <--- Exiting StimulusImg::Finish() dk.png --->
-            <--- Entering State::Finish() only (1) --->
-         <--- Entering Event::Finish() 1 --->
-         <--- Exiting Event::Finish() 1 --->
+            <--- Entering State::Finish() prep (1) --->
          <--- Entering Event::Finish() 7 --->
          <--- Entering StimulusWebcam::Finish() 0 --->
          <--- Exiting StimulusWebcam::Finish() 0 --->
          <--- Exiting Event::Finish() 7 --->
-         <--- Entering Event::Finish() 9 --->
-         <--- Exiting Event::Finish() 9 --->
-            <--- Exiting State::Finish() only (1) --->
-            <--- Entering State::PostTrial() only (1) --->
-            <--- Exiting State::Finish() only (1) --->
+            <--- Exiting State::Finish() prep (1) --->
+            <--- Entering State::PostTrial() prep (1) --->
+            <--- Exiting State::Finish() prep (1) --->
+            <--- Entering State::Finish() main (2) --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+            <--- Exiting State::Finish() main (2) --->
+            <--- Entering State::PostTrial() main (2) --->
+            <--- Exiting State::Finish() main (2) --->
    <--- Exiting Template::Finish() only (1) --->
 <--- Exiting Template::HandleEvent() 1 --->
 trial completed
@@ -668,9 +658,6 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=3 AND Ord=3
    <--- Entering Trial::Finish() 3 --->
       <--- Entering ItemCell::Finish() 3 --->
       <--- Exiting ItemCell::Finish() 3 --->
-<--- Entering Template::FindOrCreateInputDev() 0 --->
-<--- Exiting Template::FindOrCreateInputDev() 0 --->
-39 mouse samples copied
 <--- Exiting Trial::Finish() 3 --->
 <--- Exiting Experiment::FinishTrial() 0 --->
 <--- Entering Experiment::PrepareNextTrial() 0 --->
@@ -689,27 +676,20 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=3 AND Ord=3
 <--- Exiting Display_SDL::InitMemSurface() 4 --->
       <--- Entering StimulusImg::Prepare() sg.png --->
       <--- Exiting StimulusImg::Prepare() sg.png --->
-   <--- Entering State::Prepare() only (1) --->
-         <--- Entering Event::Prepare() 1 --->
-   <--- Entering StimulusDisplayOn::Prepare() 0 --->
-   <--- Exiting StimulusDisplayOn::Prepare() 0 --->
-         <--- Exiting Event::Prepare() 1 --->
+   <--- Entering State::Prepare() prep (1) --->
          <--- Entering Event::Prepare() 7 --->
          <--- Entering StimulusWebcam::Prepare() 0 --->
          <--- Exiting StimulusWebcam::Prepare() 0 --->
          <--- Exiting Event::Prepare() 7 --->
-      <--- Entering EventRecord::Prepare() 9 --->
-      <--- Exiting EventRecord::Prepare() 9 --->
-         <--- Entering Event::Prepare() 9 --->
-         <--- Exiting Event::Prepare() 9 --->
-   <--- Exiting State::Prepare() only (1) --->
+   <--- Exiting State::Prepare() prep (1) --->
+   <--- Entering State::Prepare() main (2) --->
+         <--- Entering Event::Prepare() 1 --->
+   <--- Entering StimulusDisplayOn::Prepare() 0 --->
+   <--- Exiting StimulusDisplayOn::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 1 --->
+   <--- Exiting State::Prepare() main (2) --->
 <--- Entering Template::AttachState() 1 --->
 <--- Exiting Template::AttachState() 1 --->
-      <--- Entering Mouse_SDL::Prepare() 0 --->
-error surface already defined: erasing
-      <--- Entering Mouse_SDL::Cleanup() 0 --->
-      <--- Exiting Mouse_SDL::Cleanup() 0 --->
-      <--- Exiting Mouse_SDL::Prepare() 0 --->
    <--- Exiting Template::Prepare() only (1) --->
 <--- Exiting Experiment::PrepareNextTrial() 0 --->
 <--- Entering Experiment::StartNextTrial() 0 --->
@@ -717,75 +697,79 @@ error surface already defined: erasing
    <--- Entering ItemCell::Start() 4 --->
       <--- Entering Template::Start() 1 --->
       <--- Exiting Template::Start() 1 --->
-         <--- Entering State::Start() only (1) --->
-         <--- Exiting State::Start() only (1) --->
-         <--- Entering State::Main() only (1) --->
-         <--- Entering Event::Action() 1 --->
-   <--- Exiting Trial::Start() 4 --->   <--- Entering StimulusDisplayOn::Action() 0 --->
-
+         <--- Entering State::Start() prep (1) --->
+         <--- Entering State::Main() prep (1) --->
+         <--- Exiting State::Start() prep (1) --->
+   <--- Exiting Trial::Start() 4 --->
 <--- Exiting Experiment::StartNextTrial() 0 --->
-   <--- Entering State::ProcessMouseButton() only (1) --->
-         <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140733193388032
-1 result 0
-         <--- Exiting WatchMouse::CheckCondition() 1 --->
-   <--- Exiting State::ProcessMouseButton() only (1) --->
+         <--- Entering Event::Action() 7 --->
+         <--- Entering StimulusWebcam::Action() 0 --->
+StimulusWebcam::Prepare(): Thread already active
+         <--- Exiting Event::Action() 7 --->
+... user event 7 3605
+      <--- Entering WatchDone::CheckCondition() 2 --->
+      <--- Exiting WatchDone::CheckCondition() 2 --->
+done signaled
+            <--- Entering State::Finish() prep (1) --->
+         <--- Exiting State::Main() prep (1) --->
+         <--- Entering Event::Finish() 7 --->
+         <--- Entering StimulusWebcam::Finish() 0 --->
+         <--- Exiting StimulusWebcam::Finish() 0 --->
+         <--- Exiting Event::Finish() 7 --->
+            <--- Exiting State::Finish() prep (1) --->
+<--- Entering Template::HandleEvent() 1 --->
+<--- Entering Template::AttachState() 1 --->
+<--- Exiting Template::AttachState() 1 --->
+         <--- Entering State::Start() main (2) --->
+         <--- Entering State::Main() main (2) --->
+         <--- Entering Event::Action() 1 --->
+         <--- Exiting State::Start() main (2) --->
+   <--- Entering StimulusDisplayOn::Action() 0 --->
+<--- Exiting Template::HandleEvent() 1 --->
    <--- Exiting StimulusDisplayOn::Action() 0 --->
    <--- Entering Stimulus::Action() 0 --->
    <--- Exiting Stimulus::Action() 0 --->
          <--- Exiting Event::Action() 1 --->
-         <--- Entering Event::Action() 7 --->
-         <--- Entering StimulusWebcam::Action() 0 --->
-         <--- Exiting StimulusWebcam::Action() 0 --->
-         <--- Exiting Event::Action() 7 --->
-   <--- Entering InputDev::Start() 1 --->
-   <--- Exiting InputDev::Start() 1 --->
-         <--- Entering Event::Action() 9 --->
-stimulus associated w/EventID=9 was not defined
-         <--- Exiting Event::Action() 9 --->
-... user event 7 18899
-   <--- Entering State::ProcessMouseButton() only (1) --->
+... user event 7 3612
+   <--- Entering State::ProcessMouseButton() main (2) --->
          <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140733193388033
+1 watch 1 140720308486144
+1 result 0
+         <--- Exiting WatchMouse::CheckCondition() 1 --->
+   <--- Exiting State::ProcessMouseButton() main (2) --->
+   <--- Entering State::ProcessMouseButton() main (2) --->
+         <--- Entering WatchMouse::CheckCondition() 1 --->
+1 watch 1 140720308486145
 1 result 1
          <--- Exiting WatchMouse::CheckCondition() 1 --->
 mouse button signaled (WatchID=1)
-   <--- Exiting State::ProcessMouseButton() only (1) --->
-            <--- Entering State::Finish() only (1) --->
-         <--- Exiting State::Main() only (1) --->
+   <--- Exiting State::ProcessMouseButton() main (2) --->
+            <--- Entering State::Finish() main (2) --->
+         <--- Exiting State::Main() main (2) --->
          <--- Entering Event::Finish() 1 --->
          <--- Exiting Event::Finish() 1 --->
-         <--- Entering Event::Finish() 7 --->
-         <--- Entering StimulusWebcam::Finish() 0 --->
-         <--- Exiting StimulusWebcam::Finish() 0 --->
-         <--- Exiting Event::Finish() 7 --->
-         <--- Entering Event::Finish() 9 --->
-         <--- Exiting Event::Finish() 9 --->
-            <--- Exiting State::Finish() only (1) --->
+            <--- Exiting State::Finish() main (2) --->
 <--- Entering Template::HandleEvent() 1 --->
 ending trial
    <--- Entering Template::Finish() only (1) --->
-   <--- Entering InputDev::Stop() 1 --->
-   <--- Exiting InputDev::Stop() 1 --->
-   <--- Entering Trial::SaveRespData() 4 --->
-0 events saved
-   <--- Exiting Trial::SaveRespData() 4 --->
       <--- Entering StimulusImg::Finish() dk.png --->
       <--- Exiting StimulusImg::Finish() dk.png --->
       <--- Entering StimulusImg::Finish() sg.png --->
       <--- Exiting StimulusImg::Finish() sg.png --->
-            <--- Entering State::Finish() only (1) --->
-         <--- Entering Event::Finish() 1 --->
-         <--- Exiting Event::Finish() 1 --->
+            <--- Entering State::Finish() prep (1) --->
          <--- Entering Event::Finish() 7 --->
          <--- Entering StimulusWebcam::Finish() 0 --->
          <--- Exiting StimulusWebcam::Finish() 0 --->
          <--- Exiting Event::Finish() 7 --->
-         <--- Entering Event::Finish() 9 --->
-         <--- Exiting Event::Finish() 9 --->
-            <--- Exiting State::Finish() only (1) --->
-            <--- Entering State::PostTrial() only (1) --->
-            <--- Exiting State::Finish() only (1) --->
+            <--- Exiting State::Finish() prep (1) --->
+            <--- Entering State::PostTrial() prep (1) --->
+            <--- Exiting State::Finish() prep (1) --->
+            <--- Entering State::Finish() main (2) --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+            <--- Exiting State::Finish() main (2) --->
+            <--- Entering State::PostTrial() main (2) --->
+            <--- Exiting State::Finish() main (2) --->
    <--- Exiting Template::Finish() only (1) --->
 <--- Exiting Template::HandleEvent() 1 --->
 trial completed
@@ -795,9 +779,6 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=4 AND Ord=4
    <--- Entering Trial::Finish() 4 --->
       <--- Entering ItemCell::Finish() 4 --->
       <--- Exiting ItemCell::Finish() 4 --->
-<--- Entering Template::FindOrCreateInputDev() 0 --->
-<--- Exiting Template::FindOrCreateInputDev() 0 --->
-98 mouse samples copied
 <--- Exiting Trial::Finish() 4 --->
 <--- Exiting Experiment::FinishTrial() 0 --->
 <--- Entering Experiment::PrepareNextTrial() 0 --->
@@ -805,321 +786,72 @@ END OF TRIALS!
 <--- Exiting Experiment::PrepareNextTrial() 0 --->
 finished experiment
 cleanup
-sqlite: INSERT INTO Trial VALUES (NULL, 1, 1, 1, 1012, 15343, NULL, NULL)
+sqlite: INSERT INTO Trial VALUES (NULL, 1, 1, 1, 605, 2252, NULL, NULL)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
-NULL, 1, 420
-sqlite: INSERT INTO Response VALUES (NULL, 1, 420)
+NULL, 1, 521
+sqlite: INSERT INTO Response VALUES (NULL, 1, 521)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
-sqlite: BEGIN;
-sqlite: INSERT INTO Mouse VALUES (420, 13160, 517, 382, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13250, 515, 382, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13265, 511, 383, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13277, 502, 386, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13291, 493, 390, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13306, 485, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13318, 478, 395, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13329, 472, 397, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13343, 465, 399, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13350, 458, 400, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13361, 454, 400, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13373, 446, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13384, 438, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13399, 433, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13411, 429, 402, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13423, 426, 402, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13436, 425, 402, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13449, 424, 402, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13589, 424, 403, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13968, 422, 403, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13982, 415, 403, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 13994, 404, 403, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14009, 391, 403, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14018, 373, 402, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14031, 358, 399, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14043, 343, 397, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14057, 329, 396, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14071, 314, 396, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14082, 300, 394, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14095, 288, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14108, 274, 392, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14120, 266, 391, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14135, 260, 390, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14146, 256, 390, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14158, 254, 390, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14171, 253, 390, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14197, 252, 389, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14353, 251, 389, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14377, 249, 389, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14391, 248, 389, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14402, 246, 390, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14415, 243, 391, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14427, 241, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14440, 238, 394, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14453, 235, 395, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14465, 233, 396, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14479, 231, 397, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14491, 229, 397, NULL)
-sqlite: INSERT INTO Mouse VALUES (420, 14517, 228, 397, NULL)
-sqlite: COMMIT;
-respData has 1 events
-sqlite: BEGIN;
-sqlite: COMMIT;
+respData has 0 events
       <--- Entering ItemCell::StoreData() 1 --->
 sqlite: BEGIN;
-sqlite: INSERT INTO StateTiming VALUES (420, 1, 1011)
+sqlite: INSERT INTO StateTiming VALUES (521, 1, 605)
+sqlite: INSERT INTO StateTiming VALUES (521, 2, 616)
 sqlite: COMMIT;
 sqlite: BEGIN;
-sqlite: INSERT INTO EventTiming VALUES (420, 1, 1015)
-sqlite: INSERT INTO EventTiming VALUES (420, 7, 1020)
-sqlite: INSERT INTO EventTiming VALUES (420, 9, 1025)
+sqlite: INSERT INTO EventTiming VALUES (521, 7, 614)
+sqlite: INSERT INTO EventTiming VALUES (521, 1, 621)
 sqlite: COMMIT;
       <--- Exiting ItemCell::StoreData() 1 --->
-sqlite: INSERT INTO Trial VALUES (NULL, 2, 2, 1, 15360, 16976, NULL, NULL)
+sqlite: INSERT INTO Trial VALUES (NULL, 2, 2, 1, 2272, 2961, NULL, NULL)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
-NULL, 1, 421
-sqlite: INSERT INTO Response VALUES (NULL, 1, 421)
+NULL, 1, 522
+sqlite: INSERT INTO Response VALUES (NULL, 1, 522)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
-sqlite: BEGIN;
-sqlite: INSERT INTO Mouse VALUES (421, 15932, 516, 383, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 15945, 522, 381, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 15957, 533, 378, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 15970, 548, 374, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 15983, 567, 369, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 15995, 577, 367, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16008, 599, 362, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16020, 622, 358, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16032, 645, 355, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16047, 668, 353, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16058, 689, 352, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16070, 707, 352, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16084, 722, 352, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16097, 736, 352, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16109, 747, 352, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16123, 757, 352, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16135, 760, 352, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16147, 763, 353, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16161, 767, 355, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16174, 768, 356, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16185, 770, 357, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16222, 771, 358, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16233, 772, 359, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16265, 773, 360, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16290, 774, 361, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16302, 776, 361, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16318, 777, 361, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16333, 778, 362, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16346, 780, 363, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16358, 781, 364, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16375, 782, 364, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16385, 784, 365, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16398, 785, 367, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16408, 787, 368, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16419, 789, 370, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16430, 790, 371, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16443, 792, 372, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16455, 795, 373, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16467, 797, 374, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16480, 799, 374, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16494, 801, 375, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16511, 803, 375, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16519, 805, 375, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16544, 807, 375, NULL)
-sqlite: INSERT INTO Mouse VALUES (421, 16557, 808, 376, NULL)
-sqlite: COMMIT;
-respData has 1 events
-sqlite: BEGIN;
-sqlite: COMMIT;
+respData has 0 events
       <--- Entering ItemCell::StoreData() 2 --->
 sqlite: BEGIN;
-sqlite: INSERT INTO StateTiming VALUES (421, 1, 15360)
+sqlite: INSERT INTO StateTiming VALUES (522, 1, 2272)
+sqlite: INSERT INTO StateTiming VALUES (522, 2, 2283)
 sqlite: COMMIT;
 sqlite: BEGIN;
-sqlite: INSERT INTO EventTiming VALUES (421, 1, 15361)
-sqlite: INSERT INTO EventTiming VALUES (421, 7, 15369)
-sqlite: INSERT INTO EventTiming VALUES (421, 9, 15372)
+sqlite: INSERT INTO EventTiming VALUES (522, 7, 2281)
+sqlite: INSERT INTO EventTiming VALUES (522, 1, 2288)
 sqlite: COMMIT;
       <--- Exiting ItemCell::StoreData() 2 --->
-sqlite: INSERT INTO Trial VALUES (NULL, 3, 3, 1, 16990, 18865, NULL, NULL)
+sqlite: INSERT INTO Trial VALUES (NULL, 3, 3, 1, 2982, 3578, NULL, NULL)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
-NULL, 1, 422
-sqlite: INSERT INTO Response VALUES (NULL, 1, 422)
+NULL, 1, 523
+sqlite: INSERT INTO Response VALUES (NULL, 1, 523)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
-sqlite: BEGIN;
-sqlite: INSERT INTO Mouse VALUES (422, 17772, 508, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17784, 501, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17797, 486, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17810, 470, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17822, 453, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17835, 436, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17849, 428, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17861, 413, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17874, 399, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17887, 388, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17899, 378, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17912, 369, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17925, 361, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17940, 354, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17951, 348, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17963, 344, 383, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17976, 343, 383, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 17989, 342, 383, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18026, 341, 382, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18127, 339, 382, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18141, 338, 382, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18153, 335, 382, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18168, 334, 382, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18179, 331, 381, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18192, 327, 381, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18207, 323, 381, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18218, 319, 381, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18230, 314, 381, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18242, 310, 380, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18256, 307, 380, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18268, 302, 380, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18280, 297, 380, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18296, 292, 380, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18308, 290, 380, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18320, 287, 380, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18335, 284, 380, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18348, 283, 380, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18363, 282, 380, NULL)
-sqlite: INSERT INTO Mouse VALUES (422, 18376, 280, 380, NULL)
-sqlite: COMMIT;
-respData has 1 events
-sqlite: BEGIN;
-sqlite: COMMIT;
+respData has 0 events
       <--- Entering ItemCell::StoreData() 3 --->
 sqlite: BEGIN;
-sqlite: INSERT INTO StateTiming VALUES (422, 1, 16989)
+sqlite: INSERT INTO StateTiming VALUES (523, 1, 2982)
+sqlite: INSERT INTO StateTiming VALUES (523, 2, 2993)
 sqlite: COMMIT;
 sqlite: BEGIN;
-sqlite: INSERT INTO EventTiming VALUES (422, 1, 16991)
-sqlite: INSERT INTO EventTiming VALUES (422, 7, 16997)
-sqlite: INSERT INTO EventTiming VALUES (422, 9, 17003)
+sqlite: INSERT INTO EventTiming VALUES (523, 7, 2990)
+sqlite: INSERT INTO EventTiming VALUES (523, 1, 2997)
 sqlite: COMMIT;
       <--- Exiting ItemCell::StoreData() 3 --->
-sqlite: INSERT INTO Trial VALUES (NULL, 4, 4, 1, 18887, 26332, NULL, NULL)
+sqlite: INSERT INTO Trial VALUES (NULL, 4, 4, 1, 3597, 4260, NULL, NULL)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
-NULL, 1, 423
-sqlite: INSERT INTO Response VALUES (NULL, 1, 423)
+NULL, 1, 524
+sqlite: INSERT INTO Response VALUES (NULL, 1, 524)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
-sqlite: BEGIN;
-sqlite: INSERT INTO Mouse VALUES (423, 19580, 512, 383, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19591, 512, 381, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19602, 516, 378, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19613, 532, 371, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19623, 544, 366, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19639, 571, 359, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19648, 619, 351, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19661, 654, 350, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19674, 686, 350, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19686, 715, 350, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19699, 741, 350, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19713, 765, 350, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19725, 786, 355, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19738, 804, 358, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19751, 818, 361, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19763, 828, 364, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19779, 835, 365, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19789, 840, 367, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19801, 844, 367, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19815, 846, 368, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19840, 847, 369, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19866, 848, 370, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19878, 849, 371, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19904, 849, 372, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19916, 850, 373, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19942, 850, 374, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19955, 850, 375, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19968, 850, 376, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19981, 850, 378, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 19993, 850, 381, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 20005, 850, 383, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 20018, 849, 384, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 20030, 848, 385, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 20095, 848, 386, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 20171, 848, 387, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 20183, 848, 390, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 20197, 848, 391, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 20210, 848, 392, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 20247, 848, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 21574, 849, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 21599, 850, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 21689, 851, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 21714, 852, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 21753, 853, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 22096, 855, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 22122, 856, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25081, 859, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25094, 862, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25106, 866, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25120, 870, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25132, 872, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25145, 875, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25158, 878, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25170, 882, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25183, 887, 393, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25196, 891, 394, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25209, 895, 395, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25221, 899, 396, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25235, 902, 397, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25247, 906, 398, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25259, 910, 399, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25273, 913, 400, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25285, 916, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25298, 918, 402, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25312, 920, 402, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25324, 921, 404, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25337, 922, 405, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25350, 924, 406, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25363, 927, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25375, 930, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25412, 932, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25422, 939, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25433, 941, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25454, 942, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25546, 940, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25561, 936, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25574, 932, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25587, 925, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25598, 919, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25609, 912, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25619, 906, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25631, 899, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25643, 892, 407, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25655, 886, 405, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25669, 881, 403, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25681, 877, 402, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25694, 874, 402, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25707, 872, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25720, 871, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25734, 870, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25758, 869, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25770, 868, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25784, 866, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25797, 865, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25834, 864, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25860, 863, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25885, 862, 401, NULL)
-sqlite: INSERT INTO Mouse VALUES (423, 25924, 860, 401, NULL)
-sqlite: COMMIT;
-respData has 1 events
-sqlite: BEGIN;
-sqlite: COMMIT;
+respData has 0 events
       <--- Entering ItemCell::StoreData() 4 --->
 sqlite: BEGIN;
-sqlite: INSERT INTO StateTiming VALUES (423, 1, 18886)
+sqlite: INSERT INTO StateTiming VALUES (524, 1, 3596)
+sqlite: INSERT INTO StateTiming VALUES (524, 2, 3607)
 sqlite: COMMIT;
 sqlite: BEGIN;
-sqlite: INSERT INTO EventTiming VALUES (423, 1, 18888)
-sqlite: INSERT INTO EventTiming VALUES (423, 7, 18894)
-sqlite: INSERT INTO EventTiming VALUES (423, 9, 18899)
+sqlite: INSERT INTO EventTiming VALUES (524, 7, 3605)
+sqlite: INSERT INTO EventTiming VALUES (524, 1, 3612)
 sqlite: COMMIT;
       <--- Exiting ItemCell::StoreData() 4 --->
 sqlite: UPDATE Session SET Completion='COMPLETED' WHERE SessionID=1
 <--- Entering Experiment::~Experiment() --->
-      <--- Entering Webcam::~Webcam() 0 --->
-      <--- Exiting Webcam::~Webcam() 0 --->
 .Deleting Trials.
    <--- Entering Trial::~Trial() 4 --->
    <--- Exiting Trial::~Trial() 4 --->
@@ -1151,30 +883,32 @@ sqlite: UPDATE Session SET Completion='COMPLETED' WHERE SessionID=1
    <--- Entering ItemCell::~ItemCell() 1 --->
       <--- Entering StimulusImg::~StimulusImg() dk.png --->
       <--- Exiting StimulusImg::~StimulusImg() dk.png --->
-      <--- Entering StimulusImg::~StimulusImg() sg.png --->
-      <--- Exiting StimulusImg::~StimulusImg() sg.png --->
+      <--- Entering StimulusImg::~StimulusImg() sg.jpg --->
+      <--- Exiting StimulusImg::~StimulusImg() sg.jpg --->
    <--- Exiting ItemCell::~ItemCell() 1 --->
 .Deleting Templates.
    <--- Entering Template::~Template() only (1) --->
-      <--- Entering State::~State() only (1) --->
-         <--- Entering Event::~Event() 9 --->
-         <--- Exiting Event::~Event() 9 --->
-         <--- Entering Event::~Event() 7 --->
-         <--- Exiting Event::~Event() 7 --->
+      <--- Entering State::~State() main (2) --->
          <--- Entering Event::~Event() 1 --->
          <--- Exiting Event::~Event() 1 --->
          <--- Entering Watch::~Watch() 1 --->
          <--- Exiting Watch::~Watch() 1 --->
-      <--- Exiting State::~State() only (1) --->
-      <--- Entering Mouse_SDL::~Mouse_SDL() 0 --->
-      <--- Entering StimulusImg::~StimulusImg() mouse --->
-      <--- Exiting StimulusImg::~StimulusImg() mouse --->
-      <--- Exiting Mouse_SDL::~Mouse_SDL() 0 --->
+      <--- Exiting State::~State() main (2) --->
+      <--- Entering State::~State() prep (1) --->
+         <--- Entering Event::~Event() 7 --->
+         <--- Entering StimulusWebcam::Cleanup() 0 --->
+         <--- Entering StimulusWebcam::Cleanup() 0 --->
+         <--- Exiting Event::~Event() 7 --->
+         <--- Entering Watch::~Watch() 2 --->
+         <--- Exiting Watch::~Watch() 2 --->
+      <--- Exiting State::~State() prep (1) --->
    <--- Exiting Template::~Template() only (1) --->
 .Deleting Stimuli.
 .Deleting Devices.
 .Deleting Recordsets.
 .Deleting Recordsets.
+      <--- Entering Webcam2::~Webcam2() 0 --->
+      <--- Exiting Webcam2::~Webcam2() 0 --->
 <--- Exiting Experiment::~Experiment() --->
 <--- Entering Audio_SDL::~Audio_SDL() 0 --->
 <--- Exiting Audio_SDL::~Audio_SDL() 0 --->

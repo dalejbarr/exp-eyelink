@@ -1,12 +1,12 @@
 #!/bin/bash -eu
 REMOTE=yap
-cmd="export DISPLAY=:0; cd socket; ./helloworld.sh $1"
+#cmd="export DISPLAY=:0; cd socket; ./helloworld.sh $1"
 
-echo $cmd
+#echo $cmd
 ssh -X $REMOTE bash -c "'
 export DISPLAY=:0
-cd socket_remote
-./helloworld.sh $1
-'" > log_remote.txt &
+cd Experiments/EESP4_Listener
+./run_listener.sh $1
+'" > log_listener.txt &
 sleep 2
-./helloworld.sh $1 > log_local.txt
+./run.sh $1 > log_speaker.txt

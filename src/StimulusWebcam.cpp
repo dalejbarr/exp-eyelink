@@ -18,7 +18,8 @@ StimulusWebcam::StimulusWebcam(long id, ArgMMap mmArgs, Template * pTemplate, We
 	pair<ArgIter, ArgIter> pii;
   ArgIter ii;
 
-	m_rect.w = m_pCam->GetWidth();
+	// m_rect.w = m_pCam->GetWidth();
+	m_rect.w = 1280;
 	pii = mmArgs.equal_range("width");
 	if (pii.first != pii.second) {
 		ii = pii.first;
@@ -26,7 +27,8 @@ StimulusWebcam::StimulusWebcam(long id, ArgMMap mmArgs, Template * pTemplate, We
 	} 
   //ArgIter ii;
 
-	m_rect.h = m_pCam->GetHeight();
+	m_rect.h = 800;
+	//m_rect.h = m_pCam->GetHeight();
 	pii = mmArgs.equal_range("height");
 	if (pii.first != pii.second) {
 		ii = pii.first;
@@ -63,14 +65,16 @@ int StimulusWebcam::Prepare() {
 	}
 
 	if (m_rect.x == -1) {
-		m_rect.x = (int) ((g_pDisplay->m_nWidth - m_rect.w) / 2);
-		g_pErr->Debug(pastestr::paste("sddd", " ", "x:", (long) m_rect.x,
+		m_rect.x = (int) ((g_pDisplay->m_nWidth - m_pCam->GetWidth()) / 2);
+		m_rect.w = m_pCam->GetWidth();
+		g_pErr->Debug(pastestr::paste("sddd", " ", "x:", (long) m_pCam->GetWidth(),
 																	(long) g_pDisplay->m_nWidth,
 																	(long) m_rect.w));
 	}
 
 	if (m_rect.y == -1) {
-		m_rect.y = (int) ((g_pDisplay->m_nHeight - m_rect.h) / 2);
+		m_rect.y = (int) ((g_pDisplay->m_nHeight - m_pCam->GetHeight()) / 2);
+		m_rect.h = (int) m_pCam->GetHeight();
 		g_pErr->Debug(pastestr::paste("sddd", " ", "y:", (long) m_rect.y,
 																	(long) g_pDisplay->m_nHeight,
 																	(long) m_rect.h));

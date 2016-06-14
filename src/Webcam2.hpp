@@ -47,9 +47,9 @@ protected:
 	bool m_bInitialized;
 	bool m_bIsVisible;
 public:
-	inline int GetWidth() { return m_vd.width; };
-	inline int GetHeight() { return m_vd.height; };
-	inline bool IsVisible() { return m_bIsVisible; };
+	int GetWidth(); // { return m_vd.width; };
+	int GetHeight(); // { return m_vd.height; };
+	bool IsVisible(); // { return m_bIsVisible; };
 	Webcam2(const char * pDev, int width = -1, int height = -1);
 	virtual ~Webcam2();
 	int Initialize();
