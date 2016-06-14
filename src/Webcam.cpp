@@ -19,7 +19,7 @@ Webcam::Webcam() {
 	m_bInitialized = false;
 	m_buffer_stream = NULL;
 	m_frame = NULL;
-
+	m_bIsVisible = false;
  
 	g_pErr->DFO("Webcam::Webcam", 0L, 3);
 }
@@ -48,6 +48,8 @@ Webcam::~Webcam() {
 
 int Webcam::Initialize() {
 	if (!m_bInitialized) {
+
+		m_bIsVisible = false;
 
 		m_width = g_pDisplay->m_nWidth;
 		m_height = g_pDisplay->m_nHeight;
@@ -166,6 +168,8 @@ int Webcam::DeactivateStreaming() {
 	if(ioctl(m_fd, VIDIOC_STREAMOFF, &m_type) < 0){
     g_pErr->Report("Error with VIDIOC_STREAMOFF");
 	}
+
+	m_bIsVisible = false;
 }
 
 SDL_Surface * Webcam::GrabFrame() {
@@ -200,6 +204,8 @@ SDL_Surface * Webcam::GrabFrame() {
 	m_frame = IMG_Load_RW(m_buffer_stream, 0);
 	if (m_frame == NULL) {
 		g_pErr->Report(pastestr::paste("ss", "", "couldn't grab frame: ", IMG_GetError()));
+	} else {
+		m_bIsVisible = true;
 	}
 
 	return m_frame;

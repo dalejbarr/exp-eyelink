@@ -257,10 +257,6 @@ int Experiment::Cleanup() {
 		delete s_pSockListener;
 	}
 
-	if (s_pCam) {
-		delete s_pCam;
-	}
-
   g_pErr->Debug(".Deleting Trials.");
   m_mapTrial.clear();
 
@@ -297,6 +293,11 @@ int Experiment::Cleanup() {
 
   g_pErr->Debug(".Deleting Recordsets.");
   m_mapCounter.clear();
+	if (s_pCam) {
+		delete s_pCam;
+		s_pCam = NULL;
+	}
+
 }
 
 int Experiment::LoadTemplates() {

@@ -14,15 +14,18 @@ protected:
 	int m_height;
 	SDL_RWops * m_buffer_stream;
 	bool m_bInitialized;
+	bool m_bIsVisible;
 public:
 	inline int GetWidth() { return m_width; };
 	inline int GetHeight() { return m_height; };
+	inline bool IsVisible() { returm m_bIsVisible; };
 	Webcam();
 	virtual ~Webcam();
 	int Initialize();
 	int ActivateStreaming();
 	int DeactivateStreaming();
 	SDL_Surface * GrabFrame();
+
 };
 
 #endif

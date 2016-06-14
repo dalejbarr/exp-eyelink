@@ -45,9 +45,11 @@ protected:
 	//int m_height;
 	SDL_RWops * m_buffer_stream;
 	bool m_bInitialized;
+	bool m_bIsVisible;
 public:
 	inline int GetWidth() { return m_vd.width; };
 	inline int GetHeight() { return m_vd.height; };
+	inline bool IsVisible() { return m_bIsVisible; };
 	Webcam2(const char * pDev, int width = -1, int height = -1);
 	virtual ~Webcam2();
 	int Initialize();

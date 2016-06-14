@@ -54,6 +54,7 @@ Webcam2::Webcam2(const char * pDev, int width, int height) {
 
 	m_bInitialized = false;
 	m_frame = NULL;
+	m_bIsVisible = false;
 	m_vd.width = width;
 	m_vd.height = height;
 	m_vd.isstreaming = false;
@@ -101,6 +102,7 @@ Webcam2::~Webcam2() {
 int Webcam2::Initialize() {
 	if (!m_bInitialized) {
 		m_bInitialized = true;
+		m_bIsVisible = false;
 		
 		if (m_vd.width == -1) {
 			m_vd.width = g_pDisplay->m_nWidth;
@@ -216,6 +218,7 @@ int Webcam2::DeactivateStreaming() {
     g_pErr->Report("Unable to stop capture");
   }
   m_vd.isstreaming = false;
+	m_bIsVisible = false;
 
   return ret;
 }
@@ -255,6 +258,8 @@ SDL_Surface * Webcam2::GrabFrame() {
 	m_frame = IMG_Load_RW(m_buffer_stream, 0);
 	if (m_frame == NULL) {
 		g_pErr->Report(pastestr::paste("ss", "", "couldn't grab frame: ", IMG_GetError()));
+	} else {
+		m_bIsVisible = true;
 	}
 	/*
 	// Create a stream based on our buffer.

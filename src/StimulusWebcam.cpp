@@ -85,11 +85,13 @@ int StimulusWebcam::Action() {
   g_pErr->DFI("StimulusWebcam::Action", 0L, 4);
 
 	if (m_pThread) {
-		g_pErr->Report("StimulusWebcam::Prepare(): Thread already active");
+		g_pErr->Debug("StimulusWebcam::Prepare(): Thread already active");
+	} else {
+		m_pThread = SDL_CreateThread(StimulusWebcam::LaunchThread, this);
+		// TODO delay until webcam visible
+		//while(!m_pCam->IsVisible()) SDL_Delay(20);
+		g_pErr->DFO("StimulusWebcam::Action", 0L, 4);
 	}
-
-	m_pThread = SDL_CreateThread(StimulusWebcam::LaunchThread, this);
-  g_pErr->DFO("StimulusWebcam::Action", 0L, 4);
 
 	return 0;
 }
@@ -97,17 +99,22 @@ int StimulusWebcam::Action() {
 int StimulusWebcam::Finish() {
   g_pErr->DFI("StimulusWebcam::Finish", 0L, 4);
 
-	s_bContinue = false;
-	int nStatus = 0;
-	SDL_WaitThread(m_pThread, &nStatus);
-	m_pThread = NULL;
 	
   g_pErr->DFO("StimulusWebcam::Finish", 0L, 4);
 
 	return 0;
 }
 
-int StimulusWebcam::Cleanup() {
+int StimulusWebcam::Cleanup() {	
+  g_pErr->DFI("StimulusWebcam::Cleanup", 0L, 4);
+
+	s_bContinue = false;
+	int nStatus = 0;
+	SDL_WaitThread(m_pThread, &nStatus);
+	m_pThread = NULL;
+
+  g_pErr->DFI("StimulusWebcam::Cleanup", 0L, 4);
+
 	return 0;
 }
 
