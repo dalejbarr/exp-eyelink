@@ -1442,6 +1442,16 @@ Uint32 Experiment::GetMSElapsed() {
   return (ClockFn()-m_msExpBegin);
 }
 
+Uint32 Experiment::GetTrialBegin() {
+	Uint32 msBegin = 0;
+
+	if (m_pCurTrial) {
+		msBegin = m_pCurTrial->m_msBegin;
+	} 
+
+	return msBegin;
+}
+
 int Experiment::LoadConfiguration(unsigned long eid) {
 	if (g_pConfig) {
 		delete g_pConfig;

@@ -164,7 +164,7 @@ public:
   void ResetCounter(const char * pcCtr);
   long GetCounter(const char * pcCtr);
   Uint32 GetMSElapsed();
-
+	Uint32 GetTrialBegin();
   int Loop();
 };
 

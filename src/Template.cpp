@@ -274,7 +274,8 @@ int Template::Run() {
   if (m_pCurState) {
     m_pCurState->Run();
   } else {
-    g_pErr->Report(pastestr::paste("ss", " ", "no states found for Template", m_strName.c_str()));
+    g_pErr->Report(pastestr::paste("ss", " ", "no states found for Template", 
+																	 m_strName.c_str()));
   }
 
   g_pErr->DFO("Template::Run", m_id, 1);

@@ -25,8 +25,8 @@ response/s0000001
 sqlite: SELECT ListID FROM Session WHERE SessionID=1
 ListID is 1 for SessionID 1
 sqlite: UPDATE Session SET Completion='IN PROGRESS' WHERE SessionID=1
-sqlite: UPDATE Session SET Seed=1465910516 WHERE SessionID=1
-established seed of 1465910516
+sqlite: UPDATE Session SET Seed=1466417403 WHERE SessionID=1
+established seed of 1466417403
 sqlite: UPDATE Session SET Completion='IN_PROGRESS' WHERE SessionID=1
 sqlite: UPDATE Session SET Date=datetime('now') WHERE SessionID=1
 LOADING EXPERIMENT CONFIGURATION...
@@ -35,6 +35,10 @@ sqlite: SELECT Var, Data FROM EXPConfig
 Display_Width = 1280
 Display_Height = 1024
 Video_Device = /dev/video0
+Audio_Input_Device_ID = 0
+Audio_Sampling_Rate = 44100
+Audio_Input_Channels = 2
+SOCKET_CLIENT = 1 yap:4545
 sqlite: SELECT SubjID FROM Subject WHERE SessionID=1
 Subject ID is 1
 <--- Entering Experiment::LoadTemplates() --->
@@ -80,12 +84,19 @@ ORDER BY Msec ASC
          <--- Entering State::GetArgs() prep (1) --->
 sqlite: SELECT ArgID, Info 
 FROM EventArgs
-WHERE EventID=7
+WHERE EventID=1
          <--- Exiting State::GetArgs() prep (1) --->
-the EvtCmdID was 400
-creating new webcam instance...
-      <--- Entering Webcam2::Webcam2() 0 --->
-      <--- Exiting Webcam2::Webcam2() 0 --->
+the EvtCmdID was 5
+   <--- Entering Event::Event() 1 --->
+   <--- Exiting Event::Event() 1 --->
+         <--- Entering State::GetArgs() prep (1) --->
+sqlite: SELECT ArgID, Info 
+FROM EventArgs
+WHERE EventID=2
+         <--- Exiting State::GetArgs() prep (1) --->
+the EvtCmdID was 8
+         <--- Entering StimulusTxt::StimulusTxt()() press key to continue --->
+         <--- Exiting StimulusTxt::StimulusTxt()() press key to continue --->
       <--- Exiting LoadEvents() prep (1) --->
       <--- Entering LoadWatches() prep (1) --->
 sqlite: SELECT WatchID, WCmdID, NextStateID 
@@ -95,10 +106,11 @@ ORDER BY WatchID ASC
          <--- Entering State::GetArgs() prep (1) --->
 sqlite: SELECT ArgID, Info 
 FROM WatchArgs
-WHERE WatchID=2
+WHERE WatchID=1
          <--- Exiting State::GetArgs() prep (1) --->
-      <--- Entering WatchDone::WatchDone() 2 --->
-      <--- Exiting WatchDone::WatchDone() 2 --->
+         <--- Entering WatchKey::WatchKey() 1 --->
+watching for ANYKEY
+         <--- Exiting WatchKey::WatchKey() 1 --->
       <--- Exiting LoadWatches() prep (1) --->
       <--- Entering LoadEvents() main (2) --->
 sqlite: SELECT EventID, EvtCmdID, Msec 
@@ -108,9 +120,19 @@ ORDER BY Msec ASC
          <--- Entering State::GetArgs() main (2) --->
 sqlite: SELECT ArgID, Info 
 FROM EventArgs
-WHERE EventID=1
+WHERE EventID=3
          <--- Exiting State::GetArgs() main (2) --->
-the EvtCmdID was 12
+the EvtCmdID was 5
+   <--- Entering Event::Event() 3 --->
+   <--- Exiting Event::Event() 3 --->
+         <--- Entering State::GetArgs() main (2) --->
+sqlite: SELECT ArgID, Info 
+FROM EventArgs
+WHERE EventID=4
+         <--- Exiting State::GetArgs() main (2) --->
+the EvtCmdID was 8
+         <--- Entering StimulusTxt::StimulusTxt()() please wait --->
+         <--- Exiting StimulusTxt::StimulusTxt()() please wait --->
       <--- Exiting LoadEvents() main (2) --->
       <--- Entering LoadWatches() main (2) --->
 sqlite: SELECT WatchID, WCmdID, NextStateID 
@@ -120,11 +142,10 @@ ORDER BY WatchID ASC
          <--- Entering State::GetArgs() main (2) --->
 sqlite: SELECT ArgID, Info 
 FROM WatchArgs
-WHERE WatchID=1
+WHERE WatchID=2
          <--- Exiting State::GetArgs() main (2) --->
-         <--- Entering WatchMouse::WatchMouse() 1 --->
-watching for ANYBUTTON down
-         <--- Exiting WatchMouse::WatchMouse() 1 --->
+      <--- Entering WatchRemain::WatchRemain() 2 --->
+      <--- Exiting WatchRemain::WatchRemain() 2 --->
       <--- Exiting LoadWatches() main (2) --->
 <--- Exiting Experiment::LoadTemplates() --->
 <--- Entering Experiment::LoadItems() --->
@@ -155,9 +176,6 @@ dk.png
 sqlite: SELECT Code, Data 
 FROM Resource 
 WHERE ItemCellID= 1 ORDER BY Code
-IMGFILE=sg.jpg
-SFILE=01.raw
-TXT=Hello world
    <--- Exiting ItemCell::LoadResources() 1 --->
    <--- Entering ItemCell::LoadAOIs() 2 --->
 sqlite: SELECT AOIArgs.AOIID, AOIArgs.ArgID, AOIArgs.Info 
@@ -179,9 +197,6 @@ sg.png
 sqlite: SELECT Code, Data 
 FROM Resource 
 WHERE ItemCellID= 2 ORDER BY Code
-IMGFILE=sg.jpg
-SFILE=02.raw
-TXT=Yo
    <--- Exiting ItemCell::LoadResources() 2 --->
    <--- Entering ItemCell::LoadAOIs() 3 --->
 sqlite: SELECT AOIArgs.AOIID, AOIArgs.ArgID, AOIArgs.Info 
@@ -203,9 +218,6 @@ dk.png
 sqlite: SELECT Code, Data 
 FROM Resource 
 WHERE ItemCellID= 3 ORDER BY Code
-IMGFILE=sg.jpg
-SFILE=03.raw
-TXT=Trial3
    <--- Exiting ItemCell::LoadResources() 3 --->
    <--- Entering ItemCell::LoadAOIs() 4 --->
 sqlite: SELECT AOIArgs.AOIID, AOIArgs.ArgID, AOIArgs.Info 
@@ -227,9 +239,6 @@ sg.png
 sqlite: SELECT Code, Data 
 FROM Resource 
 WHERE ItemCellID= 4 ORDER BY Code
-IMGFILE=sg.jpg
-SFILE=04.raw
-TXT=Trial4
    <--- Exiting ItemCell::LoadResources() 4 --->
 <--- Exiting Experiment::LoadItems() --->
 <--- Entering Experiment::PurgeTrialsTodo() --->
@@ -292,7 +301,7 @@ There are 4 trials in all
 <--- Exiting Experiment::InitializeExp() --->
 <--- Entering Experiment::Prepare() 0 --->
 display not initialized
-Display size is 1280 1024
+Display size is 1366 768
 display initialized
 ttf initialized
 <--- Entering Audio_SDL::Audio_SDL() 0 --->
@@ -317,19 +326,20 @@ initializing memory surface
       <--- Entering StimulusImg::Prepare() dk.png --->
       <--- Exiting StimulusImg::Prepare() dk.png --->
    <--- Entering State::Prepare() prep (1) --->
-         <--- Entering Event::Prepare() 7 --->
-         <--- Entering StimulusWebcam::Prepare() 0 --->
-format requested unavailable, got width 1280 height 800
-x: 1280 1280 1280
-y: 112 1024 800
-         <--- Exiting StimulusWebcam::Prepare() 0 --->
-         <--- Exiting Event::Prepare() 7 --->
+         <--- Entering Event::Prepare() 1 --->
+         <--- Exiting Event::Prepare() 1 --->
+         <--- Entering Event::Prepare() 2 --->
+   <--- Entering StimulusTxt::Prepare() 0 --->
+   <--- Exiting StimulusTxt::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 2 --->
    <--- Exiting State::Prepare() prep (1) --->
    <--- Entering State::Prepare() main (2) --->
-         <--- Entering Event::Prepare() 1 --->
-   <--- Entering StimulusDisplayOn::Prepare() 0 --->
-   <--- Exiting StimulusDisplayOn::Prepare() 0 --->
-         <--- Exiting Event::Prepare() 1 --->
+         <--- Entering Event::Prepare() 3 --->
+         <--- Exiting Event::Prepare() 3 --->
+         <--- Entering Event::Prepare() 4 --->
+   <--- Entering StimulusTxt::Prepare() 0 --->
+   <--- Exiting StimulusTxt::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 4 --->
    <--- Exiting State::Prepare() main (2) --->
 <--- Entering Template::AttachState() 1 --->
 <--- Exiting Template::AttachState() 1 --->
@@ -341,50 +351,55 @@ y: 112 1024 800
       <--- Entering Template::Start() 1 --->
       <--- Exiting Template::Start() 1 --->
          <--- Entering State::Start() prep (1) --->
-         <--- Entering State::Main() prep (1) --->
          <--- Exiting State::Start() prep (1) --->
+         <--- Entering State::Main() prep (1) --->
    <--- Exiting Trial::Start() 1 --->
 <--- Exiting Experiment::StartNextTrial() 0 --->
-         <--- Entering Event::Action() 7 --->
-         <--- Entering StimulusWebcam::Action() 0 --->
-         <--- Exiting StimulusWebcam::Action() 0 --->
-         <--- Exiting Event::Action() 7 --->
-... user event 7 614
-      <--- Entering WatchDone::CheckCondition() 2 --->
-      <--- Exiting WatchDone::CheckCondition() 2 --->
-done signaled
+         <--- Entering Event::Action() 2 --->
+   <--- Entering StimulusTxt::Action() 0 --->
+   <--- Exiting StimulusTxt::Action() 0 --->
+   <--- Entering Stimulus::Action() 0 --->
+   <--- Exiting Stimulus::Action() 0 --->
+         <--- Exiting Event::Action() 2 --->
+... user event 7 991
+key space (32) pressed
+~-~-~-~-~ key down ~-~-~-~-~
+ANYKEY signaled (WatchID=1)
             <--- Entering State::Finish() prep (1) --->
          <--- Exiting State::Main() prep (1) --->
-         <--- Entering Event::Finish() 7 --->
-         <--- Entering StimulusWebcam::Finish() 0 --->
-         <--- Exiting StimulusWebcam::Finish() 0 --->
-         <--- Exiting Event::Finish() 7 --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
             <--- Exiting State::Finish() prep (1) --->
 <--- Entering Template::HandleEvent() 1 --->
 <--- Entering Template::AttachState() 1 --->
 <--- Exiting Template::AttachState() 1 --->
          <--- Entering State::Start() main (2) --->
-         <--- Entering State::Main() main (2) --->
          <--- Exiting State::Start() main (2) --->
-         <--- Entering Event::Action() 1 --->
-<--- Exiting Template::HandleEvent() 1 --->
-   <--- Entering StimulusDisplayOn::Action() 0 --->
-   <--- Exiting StimulusDisplayOn::Action() 0 --->
+         <--- Entering State::Main() main (2) ---><--- Exiting Template::HandleEvent() 1 --->
+
+      <--- Entering WatchRemain::Activate() 2 --->
+981 1896 5000 trial begin vs current clock vs wait
+wait for 4085
+      <--- Exiting WatchRemain::Activate() 2 --->
+         <--- Entering Event::Action() 4 --->
+   <--- Entering StimulusTxt::Action() 0 --->
+   <--- Exiting StimulusTxt::Action() 0 --->
    <--- Entering Stimulus::Action() 0 --->
    <--- Exiting Stimulus::Action() 0 --->
-         <--- Exiting Event::Action() 1 --->
-... user event 7 621
-   <--- Entering State::ProcessMouseButton() main (2) --->
-         <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140720308486145
-1 result 1
-         <--- Exiting WatchMouse::CheckCondition() 1 --->
-mouse button signaled (WatchID=1)
-   <--- Exiting State::ProcessMouseButton() main (2) --->
+         <--- Exiting Event::Action() 4 --->
+... user event 7 1902
+~-~-~-~-~ key up ~-~-~-~-~
+... user event 30 5978
+      <--- Entering WatchRemain::CheckCondition() 2 --->
+      <--- Exiting WatchRemain::CheckCondition() 2 --->
             <--- Entering State::Finish() main (2) --->
          <--- Exiting State::Main() main (2) --->
-         <--- Entering Event::Finish() 1 --->
-         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 4 --->
+         <--- Exiting Event::Finish() 4 --->
             <--- Exiting State::Finish() main (2) --->
 <--- Entering Template::HandleEvent() 1 --->
 ending trial
@@ -394,16 +409,18 @@ ending trial
       <--- Entering StimulusImg::Finish() dk.png --->
       <--- Exiting StimulusImg::Finish() dk.png --->
             <--- Entering State::Finish() prep (1) --->
-         <--- Entering Event::Finish() 7 --->
-         <--- Entering StimulusWebcam::Finish() 0 --->
-         <--- Exiting StimulusWebcam::Finish() 0 --->
-         <--- Exiting Event::Finish() 7 --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
             <--- Exiting State::Finish() prep (1) --->
             <--- Entering State::PostTrial() prep (1) --->
             <--- Exiting State::Finish() prep (1) --->
             <--- Entering State::Finish() main (2) --->
-         <--- Entering Event::Finish() 1 --->
-         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 4 --->
+         <--- Exiting Event::Finish() 4 --->
             <--- Exiting State::Finish() main (2) --->
             <--- Entering State::PostTrial() main (2) --->
             <--- Exiting State::Finish() main (2) --->
@@ -435,16 +452,20 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=1 AND Ord=1
       <--- Entering StimulusImg::Prepare() sg.png --->
       <--- Exiting StimulusImg::Prepare() sg.png --->
    <--- Entering State::Prepare() prep (1) --->
-         <--- Entering Event::Prepare() 7 --->
-         <--- Entering StimulusWebcam::Prepare() 0 --->
-         <--- Exiting StimulusWebcam::Prepare() 0 --->
-         <--- Exiting Event::Prepare() 7 --->
+         <--- Entering Event::Prepare() 1 --->
+         <--- Exiting Event::Prepare() 1 --->
+         <--- Entering Event::Prepare() 2 --->
+   <--- Entering StimulusTxt::Prepare() 0 --->
+   <--- Exiting StimulusTxt::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 2 --->
    <--- Exiting State::Prepare() prep (1) --->
    <--- Entering State::Prepare() main (2) --->
-         <--- Entering Event::Prepare() 1 --->
-   <--- Entering StimulusDisplayOn::Prepare() 0 --->
-   <--- Exiting StimulusDisplayOn::Prepare() 0 --->
-         <--- Exiting Event::Prepare() 1 --->
+         <--- Entering Event::Prepare() 3 --->
+         <--- Exiting Event::Prepare() 3 --->
+         <--- Entering Event::Prepare() 4 --->
+   <--- Entering StimulusTxt::Prepare() 0 --->
+   <--- Exiting StimulusTxt::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 4 --->
    <--- Exiting State::Prepare() main (2) --->
 <--- Entering Template::AttachState() 1 --->
 <--- Exiting Template::AttachState() 1 --->
@@ -460,52 +481,43 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=1 AND Ord=1
          <--- Exiting State::Start() prep (1) --->
    <--- Exiting Trial::Start() 2 --->
 <--- Exiting Experiment::StartNextTrial() 0 --->
-         <--- Entering Event::Action() 7 --->
-         <--- Entering StimulusWebcam::Action() 0 --->
-StimulusWebcam::Prepare(): Thread already active
-         <--- Exiting Event::Action() 7 --->
-... user event 7 2281
-      <--- Entering WatchDone::CheckCondition() 2 --->
-      <--- Exiting WatchDone::CheckCondition() 2 --->
-done signaled
+         <--- Entering Event::Action() 2 --->
+   <--- Entering StimulusTxt::Action() 0 --->
+   <--- Exiting StimulusTxt::Action() 0 --->
+   <--- Entering Stimulus::Action() 0 --->
+   <--- Exiting Stimulus::Action() 0 --->
+         <--- Exiting Event::Action() 2 --->
+... user event 7 6439
+key space (32) pressed
+~-~-~-~-~ key down ~-~-~-~-~
+ANYKEY signaled (WatchID=1)
             <--- Entering State::Finish() prep (1) --->
          <--- Exiting State::Main() prep (1) --->
-         <--- Entering Event::Finish() 7 --->
-         <--- Entering StimulusWebcam::Finish() 0 --->
-         <--- Exiting StimulusWebcam::Finish() 0 --->
-         <--- Exiting Event::Finish() 7 --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
             <--- Exiting State::Finish() prep (1) --->
 <--- Entering Template::HandleEvent() 1 --->
 <--- Entering Template::AttachState() 1 --->
 <--- Exiting Template::AttachState() 1 --->
          <--- Entering State::Start() main (2) --->
          <--- Entering State::Main() main (2) --->
-         <--- Entering Event::Action() 1 --->
          <--- Exiting State::Start() main (2) --->
-   <--- Entering StimulusDisplayOn::Action() 0 --->
+      <--- Entering WatchRemain::Activate() 2 --->
 <--- Exiting Template::HandleEvent() 1 --->
-   <--- Exiting StimulusDisplayOn::Action() 0 --->
-   <--- Entering Stimulus::Action() 0 --->
-   <--- Exiting Stimulus::Action() 0 --->
-         <--- Exiting Event::Action() 1 --->
-... user event 7 2288
-   <--- Entering State::ProcessMouseButton() main (2) --->
-         <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140720308486144
-1 result 0
-         <--- Exiting WatchMouse::CheckCondition() 1 --->
-   <--- Exiting State::ProcessMouseButton() main (2) --->
-   <--- Entering State::ProcessMouseButton() main (2) --->
-         <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140720308486145
-1 result 1
-         <--- Exiting WatchMouse::CheckCondition() 1 --->
-mouse button signaled (WatchID=1)
-   <--- Exiting State::ProcessMouseButton() main (2) --->
+6434 15342 5000 trial begin vs current clock vs wait
+stop immediately
+      <--- Exiting WatchRemain::Activate() 2 --->
+... user event 30 15342
+      <--- Entering WatchRemain::CheckCondition() 2 --->
+      <--- Exiting WatchRemain::CheckCondition() 2 --->
             <--- Entering State::Finish() main (2) --->
          <--- Exiting State::Main() main (2) --->
-         <--- Entering Event::Finish() 1 --->
-         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 4 --->
+         <--- Exiting Event::Finish() 4 --->
             <--- Exiting State::Finish() main (2) --->
 <--- Entering Template::HandleEvent() 1 --->
 ending trial
@@ -515,16 +527,18 @@ ending trial
       <--- Entering StimulusImg::Finish() sg.png --->
       <--- Exiting StimulusImg::Finish() sg.png --->
             <--- Entering State::Finish() prep (1) --->
-         <--- Entering Event::Finish() 7 --->
-         <--- Entering StimulusWebcam::Finish() 0 --->
-         <--- Exiting StimulusWebcam::Finish() 0 --->
-         <--- Exiting Event::Finish() 7 --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
             <--- Exiting State::Finish() prep (1) --->
             <--- Entering State::PostTrial() prep (1) --->
             <--- Exiting State::Finish() prep (1) --->
             <--- Entering State::Finish() main (2) --->
-         <--- Entering Event::Finish() 1 --->
-         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 4 --->
+         <--- Exiting Event::Finish() 4 --->
             <--- Exiting State::Finish() main (2) --->
             <--- Entering State::PostTrial() main (2) --->
             <--- Exiting State::Finish() main (2) --->
@@ -556,16 +570,20 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=2 AND Ord=2
       <--- Entering StimulusImg::Prepare() dk.png --->
       <--- Exiting StimulusImg::Prepare() dk.png --->
    <--- Entering State::Prepare() prep (1) --->
-         <--- Entering Event::Prepare() 7 --->
-         <--- Entering StimulusWebcam::Prepare() 0 --->
-         <--- Exiting StimulusWebcam::Prepare() 0 --->
-         <--- Exiting Event::Prepare() 7 --->
+         <--- Entering Event::Prepare() 1 --->
+         <--- Exiting Event::Prepare() 1 --->
+         <--- Entering Event::Prepare() 2 --->
+   <--- Entering StimulusTxt::Prepare() 0 --->
+   <--- Exiting StimulusTxt::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 2 --->
    <--- Exiting State::Prepare() prep (1) --->
    <--- Entering State::Prepare() main (2) --->
-         <--- Entering Event::Prepare() 1 --->
-   <--- Entering StimulusDisplayOn::Prepare() 0 --->
-   <--- Exiting StimulusDisplayOn::Prepare() 0 --->
-         <--- Exiting Event::Prepare() 1 --->
+         <--- Entering Event::Prepare() 3 --->
+         <--- Exiting Event::Prepare() 3 --->
+         <--- Entering Event::Prepare() 4 --->
+   <--- Entering StimulusTxt::Prepare() 0 --->
+   <--- Exiting StimulusTxt::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 4 --->
    <--- Exiting State::Prepare() main (2) --->
 <--- Entering Template::AttachState() 1 --->
 <--- Exiting Template::AttachState() 1 --->
@@ -581,52 +599,52 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=2 AND Ord=2
          <--- Exiting State::Start() prep (1) --->
    <--- Exiting Trial::Start() 3 --->
 <--- Exiting Experiment::StartNextTrial() 0 --->
-         <--- Entering Event::Action() 7 --->
-         <--- Entering StimulusWebcam::Action() 0 --->
-StimulusWebcam::Prepare(): Thread already active
-         <--- Exiting Event::Action() 7 --->
-... user event 7 2990
-      <--- Entering WatchDone::CheckCondition() 2 --->
-      <--- Exiting WatchDone::CheckCondition() 2 --->
-done signaled
+~-~-~-~-~ key up ~-~-~-~-~
+         <--- Entering Event::Action() 2 --->
+   <--- Entering StimulusTxt::Action() 0 --->
+   <--- Exiting StimulusTxt::Action() 0 --->
+   <--- Entering Stimulus::Action() 0 --->
+   <--- Exiting Stimulus::Action() 0 --->
+         <--- Exiting Event::Action() 2 --->
+... user event 7 15450
+key space (32) pressed
+~-~-~-~-~ key down ~-~-~-~-~
+ANYKEY signaled (WatchID=1)
             <--- Entering State::Finish() prep (1) --->
          <--- Exiting State::Main() prep (1) --->
-         <--- Entering Event::Finish() 7 --->
-         <--- Entering StimulusWebcam::Finish() 0 --->
-         <--- Exiting StimulusWebcam::Finish() 0 --->
-         <--- Exiting Event::Finish() 7 --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
             <--- Exiting State::Finish() prep (1) --->
 <--- Entering Template::HandleEvent() 1 --->
 <--- Entering Template::AttachState() 1 --->
 <--- Exiting Template::AttachState() 1 --->
          <--- Entering State::Start() main (2) --->
-         <--- Exiting State::Start() main (2) --->
-<--- Exiting Template::HandleEvent() 1 --->
          <--- Entering State::Main() main (2) --->
-         <--- Entering Event::Action() 1 --->
-   <--- Entering StimulusDisplayOn::Action() 0 --->
-   <--- Exiting StimulusDisplayOn::Action() 0 --->
+         <--- Exiting State::Start() main (2) --->
+      <--- Entering WatchRemain::Activate() 2 --->
+<--- Exiting Template::HandleEvent() 1 --->
+15444 16638 5000 trial begin vs current clock vs wait
+wait for 3806
+      <--- Exiting WatchRemain::Activate() 2 --->
+         <--- Entering Event::Action() 4 --->
+   <--- Entering StimulusTxt::Action() 0 --->
+   <--- Exiting StimulusTxt::Action() 0 --->
    <--- Entering Stimulus::Action() 0 --->
    <--- Exiting Stimulus::Action() 0 --->
-         <--- Exiting Event::Action() 1 --->
-... user event 7 2997
-   <--- Entering State::ProcessMouseButton() main (2) --->
-         <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140720308486144
-1 result 0
-         <--- Exiting WatchMouse::CheckCondition() 1 --->
-   <--- Exiting State::ProcessMouseButton() main (2) --->
-   <--- Entering State::ProcessMouseButton() main (2) --->
-         <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140720308486145
-1 result 1
-         <--- Exiting WatchMouse::CheckCondition() 1 --->
-mouse button signaled (WatchID=1)
-   <--- Exiting State::ProcessMouseButton() main (2) --->
+         <--- Exiting Event::Action() 4 --->
+... user event 7 16644
+~-~-~-~-~ key up ~-~-~-~-~
+... user event 30 20439
+      <--- Entering WatchRemain::CheckCondition() 2 --->
+      <--- Exiting WatchRemain::CheckCondition() 2 --->
             <--- Entering State::Finish() main (2) --->
          <--- Exiting State::Main() main (2) --->
-         <--- Entering Event::Finish() 1 --->
-         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 4 --->
+         <--- Exiting Event::Finish() 4 --->
             <--- Exiting State::Finish() main (2) --->
 <--- Entering Template::HandleEvent() 1 --->
 ending trial
@@ -636,16 +654,18 @@ ending trial
       <--- Entering StimulusImg::Finish() dk.png --->
       <--- Exiting StimulusImg::Finish() dk.png --->
             <--- Entering State::Finish() prep (1) --->
-         <--- Entering Event::Finish() 7 --->
-         <--- Entering StimulusWebcam::Finish() 0 --->
-         <--- Exiting StimulusWebcam::Finish() 0 --->
-         <--- Exiting Event::Finish() 7 --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
             <--- Exiting State::Finish() prep (1) --->
             <--- Entering State::PostTrial() prep (1) --->
             <--- Exiting State::Finish() prep (1) --->
             <--- Entering State::Finish() main (2) --->
-         <--- Entering Event::Finish() 1 --->
-         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 4 --->
+         <--- Exiting Event::Finish() 4 --->
             <--- Exiting State::Finish() main (2) --->
             <--- Entering State::PostTrial() main (2) --->
             <--- Exiting State::Finish() main (2) --->
@@ -677,16 +697,20 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=3 AND Ord=3
       <--- Entering StimulusImg::Prepare() sg.png --->
       <--- Exiting StimulusImg::Prepare() sg.png --->
    <--- Entering State::Prepare() prep (1) --->
-         <--- Entering Event::Prepare() 7 --->
-         <--- Entering StimulusWebcam::Prepare() 0 --->
-         <--- Exiting StimulusWebcam::Prepare() 0 --->
-         <--- Exiting Event::Prepare() 7 --->
+         <--- Entering Event::Prepare() 1 --->
+         <--- Exiting Event::Prepare() 1 --->
+         <--- Entering Event::Prepare() 2 --->
+   <--- Entering StimulusTxt::Prepare() 0 --->
+   <--- Exiting StimulusTxt::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 2 --->
    <--- Exiting State::Prepare() prep (1) --->
    <--- Entering State::Prepare() main (2) --->
-         <--- Entering Event::Prepare() 1 --->
-   <--- Entering StimulusDisplayOn::Prepare() 0 --->
-   <--- Exiting StimulusDisplayOn::Prepare() 0 --->
-         <--- Exiting Event::Prepare() 1 --->
+         <--- Entering Event::Prepare() 3 --->
+         <--- Exiting Event::Prepare() 3 --->
+         <--- Entering Event::Prepare() 4 --->
+   <--- Entering StimulusTxt::Prepare() 0 --->
+   <--- Exiting StimulusTxt::Prepare() 0 --->
+         <--- Exiting Event::Prepare() 4 --->
    <--- Exiting State::Prepare() main (2) --->
 <--- Entering Template::AttachState() 1 --->
 <--- Exiting Template::AttachState() 1 --->
@@ -702,52 +726,51 @@ sqlite: DELETE FROM TrialsTodo WHERE SessionID=1 AND ItemCellID=3 AND Ord=3
          <--- Exiting State::Start() prep (1) --->
    <--- Exiting Trial::Start() 4 --->
 <--- Exiting Experiment::StartNextTrial() 0 --->
-         <--- Entering Event::Action() 7 --->
-         <--- Entering StimulusWebcam::Action() 0 --->
-StimulusWebcam::Prepare(): Thread already active
-         <--- Exiting Event::Action() 7 --->
-... user event 7 3605
-      <--- Entering WatchDone::CheckCondition() 2 --->
-      <--- Exiting WatchDone::CheckCondition() 2 --->
-done signaled
+         <--- Entering Event::Action() 2 --->
+   <--- Entering StimulusTxt::Action() 0 --->
+   <--- Exiting StimulusTxt::Action() 0 --->
+   <--- Entering Stimulus::Action() 0 --->
+   <--- Exiting Stimulus::Action() 0 --->
+         <--- Exiting Event::Action() 2 --->
+... user event 7 20828
+key space (32) pressed
+~-~-~-~-~ key down ~-~-~-~-~
+ANYKEY signaled (WatchID=1)
             <--- Entering State::Finish() prep (1) --->
          <--- Exiting State::Main() prep (1) --->
-         <--- Entering Event::Finish() 7 --->
-         <--- Entering StimulusWebcam::Finish() 0 --->
-         <--- Exiting StimulusWebcam::Finish() 0 --->
-         <--- Exiting Event::Finish() 7 --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
             <--- Exiting State::Finish() prep (1) --->
 <--- Entering Template::HandleEvent() 1 --->
 <--- Entering Template::AttachState() 1 --->
 <--- Exiting Template::AttachState() 1 --->
          <--- Entering State::Start() main (2) --->
          <--- Entering State::Main() main (2) --->
-         <--- Entering Event::Action() 1 --->
+      <--- Entering WatchRemain::Activate() 2 --->
+20823 24212 5000 trial begin vs current clock vs wait
+wait for 1611
          <--- Exiting State::Start() main (2) --->
-   <--- Entering StimulusDisplayOn::Action() 0 --->
 <--- Exiting Template::HandleEvent() 1 --->
-   <--- Exiting StimulusDisplayOn::Action() 0 --->
+      <--- Exiting WatchRemain::Activate() 2 --->
+         <--- Entering Event::Action() 4 --->
+   <--- Entering StimulusTxt::Action() 0 --->
+   <--- Exiting StimulusTxt::Action() 0 --->
    <--- Entering Stimulus::Action() 0 --->
    <--- Exiting Stimulus::Action() 0 --->
-         <--- Exiting Event::Action() 1 --->
-... user event 7 3612
-   <--- Entering State::ProcessMouseButton() main (2) --->
-         <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140720308486144
-1 result 0
-         <--- Exiting WatchMouse::CheckCondition() 1 --->
-   <--- Exiting State::ProcessMouseButton() main (2) --->
-   <--- Entering State::ProcessMouseButton() main (2) --->
-         <--- Entering WatchMouse::CheckCondition() 1 --->
-1 watch 1 140720308486145
-1 result 1
-         <--- Exiting WatchMouse::CheckCondition() 1 --->
-mouse button signaled (WatchID=1)
-   <--- Exiting State::ProcessMouseButton() main (2) --->
+         <--- Exiting Event::Action() 4 --->
+... user event 7 24218
+~-~-~-~-~ key up ~-~-~-~-~
+... user event 30 25823
+      <--- Entering WatchRemain::CheckCondition() 2 --->
+      <--- Exiting WatchRemain::CheckCondition() 2 --->
             <--- Entering State::Finish() main (2) --->
          <--- Exiting State::Main() main (2) --->
-         <--- Entering Event::Finish() 1 --->
-         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 4 --->
+         <--- Exiting Event::Finish() 4 --->
             <--- Exiting State::Finish() main (2) --->
 <--- Entering Template::HandleEvent() 1 --->
 ending trial
@@ -757,16 +780,18 @@ ending trial
       <--- Entering StimulusImg::Finish() sg.png --->
       <--- Exiting StimulusImg::Finish() sg.png --->
             <--- Entering State::Finish() prep (1) --->
-         <--- Entering Event::Finish() 7 --->
-         <--- Entering StimulusWebcam::Finish() 0 --->
-         <--- Exiting StimulusWebcam::Finish() 0 --->
-         <--- Exiting Event::Finish() 7 --->
+         <--- Entering Event::Finish() 1 --->
+         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 2 --->
+         <--- Exiting Event::Finish() 2 --->
             <--- Exiting State::Finish() prep (1) --->
             <--- Entering State::PostTrial() prep (1) --->
             <--- Exiting State::Finish() prep (1) --->
             <--- Entering State::Finish() main (2) --->
-         <--- Entering Event::Finish() 1 --->
-         <--- Exiting Event::Finish() 1 --->
+         <--- Entering Event::Finish() 3 --->
+         <--- Exiting Event::Finish() 3 --->
+         <--- Entering Event::Finish() 4 --->
+         <--- Exiting Event::Finish() 4 --->
             <--- Exiting State::Finish() main (2) --->
             <--- Entering State::PostTrial() main (2) --->
             <--- Exiting State::Finish() main (2) --->
@@ -786,68 +811,67 @@ END OF TRIALS!
 <--- Exiting Experiment::PrepareNextTrial() 0 --->
 finished experiment
 cleanup
-sqlite: INSERT INTO Trial VALUES (NULL, 1, 1, 1, 605, 2252, NULL, NULL)
+sqlite: INSERT INTO Trial VALUES (NULL, 1, 1, 1, 981, 6419, NULL, NULL)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
-NULL, 1, 521
-sqlite: INSERT INTO Response VALUES (NULL, 1, 521)
+NULL, 1, 553
+sqlite: INSERT INTO Response VALUES (NULL, 1, 553)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
 respData has 0 events
       <--- Entering ItemCell::StoreData() 1 --->
 sqlite: BEGIN;
-sqlite: INSERT INTO StateTiming VALUES (521, 1, 605)
-sqlite: INSERT INTO StateTiming VALUES (521, 2, 616)
+sqlite: INSERT INTO StateTiming VALUES (553, 1, 981)
+sqlite: INSERT INTO StateTiming VALUES (553, 2, 1896)
 sqlite: COMMIT;
 sqlite: BEGIN;
-sqlite: INSERT INTO EventTiming VALUES (521, 7, 614)
-sqlite: INSERT INTO EventTiming VALUES (521, 1, 621)
+sqlite: INSERT INTO EventTiming VALUES (553, 2, 991)
+sqlite: INSERT INTO EventTiming VALUES (553, 4, 1902)
 sqlite: COMMIT;
       <--- Exiting ItemCell::StoreData() 1 --->
-sqlite: INSERT INTO Trial VALUES (NULL, 2, 2, 1, 2272, 2961, NULL, NULL)
+sqlite: INSERT INTO Trial VALUES (NULL, 2, 2, 1, 6434, 15430, NULL, NULL)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
-NULL, 1, 522
-sqlite: INSERT INTO Response VALUES (NULL, 1, 522)
+NULL, 1, 554
+sqlite: INSERT INTO Response VALUES (NULL, 1, 554)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
 respData has 0 events
       <--- Entering ItemCell::StoreData() 2 --->
 sqlite: BEGIN;
-sqlite: INSERT INTO StateTiming VALUES (522, 1, 2272)
-sqlite: INSERT INTO StateTiming VALUES (522, 2, 2283)
+sqlite: INSERT INTO StateTiming VALUES (554, 1, 6434)
+sqlite: INSERT INTO StateTiming VALUES (554, 2, 15342)
 sqlite: COMMIT;
 sqlite: BEGIN;
-sqlite: INSERT INTO EventTiming VALUES (522, 7, 2281)
-sqlite: INSERT INTO EventTiming VALUES (522, 1, 2288)
+sqlite: INSERT INTO EventTiming VALUES (554, 2, 6439)
 sqlite: COMMIT;
       <--- Exiting ItemCell::StoreData() 2 --->
-sqlite: INSERT INTO Trial VALUES (NULL, 3, 3, 1, 2982, 3578, NULL, NULL)
+sqlite: INSERT INTO Trial VALUES (NULL, 3, 3, 1, 15444, 20809, NULL, NULL)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
-NULL, 1, 523
-sqlite: INSERT INTO Response VALUES (NULL, 1, 523)
+NULL, 1, 555
+sqlite: INSERT INTO Response VALUES (NULL, 1, 555)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
 respData has 0 events
       <--- Entering ItemCell::StoreData() 3 --->
 sqlite: BEGIN;
-sqlite: INSERT INTO StateTiming VALUES (523, 1, 2982)
-sqlite: INSERT INTO StateTiming VALUES (523, 2, 2993)
+sqlite: INSERT INTO StateTiming VALUES (555, 1, 15444)
+sqlite: INSERT INTO StateTiming VALUES (555, 2, 16638)
 sqlite: COMMIT;
 sqlite: BEGIN;
-sqlite: INSERT INTO EventTiming VALUES (523, 7, 2990)
-sqlite: INSERT INTO EventTiming VALUES (523, 1, 2997)
+sqlite: INSERT INTO EventTiming VALUES (555, 2, 15450)
+sqlite: INSERT INTO EventTiming VALUES (555, 4, 16644)
 sqlite: COMMIT;
       <--- Exiting ItemCell::StoreData() 3 --->
-sqlite: INSERT INTO Trial VALUES (NULL, 4, 4, 1, 3597, 4260, NULL, NULL)
+sqlite: INSERT INTO Trial VALUES (NULL, 4, 4, 1, 20823, 25932, NULL, NULL)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Trial'
-NULL, 1, 524
-sqlite: INSERT INTO Response VALUES (NULL, 1, 524)
+NULL, 1, 556
+sqlite: INSERT INTO Response VALUES (NULL, 1, 556)
 sqlite: SELECT seq FROM SQLITE_SEQUENCE WHERE name='Response'
 respData has 0 events
       <--- Entering ItemCell::StoreData() 4 --->
 sqlite: BEGIN;
-sqlite: INSERT INTO StateTiming VALUES (524, 1, 3596)
-sqlite: INSERT INTO StateTiming VALUES (524, 2, 3607)
+sqlite: INSERT INTO StateTiming VALUES (556, 1, 20823)
+sqlite: INSERT INTO StateTiming VALUES (556, 2, 24212)
 sqlite: COMMIT;
 sqlite: BEGIN;
-sqlite: INSERT INTO EventTiming VALUES (524, 7, 3605)
-sqlite: INSERT INTO EventTiming VALUES (524, 1, 3612)
+sqlite: INSERT INTO EventTiming VALUES (556, 2, 20828)
+sqlite: INSERT INTO EventTiming VALUES (556, 4, 24218)
 sqlite: COMMIT;
       <--- Exiting ItemCell::StoreData() 4 --->
 sqlite: UPDATE Session SET Completion='COMPLETED' WHERE SessionID=1
@@ -889,26 +913,26 @@ sqlite: UPDATE Session SET Completion='COMPLETED' WHERE SessionID=1
 .Deleting Templates.
    <--- Entering Template::~Template() only (1) --->
       <--- Entering State::~State() main (2) --->
+         <--- Entering Event::~Event() 4 --->
+         <--- Exiting Event::~Event() 4 --->
+         <--- Entering Event::~Event() 3 --->
+         <--- Exiting Event::~Event() 3 --->
+         <--- Entering Watch::~Watch() 2 --->
+         <--- Exiting Watch::~Watch() 2 --->
+      <--- Exiting State::~State() main (2) --->
+      <--- Entering State::~State() prep (1) --->
+         <--- Entering Event::~Event() 2 --->
+         <--- Exiting Event::~Event() 2 --->
          <--- Entering Event::~Event() 1 --->
          <--- Exiting Event::~Event() 1 --->
          <--- Entering Watch::~Watch() 1 --->
          <--- Exiting Watch::~Watch() 1 --->
-      <--- Exiting State::~State() main (2) --->
-      <--- Entering State::~State() prep (1) --->
-         <--- Entering Event::~Event() 7 --->
-         <--- Entering StimulusWebcam::Cleanup() 0 --->
-         <--- Entering StimulusWebcam::Cleanup() 0 --->
-         <--- Exiting Event::~Event() 7 --->
-         <--- Entering Watch::~Watch() 2 --->
-         <--- Exiting Watch::~Watch() 2 --->
       <--- Exiting State::~State() prep (1) --->
    <--- Exiting Template::~Template() only (1) --->
 .Deleting Stimuli.
 .Deleting Devices.
 .Deleting Recordsets.
 .Deleting Recordsets.
-      <--- Entering Webcam2::~Webcam2() 0 --->
-      <--- Exiting Webcam2::~Webcam2() 0 --->
 <--- Exiting Experiment::~Experiment() --->
 <--- Entering Audio_SDL::~Audio_SDL() 0 --->
 <--- Exiting Audio_SDL::~Audio_SDL() 0 --->

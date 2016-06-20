@@ -45,6 +45,7 @@ using pastestr::paste;
 #include "WatchGamePadButton.hpp"
 #include "WatchGamePadMove.hpp"
 #include "WatchSocketMsg.hpp"
+#include "WatchRemain.hpp"
 //#include "boost/lexical_cast.hpp"
 
 //#include "WatchGSC1Button.hpp"
@@ -397,6 +398,9 @@ ORDER BY WatchID ASC");
     case SBX_WATCH_DONE :
       pWatch = WatchPtr(new WatchDone(idWatch, idNext, mmArgs));
       break;
+		case SBX_WATCH_REMAIN :
+			pWatch = WatchPtr(new WatchRemain(idWatch, idNext, mmArgs));
+			break;
     case SBX_WATCH_TIMEOUT :
       pii = mmArgs.equal_range("Msec");
       if (pii.first == pii.second) {
@@ -544,6 +548,11 @@ int State::Main() {
   static SDL_Event event;
   static SDL_UserEvent userevent;
 	bool bExit = false;
+  WatchMap::iterator wi;
+
+  for (wi = m_mmapWatch.begin(); wi != m_mmapWatch.end(); wi++) {
+    (*wi).second->Activate();
+  }
 
   while (State::s_bContinue) {
 		msDiff = ClockFn() - m_vMsBegin.back();
@@ -705,15 +714,24 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
 		}
       break;
 		case SBX_WATCH_SOCKET_MSG : {
-			g_pErr->Debug("handling message");
       wmip = m_mmapWatch.equal_range(SBX_WATCH_SOCKET_MSG);
 			for (wmi = wmip.first; wmi != wmip.second; wmi++) {
 				if ((*wmi).second->CheckCondition(pEvt)) {
 					pwSignaled = (*wmi).second.get();
-					g_pErr->Debug("message signaled");
 				} else {}
 			}
 			// TODO: do something
+		}
+			break;
+		case SBX_WATCH_REMAIN : {
+      wmip = m_mmapWatch.equal_range(SBX_WATCH_REMAIN);
+      if (wmip.first != wmip.second) {
+				for (wmi = wmip.first; wmi != wmip.second; wmi++) {
+					if ((*wmi).second->CheckCondition(pEvt)) {
+						pwSignaled = (*wmi).second.get();
+					}
+				}
+			}
 		}
 			break;
     }

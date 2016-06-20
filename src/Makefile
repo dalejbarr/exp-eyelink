@@ -13,7 +13,7 @@ OBJS = 	Experiment.o Template.o State.o \
   EventSocketSendMsg.o \
 	Watch.o WatchKey.o WatchMouse.o WatchDone.o \
 	WatchGamePadButton.o WatchGamePadMove.o \
-	WatchSocketMsg.o \
+	WatchSocketMsg.o WatchRemain.o \
 	AlsaSoundIn.o \
 	SoundInput.o RtAudio.o \
   Socket.o SocketListener.o \
@@ -47,7 +47,7 @@ W32OBJS = \
 	$(W32L)/EventSocketSendMsg.o \
 	$(W32L)/Watch.o $(W32L)/WatchKey.o $(W32L)/WatchMouse.o $(W32L)/WatchDone.o \
 	$(W32L)/WatchGamePadButton.o $(W32L).WatchGamePadMove.o \
-	$(W32L)/WatchSocketMsg.o \
+	$(W32L)/WatchSocketMsg.o $(W32L)/WatchRemain.o \
 	$(W32L)/PASoundIn.o \
   $(W32L)/Socket.o $(W32L)/SocketListener.o \
 	$(W32L)/StartupInfo.o $(W32L)/pastestr.o \
