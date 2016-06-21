@@ -197,28 +197,34 @@ int Webcam2::Initialize() {
 
 
 int Webcam2::ActivateStreaming() {
-  int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  int ret = 0;;
+	int ret = 0;
 
-  ret = ioctl(m_vd.fd, VIDIOC_STREAMON, &type);
-  if (ret < 0) {
-    g_pErr->Report("Unable to capture");
-  }
-  m_vd.isstreaming = true;
+	if (!m_vd.isstreaming) {
+		int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+		ret = ioctl(m_vd.fd, VIDIOC_STREAMON, &type);
+		if (ret < 0) {
+			g_pErr->Report("Unable to capture");
+		}
+		m_vd.isstreaming = true;
+	}
 
   return ret;
 }
 
 int Webcam2::DeactivateStreaming() {
 	int ret = 0;
-  int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-  ret = ioctl(m_vd.fd, VIDIOC_STREAMOFF, &type);
-  if (ret < 0) {
-    g_pErr->Report("Unable to stop capture");
-  }
-  m_vd.isstreaming = false;
-	m_bIsVisible = false;
+	if (m_vd.isstreaming) {
+		int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+		ret = ioctl(m_vd.fd, VIDIOC_STREAMOFF, &type);
+		if (ret < 0) {
+			g_pErr->Report("Unable to stop capture");
+		}
+		m_vd.isstreaming = false;
+		m_bIsVisible = false;
+	}
 
   return ret;
 }

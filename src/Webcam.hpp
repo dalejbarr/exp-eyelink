@@ -15,6 +15,7 @@ protected:
 	SDL_RWops * m_buffer_stream;
 	bool m_bInitialized;
 	bool m_bIsVisible;
+	bool m_bIsStreaming;
 public:
 	inline int GetWidth() { return m_width; };
 	inline int GetHeight() { return m_height; };

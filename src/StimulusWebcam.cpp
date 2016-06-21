@@ -103,6 +103,10 @@ int StimulusWebcam::Action() {
 int StimulusWebcam::Finish() {
   g_pErr->DFI("StimulusWebcam::Finish", 0L, 4);
 
+	s_bContinue = false;
+	int nStatus = 0;
+	SDL_WaitThread(m_pThread, &nStatus);
+	m_pThread = NULL;
 	
   g_pErr->DFO("StimulusWebcam::Finish", 0L, 4);
 
@@ -113,9 +117,12 @@ int StimulusWebcam::Cleanup() {
   g_pErr->DFI("StimulusWebcam::Cleanup", 0L, 4);
 
 	s_bContinue = false;
-	int nStatus = 0;
-	SDL_WaitThread(m_pThread, &nStatus);
-	m_pThread = NULL;
+	if (m_pThread) {
+		int nStatus = 0;
+		SDL_WaitThread(m_pThread, &nStatus);
+		m_pThread = NULL;
+	}
+	m_pCam->DeactivateStreaming();
 
   g_pErr->DFI("StimulusWebcam::Cleanup", 0L, 4);
 
@@ -150,7 +157,7 @@ int StimulusWebcam::Main() {
 		SDL_Delay(msDelay);
 	}
 
-	m_pCam->DeactivateStreaming();
+	// m_pCam->DeactivateStreaming();
 
 	return 0;
 }

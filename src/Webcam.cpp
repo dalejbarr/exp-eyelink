@@ -20,6 +20,7 @@ Webcam::Webcam() {
 	m_buffer_stream = NULL;
 	m_frame = NULL;
 	m_bIsVisible = false;
+	m_bIsStreaming = false;
  
 	g_pErr->DFO("Webcam::Webcam", 0L, 3);
 }
@@ -50,11 +51,12 @@ int Webcam::Initialize() {
 	if (!m_bInitialized) {
 
 		m_bIsVisible = false;
+		m_bInitialized = true;
+		m_bIsStreaming = false;
 
 		m_width = g_pDisplay->m_nWidth;
 		m_height = g_pDisplay->m_nHeight;
 
-		m_bInitialized = true;
 		if ((m_fd = open("/dev/video0", O_RDWR)) < 0) {
 			g_pErr->Report("error opening webcam device");
 		}
@@ -157,19 +159,29 @@ int Webcam::Initialize() {
 }
 
 int Webcam::ActivateStreaming() {
-	if(ioctl(m_fd, VIDIOC_STREAMON, &m_type) < 0){
-    g_pErr->Report("VIDIOC_STREAMON");
+	if (!m_bIsStreaming) {
+		if(ioctl(m_fd, VIDIOC_STREAMON, &m_type) < 0){
+			g_pErr->Report("VIDIOC_STREAMON");
+		} else {
+			m_bIsStreaming = true;
+		}
 	}
+
 	return 0;
 }
 
 int Webcam::DeactivateStreaming() {
 	// Deactivate streaming
-	if(ioctl(m_fd, VIDIOC_STREAMOFF, &m_type) < 0){
-    g_pErr->Report("Error with VIDIOC_STREAMOFF");
+	if (m_bIsStreaming) {
+		if(ioctl(m_fd, VIDIOC_STREAMOFF, &m_type) < 0){
+			g_pErr->Report("Error with VIDIOC_STREAMOFF");
+		} else {
+			m_bIsStreaming = false;
 	}
 
 	m_bIsVisible = false;
+
+	return 0;
 }
 
 SDL_Surface * Webcam::GrabFrame() {
