@@ -575,22 +575,26 @@ int State::Main() {
 
 		if (!State::s_bFinished) {
 			pEvent = (*m_pCurEvent).second.get();
-			if ((msDiff > pEvent->Msec()) || ((msDiff - pEvent->Msec()) < EXP_EVENT_TIMER_RESOLUTION)) {
-				//g_pErr->Debug(pastestr::paste("dd", ":", (long) pEvent->Msec(), (long) msDiff));
-				pEvent->Action();
-				m_pCurEvent++;
-				if (m_pCurEvent == m_mmapEvent.end()) { // that was last event
-					State::s_bFinished = true;
-					pEvent = NULL;
-					sdlEventDone.type=SDL_USEREVENT;
-					sdlEventDone.user.code=SBX_WATCH_DONE;
-					sdlEventDone.user.data1=NULL;
-					sdlEventDone.user.data2=NULL;
-					SDL_PushEvent(&sdlEventDone);
-					if ((!m_nTimeout) || s_bTimedOut) {
-						bExit = true;
+			if (pEvent) {
+				if ((msDiff > pEvent->Msec()) || ((msDiff - pEvent->Msec()) < EXP_EVENT_TIMER_RESOLUTION)) {
+					//g_pErr->Debug(pastestr::paste("dd", ":", (long) pEvent->Msec(), (long) msDiff));
+					pEvent->Action();
+					m_pCurEvent++;
+					if (m_pCurEvent == m_mmapEvent.end()) { // that was last event
+						State::s_bFinished = true;
+						pEvent = NULL;
+						sdlEventDone.type=SDL_USEREVENT;
+						sdlEventDone.user.code=SBX_WATCH_DONE;
+						sdlEventDone.user.data1=NULL;
+						sdlEventDone.user.data2=NULL;
+						SDL_PushEvent(&sdlEventDone);
+						if ((!m_nTimeout) || s_bTimedOut) {
+							bExit = true;
+						}
 					}
 				}
+			} else {
+				State::s_bFinished = true; // no events to process
 			}
 		}
 		SDL_Delay(2);

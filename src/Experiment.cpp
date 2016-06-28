@@ -78,9 +78,6 @@ void Experiment::InitReport() {
 }
 
 Experiment::Experiment() {
-	if (XInitThreads() == 0) {
-		g_pErr->Report("Couldn't initialize threads");
-	}
   InitReport();
   g_pErr->DFI("Experiment::Experiment", 0L, 1);
   m_pCurTrial = NULL;
@@ -148,6 +145,10 @@ int Experiment::InitializeExp(const char * pcMode, bool bResume) {
   g_pErr->DFI("Experiment::InitializeExp", (const char *) NULL);
 
   g_pErr->Debug(pastestr::paste("ss", "", "mode is ", pcMode));
+
+	if (XInitThreads() == 0) {
+		g_pErr->Report("Couldn't initialize threads");
+	}
 
   m_bRefreshNeeded = false;
   m_pCurTrial = NULL;
