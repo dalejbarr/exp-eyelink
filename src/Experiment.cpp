@@ -805,6 +805,11 @@ int Experiment::Prepare(SDL_Surface * pDisplay /* = null */, bool bFullScreen /*
 
   m_msExpBegin = ClockFn();
 
+	int nShowCursor = 1;
+	if (g_pConfig->GetConfigInt("Mouse_Cursor", &nShowCursor)) {
+		SDL_ShowCursor(nShowCursor);
+	}
+
   g_pErr->DFO("Experiment::Prepare", 0L, 1);
 
   return 0;
