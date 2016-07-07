@@ -700,6 +700,11 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
 																	(long) ClockFn()));
     switch (pEvt->user.code) {
     case SBX_WATCH_DONE : {
+			// FIRST, make sure we didn't miss any socket signals between trials
+			if (Experiment::s_pSockListener != NULL) {
+				Experiment::s_pSockListener->CheckForMissedMessages();
+			}
+
       wmip = m_mmapWatch.equal_range(SBX_WATCH_DONE);
       if (wmip.first != wmip.second) {
 				for (wmi = wmip.first; wmi != wmip.second; wmi++) {
