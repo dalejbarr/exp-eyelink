@@ -101,8 +101,13 @@ Webcam2::~Webcam2() {
 
 int Webcam2::Initialize() {
 	if (!m_bInitialized) {
-		m_bInitialized = true;
+		m_bInitialized = true; // only run once
 		m_bIsVisible = false;
+		if (m_frame) {  // should never happen!
+			g_pErr->Debug("*WARNING: in Webcam2::Initialize, m_frame was not null; this should never happen");
+			SDL_FreeSurface(m_frame);
+		}
+		m_frame = NULL;
 		
 		if (m_vd.width == -1) {
 			m_vd.width = g_pDisplay->m_nWidth;
@@ -259,6 +264,11 @@ SDL_Surface * Webcam2::GrabFrame() {
 
 	if (!IMG_isJPG(m_buffer_stream)) {
 		g_pErr->Report("webcam frame not valid JPG format");
+	}
+
+	// deallocate before reallocating
+	if (m_frame) {
+		SDL_FreeSurface(m_frame);
 	}
 
 	m_frame = IMG_Load_RW(m_buffer_stream, 0);
