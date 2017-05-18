@@ -1,5 +1,6 @@
 #include "SocketListener.hpp"
 #include <signal.h>
+#include <iostream>
 #include "pastestr.hpp"
 #include "CmdID.hpp"
 

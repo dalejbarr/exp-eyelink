@@ -98,7 +98,7 @@ exp2 : $(OBJS) sblib.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
 	$(CC) $(RTAFLAGS) -o exp2 expshell2.o sblib.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) 
 
 expdebug2 : sblib-debug.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
-	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) 
+	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) -lX11
 
 install : exp2 expdebug2
 	cp exp2 ../bin/exp2; cp expdebug2 ../bin/expdebug2

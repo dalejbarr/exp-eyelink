@@ -146,9 +146,11 @@ int Experiment::InitializeExp(const char * pcMode, bool bResume) {
 
   g_pErr->Debug(pastestr::paste("ss", "", "mode is ", pcMode));
 
-	if (XInitThreads() == 0) {
-		g_pErr->Report("Couldn't initialize threads");
-	}
+  if (XInitThreads() == 0) {
+    g_pErr->Report("Couldn't initialize threads");
+  } else {
+    g_pErr->Debug("XThreads initialized");
+  }
 
   m_bRefreshNeeded = false;
   m_pCurTrial = NULL;

@@ -12,6 +12,8 @@
 using std::cout;
 using std::endl;
 
+#include <X11/Xlib.h>
+
 int parseArgs(int argc, char **);
 void usage(char *);
 
@@ -25,7 +27,8 @@ int g_nMainResult = EXP_IN_PROGRESS;
 bool g_bResume = false;
 
 int exp_init(int argc, char * argv[]) {
-	std::cout << "initializing SDL" << std::endl;
+  XInitThreads();
+  std::cout << "initializing SDL" << std::endl;
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) == -1) {
     g_pErr->Report("Could not initialize Simple DirectMedia Layer.");
   } else {}
@@ -95,7 +98,7 @@ int main(int argc, char *argv[]){
       break;
     } else {
       g_pExperiment->FinishTrial();
-			Display_SDL::ClearScreen();
+      Display_SDL::ClearScreen();
     }
 
     /*
