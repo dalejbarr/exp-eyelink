@@ -2,6 +2,7 @@
 #include "Socket.hpp"
 #include "pastestr.hpp"
 #include <boost/lexical_cast.hpp>
+#include <iostream>
 
 #include <netinet/in.h>
 #include <netdb.h>
