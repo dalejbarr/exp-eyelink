@@ -47,7 +47,7 @@ StimulusBmp::StimulusBmp(long id, Template * pTemplate,
     int r, g, b;
     istringstream iss((*pii.first).second);
     iss >> r >> g >> b;
-		g_pErr->Debug(pastestr::paste("sddd", " ", "set colorkey", (long) r, (long) g, (long) b));
+    g_pErr->Debug(pastestr::paste("sddd", " ", "set colorkey", (long) r, (long) g, (long) b));
     SetColorkey(r, g, b);      
     //g_pErr->Report(pastestr::paste("ddd", " ", (long) r, (long) g, (long) b));
     //m_nLayer = atoi((*ii).second.c_str());
@@ -71,8 +71,9 @@ StimulusBmp::StimulusBmp(long id, Template * pTemplate, const char * pName,
   m_CurX.Set(x1);
   m_CurY.Set(y1);
   m_nLayer = nLayer;
-  Initialize();
 
+  Initialize();
+  
   g_pErr->DFO("StimulusBmp::StimulusBmp", pName, 3);
 }
 
