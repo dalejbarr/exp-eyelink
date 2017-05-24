@@ -234,6 +234,12 @@ void StimulusImg::Highlight(const char * pHinfo) {
   g_pErr->DFO("StimulusImg::Highlight", m_id, 5);
 }
 
+void StimulusImg::HighlightOff() {
+  g_pErr->DFI("StimulusImg::HighlightOff", m_id, 5);
+  m_bHighlight = 0;
+  g_pErr->DFO("StimulusImg::HighlightOff", m_id, 5);
+}
+
 int StimulusImg::Load(string s1) {
   SDL_Surface * psTemp;
 

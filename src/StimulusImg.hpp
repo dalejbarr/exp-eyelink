@@ -86,6 +86,7 @@ public:
   int SetLayer(int nLayer);
   void ResetLoc();
   void Highlight(const char * pHinfo);
+  void HighlightOff();  
   inline SDL_Surface * GetSurface() { return m_pSurface; }
   virtual int Load(string s1);
 	virtual SDL_Surface * LoadImage(string s1); // specific to image type

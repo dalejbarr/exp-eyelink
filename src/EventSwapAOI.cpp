@@ -28,6 +28,10 @@ EventSwapAOI::EventSwapAOI(long id, long msec, long idCmd,
   m_ppAOI2 = m_pTemplate->AOIArg(ii->second);  
   m_sAOI2 = ii->second;
 
+  g_pErr->Debug(pastestr::paste("ssss", " ", "AOI1=",
+				m_sAOI1.c_str(), "AOI2=",
+				m_sAOI2.c_str()));
+  
   g_pErr->DFO("EventSwapAOI::EventSwapAOI", id, 4);
 }
 
@@ -54,6 +58,8 @@ int EventSwapAOI::Action() {
   StimulusImg * p1 = NULL;
   StimulusImg * p2 = NULL;
 
+  g_pErr->DFI("EventSwapAOI::Action", 0L, 3);
+  
   if ( (!m_ppAOI1) || (!m_ppAOI2) ) {
     g_pErr->Report("null values in EventSwapAOI::Action()");
   } else {}
@@ -65,9 +71,12 @@ int EventSwapAOI::Action() {
   int y = p1->m_y1;
   int nLayer = p1->m_nLayer;
 
+  g_pErr->Debug("here1");  
   p1->m_CurX.Set(p2->m_x1);
+  g_pErr->Debug("here2");    
   p1->m_x1 = p2->m_x1;
 
+  
   p1->m_CurY.Set(p2->m_y1);
   p1->m_y1 = p2->m_y1;
 
@@ -79,11 +88,12 @@ int EventSwapAOI::Action() {
   p2->m_CurY.Set(y);
   p2->m_y1 = y;
 
+  g_pErr->Debug("swapped attributes: now reinserting");
+  
   m_pTemplate->Reinsert(p1);
   m_pTemplate->Reinsert(p2);
   m_pTemplate->Redraw(false);
 
-  g_pErr->DFI("EventSwapAOI::Action", 0L, 3);
   g_pErr->DFO("EventSwapAOI::Action", 0L, 3);
 
   return 0;

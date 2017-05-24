@@ -130,6 +130,8 @@ ORDER BY Msec ASC");
 
   d = g_prsStim->Load(q);
 
+  m_mmapEvent.clear();
+  
   // TO DO: Load arguments
   for (int i = 0; i < d.size(); i++) {
 
@@ -161,29 +163,29 @@ ORDER BY Msec ASC");
     case SBX_EVENT_SHOW_AOI :
       pStim = StimulusPtr(new StimulusShowAOI(idEvent, msec, idCmd, mmArgs, pTemplate));
       break;
-		case SBX_EVENT_WEBCAM_START :
-			if (!Experiment::s_pCam) {
-				g_pErr->Debug("creating new webcam instance...");
-				string strDev;
-				if (!g_pConfig->GetConfig("Video_Device", &strDev)) {
-					strDev.assign("/dev/video0");
-				}
-				int w, h;
-				string str1;
-				if (g_pConfig->GetConfig("Webcam_Width", &str1)) {
-					w = boost::lexical_cast<int>(str1.c_str());
-				} else {
-					w = -1;
-				}
-				if (g_pConfig->GetConfig("Webcam_Height", &str1)) {
-					h = boost::lexical_cast<int>(str1.c_str());
-				} else {
-					h = -1;
-				}
-				Experiment::s_pCam = new Webcam2(strDev.c_str(), w, h);
-			} 
-			pStim = StimulusPtr(new StimulusWebcam(idEvent, mmArgs, pTemplate, Experiment::s_pCam));
-			break;
+    case SBX_EVENT_WEBCAM_START :
+      if (!Experiment::s_pCam) {
+	g_pErr->Debug("creating new webcam instance...");
+	string strDev;
+	if (!g_pConfig->GetConfig("Video_Device", &strDev)) {
+	  strDev.assign("/dev/video0");
+	}
+	int w, h;
+	string str1;
+	if (g_pConfig->GetConfig("Webcam_Width", &str1)) {
+	  w = boost::lexical_cast<int>(str1.c_str());
+	} else {
+	  w = -1;
+	}
+	if (g_pConfig->GetConfig("Webcam_Height", &str1)) {
+	  h = boost::lexical_cast<int>(str1.c_str());
+	} else {
+	  h = -1;
+	}
+	Experiment::s_pCam = new Webcam2(strDev.c_str(), w, h);
+      } 
+      pStim = StimulusPtr(new StimulusWebcam(idEvent, mmArgs, pTemplate, Experiment::s_pCam));
+      break;
     }
 
     if (pStim.get()) {
@@ -194,131 +196,131 @@ ORDER BY Msec ASC");
       // now handle other kinds of events, self-instantiating
       switch (idCmd) { // post-process
       case SBX_EVENT_CLEARREGION :
-				pEvent = EventPtr(new EventClear(idEvent, msec, idCmd, mmArgs, pTemplate));
-				break;
+	pEvent = EventPtr(new EventClear(idEvent, msec, idCmd, mmArgs, pTemplate));
+	break;
       case SBX_EVENT_UPDATE :
-				pEvent = EventPtr(new EventUpdate(idEvent, msec, idCmd, mmArgs, pTemplate));
-				break;
+	pEvent = EventPtr(new EventUpdate(idEvent, msec, idCmd, mmArgs, pTemplate));
+	break;
       case SBX_EVENT_GRAB_AOI :
-				m_pEvtMove = new EventGrabAOI(idEvent, msec, idCmd, mmArgs, pTemplate);
-				pEvent = EventPtr(m_pEvtMove);
-				//m_pEvtMove = pEvent.get();
-				break;
+	m_pEvtMove = new EventGrabAOI(idEvent, msec, idCmd, mmArgs, pTemplate);
+	pEvent = EventPtr(m_pEvtMove);
+	//m_pEvtMove = pEvent.get();
+	break;
       case SBX_EVENT_SWAP_AOI :
-				pEvent = EventPtr(new EventSwapAOI(idEvent, msec, idCmd, mmArgs, pTemplate));
-				break;
+	pEvent = EventPtr(new EventSwapAOI(idEvent, msec, idCmd, mmArgs, pTemplate));
+	break;
       case SBX_EVENT_UPDATE_AOI :
-				//pEvent = EventPtr(new Event(idEvent, msec, idCmd, mmArgs, pTemplate));
-				pEvent = EventPtr(new EventUpdateAOI(idEvent, msec, idCmd, mmArgs, pTemplate));
-				break;
+	//pEvent = EventPtr(new Event(idEvent, msec, idCmd, mmArgs, pTemplate));
+	pEvent = EventPtr(new EventUpdateAOI(idEvent, msec, idCmd, mmArgs, pTemplate));
+	break;
       case SBX_EVENT_MOUSE_REC :
-				{
-					InputDevPtr pDev = pTemplate->FindOrCreateInputDev(SBX_MOUSE_DEV);
-					pEvent = EventPtr(new EventRecord(idEvent, msec, idCmd, mmArgs, pTemplate, pDev));
-				}
-				break;
+	{
+	  InputDevPtr pDev = pTemplate->FindOrCreateInputDev(SBX_MOUSE_DEV);
+	  pEvent = EventPtr(new EventRecord(idEvent, msec, idCmd, mmArgs, pTemplate, pDev));
+	}
+	break;
       case SBX_EVENT_SCROLLTRACKGP :
-				{
-					// figure out which one
-					pair<ArgIter, ArgIter> pii;
-					ArgMMap::iterator ii;	  
-					int ix = 0;
-					pii = mmArgs.equal_range("Index");
-					//vector<InputDevPtr> vIDP;
-					InputDevPtr pDev;
-					if (pii.first != pii.second) {
-						ii = pii.first;
-						ix = atoi((*ii).second.c_str());
-						g_pErr->Debug(pastestr::paste("sd"," ","index is",(long) ix));
-						pDev = pTemplate->FindOrCreateInputDev(SBX_SCROLLTRACKGP_DEV, ix);
-					} else {
-						g_pErr->Report("Event PERIDISP requires Argument 'Index'");
-					}	  
-					//((GamePad_SDL *) pDev.get())->SetRecMode(true);
-					pEvent = EventPtr(new EventSTRecord(idEvent, msec, idCmd, mmArgs, pTemplate, pDev));
-				}
-				break;
+	{
+	  // figure out which one
+	  pair<ArgIter, ArgIter> pii;
+	  ArgMMap::iterator ii;	  
+	  int ix = 0;
+	  pii = mmArgs.equal_range("Index");
+	  //vector<InputDevPtr> vIDP;
+	  InputDevPtr pDev;
+	  if (pii.first != pii.second) {
+	    ii = pii.first;
+	    ix = atoi((*ii).second.c_str());
+	    g_pErr->Debug(pastestr::paste("sd"," ","index is",(long) ix));
+	    pDev = pTemplate->FindOrCreateInputDev(SBX_SCROLLTRACKGP_DEV, ix);
+	  } else {
+	    g_pErr->Report("Event PERIDISP requires Argument 'Index'");
+	  }	  
+	  //((GamePad_SDL *) pDev.get())->SetRecMode(true);
+	  pEvent = EventPtr(new EventSTRecord(idEvent, msec, idCmd, mmArgs, pTemplate, pDev));
+	}
+	break;
       case SBX_EVENT_GAMEPADREC :
-				{
-					// figure out which one
-					pair<ArgIter, ArgIter> pii;
-					ArgMMap::iterator ii;	  
-					int ix = 0;
-					pii = mmArgs.equal_range("Index");
-					vector<InputDevPtr> vIDP;
-					InputDevPtr pDev;
-					if (pii.first != pii.second) {
-						for (ii = pii.first; ii != pii.second; ii++) {
-							ix = atoi((*ii).second.c_str());
-							g_pErr->Debug(pastestr::paste("sd"," ","index is",(long) ix));
-							pDev = pTemplate->FindOrCreateInputDev(SBX_GAMEPAD_DEV, ix);
-							vIDP.push_back(pDev);
-						}
-					} else {
-						g_pErr->Report("Event GAMEPADREC requires Argument 'Index'");
-					}	  
-					//((GamePad_SDL *) pDev.get())->SetRecMode(true);
-					pEvent = EventPtr(new EventRecord(idEvent, msec, idCmd, mmArgs, pTemplate, vIDP));
-				}
-				break;
+	{
+	  // figure out which one
+	  pair<ArgIter, ArgIter> pii;
+	  ArgMMap::iterator ii;	  
+	  int ix = 0;
+	  pii = mmArgs.equal_range("Index");
+	  vector<InputDevPtr> vIDP;
+	  InputDevPtr pDev;
+	  if (pii.first != pii.second) {
+	    for (ii = pii.first; ii != pii.second; ii++) {
+	      ix = atoi((*ii).second.c_str());
+	      g_pErr->Debug(pastestr::paste("sd"," ","index is",(long) ix));
+	      pDev = pTemplate->FindOrCreateInputDev(SBX_GAMEPAD_DEV, ix);
+	      vIDP.push_back(pDev);
+	    }
+	  } else {
+	    g_pErr->Report("Event GAMEPADREC requires Argument 'Index'");
+	  }	  
+	  //((GamePad_SDL *) pDev.get())->SetRecMode(true);
+	  pEvent = EventPtr(new EventRecord(idEvent, msec, idCmd, mmArgs, pTemplate, vIDP));
+	}
+	break;
       case SBX_EVENT_MSG :
-				pEvent = EventPtr(new EventMsg(idEvent, msec, idCmd, mmArgs, pTemplate));
-				break;
-				//case SBX_EVENT_GSC1FEEDBACK :
-				//pEvent = EventPtr(new EventGSC1Feedback(idEvent, msec, idCmd, mmArgs, pTemplate, NULL));
-				//pGSC1Feedback = pEvent;
-				//break;
-				//case SBX_EVENT_GSC1DRAWGRID :
-				//pEvent = EventPtr(new EventGSC1DrawGrid(idEvent, msec, idCmd, mmArgs, pTemplate));
-				//pGSC1DrawGrid = pEvent;
-				//break;
+	pEvent = EventPtr(new EventMsg(idEvent, msec, idCmd, mmArgs, pTemplate));
+	break;
+	//case SBX_EVENT_GSC1FEEDBACK :
+	//pEvent = EventPtr(new EventGSC1Feedback(idEvent, msec, idCmd, mmArgs, pTemplate, NULL));
+	//pGSC1Feedback = pEvent;
+	//break;
+	//case SBX_EVENT_GSC1DRAWGRID :
+	//pEvent = EventPtr(new EventGSC1DrawGrid(idEvent, msec, idCmd, mmArgs, pTemplate));
+	//pGSC1DrawGrid = pEvent;
+	//break;
       case SBX_EVENT_ASYNCSTART :
-				pEvent = EventPtr(new EventAsyncCtrl(idEvent, msec, idCmd, mmArgs, pTemplate, true));
-				break;
+	pEvent = EventPtr(new EventAsyncCtrl(idEvent, msec, idCmd, mmArgs, pTemplate, true));
+	break;
       case SBX_EVENT_ASYNCSTOP :
-				pEvent = EventPtr(new EventAsyncCtrl(idEvent, msec, idCmd, mmArgs, pTemplate, false));
-				break;
-				//case SBX_EVENT_LC1DISPLAY :
-				//pEvent = EventPtr(new EventLC1Display(idEvent, msec, idCmd, mmArgs, pTemplate));
-				//break;
+	pEvent = EventPtr(new EventAsyncCtrl(idEvent, msec, idCmd, mmArgs, pTemplate, false));
+	break;
+	//case SBX_EVENT_LC1DISPLAY :
+	//pEvent = EventPtr(new EventLC1Display(idEvent, msec, idCmd, mmArgs, pTemplate));
+	//break;
       case SBX_EVENT_RECSOUND :
-				{
-					InputDevPtr pDev = pTemplate->FindOrCreateInputDev(SBX_AUDIOREC_DEV);
-					pEvent = EventPtr(new EventRecord(idEvent, msec, idCmd, mmArgs, pTemplate, pDev));
-				}
-				break;
+	{
+	  InputDevPtr pDev = pTemplate->FindOrCreateInputDev(SBX_AUDIOREC_DEV);
+	  pEvent = EventPtr(new EventRecord(idEvent, msec, idCmd, mmArgs, pTemplate, pDev));
+	}
+	break;
       case SBX_EVENT_INCREMENT_COUNTER :
-				pEvent = EventPtr(new EventIncrementCounter(idEvent, msec, idCmd, mmArgs, pTemplate));
-				break;
+	pEvent = EventPtr(new EventIncrementCounter(idEvent, msec, idCmd, mmArgs, pTemplate));
+	break;
       case SBX_EVENT_RESET_COUNTER :
-				pEvent = EventPtr(new EventResetCounter(idEvent, msec, idCmd, mmArgs, pTemplate));
-				break;
+	pEvent = EventPtr(new EventResetCounter(idEvent, msec, idCmd, mmArgs, pTemplate));
+	break;
       case SBX_EVENT_REPEATIF :
-				pEvent = EventPtr(new EventRepeatIf(idEvent, msec, idCmd, mmArgs, pTemplate));
-				break;
-			case SBX_EVENT_SOCKET_SEND_MSG : {
-				// figure out which one
-				pair<ArgIter, ArgIter> pii;
-				ArgMMap::iterator ii;	  
-				unsigned short us = 0;
-				pii = mmArgs.equal_range("SocketID");
-				InputDevPtr pDev;
-				if (pii.first != pii.second) {
-						ii = pii.first;
-						us = boost::lexical_cast<unsigned short>((*ii).second.c_str());
-						g_pErr->Debug(pastestr::paste("sd"," ","socket index is",(long) us));
-						pDev = pTemplate->FindOrCreateInputDev(SBX_SOCKET_DEV, (int) us);
-				} else {
-					g_pErr->Report("Event SOCKET_SEND_MSG requires argument 'SocketID'");
-				}  
-				pEvent = EventPtr(new EventSocketSendMsg(idEvent, msec, idCmd, 
-																								 mmArgs, pTemplate, pDev));
-			}
-				break;
+	pEvent = EventPtr(new EventRepeatIf(idEvent, msec, idCmd, mmArgs, pTemplate));
+	break;
+      case SBX_EVENT_SOCKET_SEND_MSG : {
+	// figure out which one
+	pair<ArgIter, ArgIter> pii;
+	ArgMMap::iterator ii;	  
+	unsigned short us = 0;
+	pii = mmArgs.equal_range("SocketID");
+	InputDevPtr pDev;
+	if (pii.first != pii.second) {
+	  ii = pii.first;
+	  us = boost::lexical_cast<unsigned short>((*ii).second.c_str());
+	  g_pErr->Debug(pastestr::paste("sd"," ","socket index is",(long) us));
+	  pDev = pTemplate->FindOrCreateInputDev(SBX_SOCKET_DEV, (int) us);
+	} else {
+	  g_pErr->Report("Event SOCKET_SEND_MSG requires argument 'SocketID'");
+	}  
+	pEvent = EventPtr(new EventSocketSendMsg(idEvent, msec, idCmd, 
+						 mmArgs, pTemplate, pDev));
+      }
+	break;
       default :
-				g_pErr->Report(pastestr::paste("sd", " ", "UNDEFINED EVENT!", idCmd));
-				pEvent = EventPtr(new Event(idEvent, msec, idCmd, mmArgs, pTemplate));
-				break;
+	g_pErr->Report(pastestr::paste("sd", " ", "UNDEFINED EVENT!", idCmd));
+	pEvent = EventPtr(new Event(idEvent, msec, idCmd, mmArgs, pTemplate));
+	break;
       }
     }
 
@@ -525,6 +527,7 @@ int State::Start() {
 
   //m_bVisited = 1;
   m_pCurEvent = m_mmapEvent.begin();
+
   m_vMsBegin.push_back(ClockFn());
 	if (s_pThread) {
 		g_pErr->Report("thread already running!");
@@ -547,7 +550,7 @@ int State::Main() {
   static Uint32 msDiff = 0;
   static SDL_Event event;
   static SDL_UserEvent userevent;
-	bool bExit = false;
+  bool bExit = false;
   WatchMap::iterator wi;
 
   for (wi = m_mmapWatch.begin(); wi != m_mmapWatch.end(); wi++) {
@@ -555,50 +558,58 @@ int State::Main() {
   }
 
   while (State::s_bContinue) {
-		msDiff = ClockFn() - m_vMsBegin.back();
-		if (m_nTimeout && !State::s_bTimedOut) {
-			if (msDiff >= m_nTimeout) {
-				State::s_bTimedOut = true;
-				State::s_bFinished = true; // don't run any more events
-				//g_pErr->Report(pastestr::paste("sd", " ", "state timeout", m_id));
-				m_pCurEvent = m_mmapEvent.end(); // make sure no more events will be triggered
-				userevent.type = SDL_USEREVENT;
-				userevent.code = SBX_WATCH_TIMEOUT;
-				userevent.data1 = NULL;
-				userevent.data2 = NULL;
-				event.type = SDL_USEREVENT;
-				event.user = userevent;
-				SDL_PushEvent(&event);
-				bExit = true;
-			} else {}
-		} else {}
+    msDiff = ClockFn() - m_vMsBegin.back();
+    if (m_nTimeout && !State::s_bTimedOut) {
+      if (msDiff >= m_nTimeout) {
+	State::s_bTimedOut = true;
+	State::s_bFinished = true; // don't run any more events
+	//g_pErr->Report(pastestr::paste("sd", " ", "state timeout", m_id));
+	m_pCurEvent = m_mmapEvent.end(); // make sure no more events will be triggered
+	userevent.type = SDL_USEREVENT;
+	userevent.code = SBX_WATCH_TIMEOUT;
+	userevent.data1 = NULL;
+	userevent.data2 = NULL;
+	event.type = SDL_USEREVENT;
+	event.user = userevent;
+	SDL_PushEvent(&event);
+	bExit = true;
+      } else {}
+    } else {}
 
-		if (!State::s_bFinished) {
-			pEvent = (*m_pCurEvent).second.get();
-			if (pEvent) {
-				if ((msDiff > pEvent->Msec()) || ((msDiff - pEvent->Msec()) < EXP_EVENT_TIMER_RESOLUTION)) {
-					//g_pErr->Debug(pastestr::paste("dd", ":", (long) pEvent->Msec(), (long) msDiff));
-					pEvent->Action();
-					m_pCurEvent++;
-					if (m_pCurEvent == m_mmapEvent.end()) { // that was last event
-						State::s_bFinished = true;
-						pEvent = NULL;
-						sdlEventDone.type=SDL_USEREVENT;
-						sdlEventDone.user.code=SBX_WATCH_DONE;
-						sdlEventDone.user.data1=NULL;
-						sdlEventDone.user.data2=NULL;
-						SDL_PushEvent(&sdlEventDone);
-						if ((!m_nTimeout) || s_bTimedOut) {
-							bExit = true;
-						}
-					}
-				}
-			} else {
-				State::s_bFinished = true; // no events to process
-			}
-		}
-		SDL_Delay(2);
+    if (!State::s_bFinished) {
+      if (!m_mmapEvent.empty()) {
+	pEvent = (*m_pCurEvent).second.get();
+	if (pEvent) {
+	  g_pErr->Debug(pastestr::paste("sd", " ", "event_id", pEvent->ID()));
+	  if ((msDiff > pEvent->Msec()) || ((msDiff - pEvent->Msec()) < EXP_EVENT_TIMER_RESOLUTION)) {
+	    //g_pErr->Debug(pastestr::paste("dd", ":", (long) pEvent->Msec(), (long) msDiff));
+	    pEvent->Action();
+	    m_pCurEvent++;
+	    if (m_pCurEvent == m_mmapEvent.end()) { // that was last event
+	      State::s_bFinished = true;
+	      pEvent = NULL;
+	      sdlEventDone.type=SDL_USEREVENT;
+	      sdlEventDone.user.code=SBX_WATCH_DONE;
+	      sdlEventDone.user.data1=NULL;
+	      sdlEventDone.user.data2=NULL;
+	      SDL_PushEvent(&sdlEventDone);
+	      if ((!m_nTimeout) || s_bTimedOut) {
+		bExit = true;
+	      } 
+	    } // matches if (m_pCurEvent)
+	  } // matches if ((msDiff))
+	} else { // matches if (pEvent)
+	  State::s_bFinished = true; // no events to process
+	  g_pErr->Debug("finished processing events for this state");
 	}
+      } else {
+	g_pErr->Debug("event queue is empty");
+	State::s_bFinished = true; // no events to process
+	pEvent = NULL;
+      }
+    }
+    SDL_Delay(2);
+  }
 
   g_pErr->DFO("State::Main", m_strDebug.c_str(), 4);  
 

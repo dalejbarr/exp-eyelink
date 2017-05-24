@@ -301,22 +301,21 @@ int Template::HandleEvent(SDL_Event * pEvt) {
       g_pErr->DFI("Template::HandleEvent", m_id, 1);
       
       if (pwSignaled->GetNextID() != 0) {
-				AttachState(m_mapState[pwSignaled->GetNextID()].get());
-				(m_mapState[pwSignaled->GetNextID()].get())->Start();
-				//m_pCurState->Run();
+	AttachState(m_mapState[pwSignaled->GetNextID()].get());
+	(m_mapState[pwSignaled->GetNextID()].get())->Start();
+	//m_pCurState->Run();
       } else {
-				g_pErr->Debug("ending trial");
-				Finish();
-				SDL_Event event;
-				event.type = SDL_USEREVENT;
-				event.user.code = SBX_FINISHED;
-				SDL_PushEvent(&event);
+	g_pErr->Debug("ending trial");
+	Finish();
+	SDL_Event event;
+	event.type = SDL_USEREVENT;
+	event.user.code = SBX_FINISHED;
+	SDL_PushEvent(&event);
       }
-
       g_pErr->DFO("Template::HandleEvent", m_id, 1);
     } else {}
   } else {}
-
+  
   return 0;
 }
 

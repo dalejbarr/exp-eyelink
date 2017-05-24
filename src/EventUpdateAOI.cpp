@@ -73,6 +73,11 @@ int EventUpdateAOI::Action() {
     pStim->Highlight((*pii.first).second.c_str());
   } else {}
 
+  pii = m_mmapArgs.equal_range("Unhighlight");
+  if (pii.first != pii.second) {
+    pStim->HighlightOff();
+  } else {}
+
   pii = m_mmapArgs.equal_range("Image");
   if (pii.first != pii.second) {    
     pStim->Load(pastestr::paste("ss", "", "resource/", (*pii.first).second.c_str()));
