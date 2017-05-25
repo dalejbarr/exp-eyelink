@@ -122,11 +122,23 @@ int State::LoadEvents(Template * pTemplate) {
   //EventPtr pGSC1DrawGrid;
   //EventPtr pGSC1Feedback;
 
-  string q = pastestr::paste("sds", "", "\
-SELECT EventID, EvtCmdID, Msec \n\
-FROM Event \n\
-WHERE StateID=", m_id, "\n\
-ORDER BY Msec ASC");
+  string q("");
+  
+  if (g_prsStim->TableExists("EventBlacklist")) {
+    q.assign(pastestr::paste("sds", "", "   \
+SELECT EventID, EvtCmdID, Msec \n	    \
+FROM Event \n				    \
+LEFT JOIN EventBlacklist USING (EventID) \n \
+WHERE StateID=", m_id, "\n		    \
+AND EventBlacklist.EventID IS NULL \n       \
+ORDER BY Msec ASC"));    
+  } else {  
+    q.assign(pastestr::paste("sds", "", "\
+SELECT EventID, EvtCmdID, Msec \n	 \
+FROM Event \n				 \
+WHERE StateID=", m_id, "\n		 \
+ORDER BY Msec ASC"));
+  }
 
   d = g_prsStim->Load(q);
 
@@ -341,11 +353,23 @@ ORDER BY Msec ASC");
 int State::LoadWatches(Template * pTemplate) {
   g_pErr->DFI("LoadWatches", m_strDebug.c_str(), 3);
 
-  string q = pastestr::paste("sds", "", "\
-SELECT WatchID, WCmdID, NextStateID \n\
-FROM Watch \n\
-WHERE StateID=", m_id, "\n\
-ORDER BY WatchID ASC");
+  string q("");
+
+  if (g_prsStim->TableExists("WatchBlacklist")) {
+    q.assign(pastestr::paste("sds", "", "  \
+SELECT WatchID, WCmdID, NextStateID \n	   \
+FROM Watch \n				   \
+LEFT JOIN WatchBlacklist USING (WatchID)\n \
+WHERE StateID=", m_id, "\n		   \
+AND WatchBlacklist.WatchID IS NULL \n      \
+ORDER BY WatchID ASC"));  
+  } else {
+    q.assign(pastestr::paste("sds", "", "\
+SELECT WatchID, WCmdID, NextStateID \n	 \
+FROM Watch \n				 \
+WHERE StateID=", m_id, "\n		 \
+ORDER BY WatchID ASC"));  
+  }
 
   dbData d = g_prsStim->Load(q);
   long idCmd = 0L;
