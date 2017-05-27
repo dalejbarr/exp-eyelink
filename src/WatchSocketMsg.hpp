@@ -14,15 +14,17 @@ using std::vector;
 
 class WatchSocketMsg : public Watch {
 protected:
-	//unsigned short m_idSocket;
-	//Socket * m_pSocket;
-	bool m_bAny; // watch for any message at all?
-	string m_strMsg;
+  //unsigned short m_idSocket;
+  //Socket * m_pSocket;
+  bool m_bAny; // watch for any message at all?
+  string m_strMsgTarget;
+  string m_strMsgReceived;
 public:
   WatchSocketMsg(long id, long idNext, ArgMMap mmap);
   virtual ~WatchSocketMsg();
   // inline Uint8 GetState() { return m_nState; }
   virtual bool CheckCondition(SDL_Event * pEvt);
+  string GetMsgReceived();
 	//virtual bool CheckWhich(Uint8 nGamePadUsed);
   //virtual int Prepare();  
   //virtual int Finish();

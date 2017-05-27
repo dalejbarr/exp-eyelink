@@ -5,21 +5,29 @@ EventSwapAOI::EventSwapAOI(long id, long msec, long idCmd,
   Event(id, msec, idCmd, mmArgs, pTemplate) {
   g_pErr->DFI("EventSwapAOI::EventSwapAOI", id, 4);
 
-  pair<ArgIter, ArgIter> pii;
-  ArgMMap::iterator ii;
-
   m_ppAOI1 = NULL;
   m_ppAOI2 = NULL;;
-
-  if (mmArgs.count("AOI") != 2) {
-    g_pErr->Report("Event SWAP_AOI must have exactly two AOI arguments");
-  } else {}
-
-  pii = mmArgs.equal_range("AOI");
 
   if (!pTemplate) {
     g_pErr->Report("problem: m_pTemplate undefined");
   } else {}
+
+  m_mmArgs = mmArgs;
+  
+  g_pErr->DFO("EventSwapAOI::EventSwapAOI", id, 4);
+}
+
+int EventSwapAOI::ProcessArgs() {
+  g_pErr->DFI("EventSwapAOI::ProcessArgs", m_id, 4);
+
+  pair<ArgIter, ArgIter> pii;
+  ArgMMap::iterator ii;
+
+  if (m_mmArgs.count("AOI") != 2) {
+    g_pErr->Report("Event SWAP_AOI must have exactly two AOI arguments");
+  } else {}
+
+  pii = m_mmArgs.equal_range("AOI");
 
   ii = pii.first;
   m_ppAOI1 = m_pTemplate->AOIArg(ii->second);
@@ -31,11 +39,13 @@ EventSwapAOI::EventSwapAOI(long id, long msec, long idCmd,
   g_pErr->Debug(pastestr::paste("ssss", " ", "AOI1=",
 				m_sAOI1.c_str(), "AOI2=",
 				m_sAOI2.c_str()));
-  
-  g_pErr->DFO("EventSwapAOI::EventSwapAOI", id, 4);
+
+  g_pErr->DFO("EventSwapAOI::ProcessArgs", m_id, 4);
 }
 
 int EventSwapAOI::Prepare() {
+  ProcessArgs();
+  
   if (!m_ppAOI1) {
     m_ppAOI1 = m_pTemplate->AOIArg(m_sAOI1);
   } else {}

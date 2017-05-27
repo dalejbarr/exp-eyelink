@@ -20,6 +20,7 @@ using pastestr::paste;
 #include "StimulusWebcam.hpp"
 #include "EventGrabAOI.hpp"
 #include "EventSwapAOI.hpp"
+#include "EventSwapAOI2.hpp"
 #include "EventUpdateAOI.hpp"
 #include "EventUpdate.hpp"
 #include "EventRecord.hpp"
@@ -221,6 +222,10 @@ ORDER BY Msec ASC"));
       case SBX_EVENT_SWAP_AOI :
 	pEvent = EventPtr(new EventSwapAOI(idEvent, msec, idCmd, mmArgs, pTemplate));
 	break;
+      case SBX_EVENT_SWAP_AOI2 : 
+	pEvent = EventPtr(new EventSwapAOI2(idEvent, msec, idCmd, mmArgs, pTemplate));
+	break;
+	
       case SBX_EVENT_UPDATE_AOI :
 	//pEvent = EventPtr(new Event(idEvent, msec, idCmd, mmArgs, pTemplate));
 	pEvent = EventPtr(new EventUpdateAOI(idEvent, msec, idCmd, mmArgs, pTemplate));
@@ -424,9 +429,9 @@ ORDER BY WatchID ASC"));
     case SBX_WATCH_DONE :
       pWatch = WatchPtr(new WatchDone(idWatch, idNext, mmArgs));
       break;
-		case SBX_WATCH_REMAIN :
-			pWatch = WatchPtr(new WatchRemain(idWatch, idNext, mmArgs));
-			break;
+    case SBX_WATCH_REMAIN :
+      pWatch = WatchPtr(new WatchRemain(idWatch, idNext, mmArgs));
+      break;
     case SBX_WATCH_TIMEOUT :
       pii = mmArgs.equal_range("Msec");
       if (pii.first == pii.second) {
@@ -609,28 +614,28 @@ int State::Main() {
 	    //g_pErr->Debug(pastestr::paste("dd", ":", (long) pEvent->Msec(), (long) msDiff));
 	    pEvent->Action();
 	    m_pCurEvent++;
-	    if (m_pCurEvent == m_mmapEvent.end()) { // that was last event
-	      State::s_bFinished = true;
-	      pEvent = NULL;
-	      sdlEventDone.type=SDL_USEREVENT;
-	      sdlEventDone.user.code=SBX_WATCH_DONE;
-	      sdlEventDone.user.data1=NULL;
-	      sdlEventDone.user.data2=NULL;
-	      SDL_PushEvent(&sdlEventDone);
-	      if ((!m_nTimeout) || s_bTimedOut) {
-		bExit = true;
-	      } 
-	    } // matches if (m_pCurEvent)
+	    /*
+	    */
 	  } // matches if ((msDiff))
 	} else { // matches if (pEvent)
 	  State::s_bFinished = true; // no events to process
-	  g_pErr->Debug("finished processing events for this state");
+	  g_pErr->Debug("finished processing events for this state");	  
 	}
       } else {
 	g_pErr->Debug("event queue is empty");
-	State::s_bFinished = true; // no events to process
-	pEvent = NULL;
       }
+      if (m_pCurEvent == m_mmapEvent.end()) { // completed
+	State::s_bFinished = true;
+	pEvent = NULL;
+	sdlEventDone.type=SDL_USEREVENT;
+	sdlEventDone.user.code=SBX_WATCH_DONE;
+	sdlEventDone.user.data1=NULL;
+	sdlEventDone.user.data2=NULL;
+	SDL_PushEvent(&sdlEventDone);
+	if ((!m_nTimeout) || s_bTimedOut) {
+	  bExit = true;
+	} 
+      } // matches if (m_pCurEvent)      
     }
     SDL_Delay(2);
   }

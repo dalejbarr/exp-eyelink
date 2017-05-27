@@ -25,7 +25,8 @@ OBJS = 	Experiment.o Template.o State.o \
 	RespObj.o RespData.o \
 	GamePad_SDL.o GPEvent.o ScrollTrackGP_SDL.o EventSTRecord.o \
 	xy.o \
-	EventLC1Display.o
+	EventLC1Display.o \
+	EventSwapAOI2.o
 
 W32L = win32/obj
 CC = g++
@@ -58,9 +59,10 @@ W32OBJS = \
 	$(W32L)/RespObj.o $(W32L)/RespData.o \
 	$(W32L)/GamePad_SDL.o $(W32L)/GPEvent.o $(W32L)/ScrollTrackGP_SDL.o $(W32L)/EventSTRecord.o \
 	$(W32L)/xy.o \
-	$(W32L)/EventLC1Display.o
+	$(W32L)/EventLC1Display.o \
+	$(W32L)/EventSwapAOI2.o
 
-CFLAGS = -c -I. 
+CFLAGS = -std=c++11 -c -I. 
 
 W32CF = -c -I. -I/home/daleb/src/boost -D WIN32 $(shell /opt/SDL-win32/bin/sdl-config --cflags)
 #-I/usr/i586-mingw32msvc/include/SDL -I/home/daleb/src/boost -D WIN32

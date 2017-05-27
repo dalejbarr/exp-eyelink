@@ -20,7 +20,7 @@ using std::string;
 
 class StimulusImg : public Stimulus {
 protected:
-	SDL_Surface * m_pSurface;
+  SDL_Surface * m_pSurface;
 	// static Display_SDL * s_pDisplay;
   bool m_bColorKey;
   bool m_bHighlight;

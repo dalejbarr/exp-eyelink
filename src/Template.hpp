@@ -109,7 +109,11 @@ public:
   static InputDevPtr GetDevice(unsigned long idDev, int nIndex = 0);
   //StimulusImg ** AOIArg(string s);
   StimulusPtr * AOIArg(string s);
-
+  Watch * FindWatchFromIDString(string s);
+  string GetMessageFromWatchID(string s);
+  string ReplaceWatchStringWithAOIName(string s);
+  //string FindAOINameFromPointer(StimulusPtr p);
+  
   Watch * FindWatch(long id);
   Operation * FindVar(string s);
 
