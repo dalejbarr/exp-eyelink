@@ -100,7 +100,7 @@ exp2 : $(OBJS) sblib.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
 	$(CC) $(RTAFLAGS) -o exp2 expshell2.o sblib.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) 
 
 expdebug2 : sblib-debug.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
-	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) -lX11
+	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) -lX11 -std=c++11
 
 install : exp2 expdebug2
 	cp exp2 ../bin/exp2; cp expdebug2 ../bin/expdebug2
@@ -138,7 +138,7 @@ Experiment.o : Experiment.cpp Experiment.hpp
 expshell.o : expshell.cc
 	$(CC) $(CFLAGS) $(SDL_CFLAGS) $(MYFLAGS) $<
 
-expshell2.o : expshell2.cc
+expshell2.o : expshell2.cpp
 	$(CC) $(CFLAGS) $(SDL_CFLAGS) $(MYFLAGS) $<
 
 sqlite3.o : sqlite3.c sqlite3.h

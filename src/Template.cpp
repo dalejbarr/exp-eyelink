@@ -438,7 +438,7 @@ string Template::GetMessageFromWatchID(string s) {
   WatchSocketMsg * wsocket = (WatchSocketMsg *) FindWatchFromIDString(s);
 
   if (!wsocket) {
-    g_pErr->Report(pastestr::paste("ss", " ", "Couldn't find message", s));
+    g_pErr->Report(pastestr::paste("ss", " ", "Couldn't find message", s.c_str()));
   }
 
   return wsocket->GetMsgReceived();
