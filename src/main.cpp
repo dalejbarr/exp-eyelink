@@ -115,7 +115,15 @@ int get_tracker_sw_version(char* verstr)
 int single_trial() {
   int nResult = 0;
   int error;        /* trial result code */
+  bool bCalibrate = false;
 
+  if (g_nTrialsCompleted == 0) bCalibrate = true;
+
+  if (Experiment::g_bsFlag.test(0)) {
+    bCalibrate = true;
+    Experiment::g_bsFlag.set(0, false);
+  } else {}
+  
   // drift correct
   while (1) {
     {
@@ -123,7 +131,10 @@ int single_trial() {
       if(!eyelink_is_connected()) return ABORT_EXPT;
       // We let do_drift_correct() draw target in this example
       // 3rd argument would be 0 if we already drew the fixation target
-      error = do_drift_correct((INT16)(512), (INT16)(SCRHEIGHT/2), 1, 1);
+      if (bCalibrate) {
+	error = do_drift_correct((INT16)(512), (INT16)(SCRHEIGHT/2), 1, 1);
+      } else {}
+      
       // repeat if ESC was pressed to access Setup menu
       if(error!=27) break;
     }
