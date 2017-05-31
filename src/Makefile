@@ -80,9 +80,10 @@ RTAFLAGS = -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__
 #SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer
 #SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_mixer -lSDL_ttf
 SDL_LDFLAGS = $(shell sdl-config --libs) -lSDL -lpthread -lSDL_image -lSDL_mixer -lSDL_ttf -lX11 -ljpeg
-ELINK_CFLAGS := -I$(HDIR)/include
+# ELINK_CFLAGS := -I$(HDIR)/include
+ELINK_CFLAGS := -I/usr/include
 #ELINK_LDFLAGS := -L$(HDIR)/libs -leyelink_core -leyelink_core_graphics  -lsdl_util `sdl-config --libs`   -lSDL_image -lSDL_mixer -lrt -lSDL_ttf -lSDL_gfx -lSDL_image
-ELINK_LDFLAGS := -L$(HDIR)/libs -leyelink_core -leyelink_core_graphics  -lsdl_util `sdl-config --libs`   -lSDL_image -lSDL_mixer -lrt -lSDL_gfx -lSDL_image -lSDL_ttf
+ELINK_LDFLAGS := -L/usr/lib -leyelink_core -leyelink_core_graphics  -lsdl_util `sdl-config --libs`   -lSDL_image -lSDL_mixer -lrt -lSDL_gfx -lSDL_image -lSDL_ttf
 
 sblib-debug.a : $(OBJS) ReportErrorDebug.o sqlite3.o global.hpp
 	ar -rv sblib-debug.a $(OBJS) sqlite3.o ReportErrorDebug.o
@@ -91,7 +92,7 @@ sblib.a : $(OBJS) ReportError.o sqlite3.o global.hpp
 	ar -rv sblib.a $(OBJS) sqlite3.o ReportError.o
 
 main.o : main.cpp picture.h
-	$(CC) $(CFLAGS) $(ELINK_CFLAGS) $(SDL_CFLAGS) main.cpp
+	$(CC) $(ELINK_CFLAGS) $(CFLAGS) $(SDL_CFLAGS) main.cpp
 
 pp3main.o : pp3main.cpp picture.h
 	$(CC) $(CFLAGS) $(ELINK_CFLAGS) $(SDL_CFLAGS) pp3main.cpp
@@ -115,7 +116,7 @@ expeyelinkpp3 : sblib.a pp3main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
 	$(CC) -o expeyelinkpp3 pp3main.o sblib.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound  
 
 expeyelinkdebug : sblib-debug.a main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
-	$(CC) -o expeyelinkdebug main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound 
+	$(CC) -o expeyelinkdebug main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound -lX11
 
 expeyelinkpp3debug : sblib-debug.a pp3main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
 	$(CC) -o expeyelinkpp3debug pp3main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound 

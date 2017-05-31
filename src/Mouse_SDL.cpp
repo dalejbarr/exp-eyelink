@@ -201,8 +201,10 @@ void Mouse_SDL::DrawCursor(int old_x, int old_y) {
     m_rect.x = old_x; m_rect.y = old_y;
 
     // erase old one
+    //Display_SDL::Flip1();		
 		pScreen = Display_SDL::LockScreen();
-    SDL_BlitSurface(m_pOld, NULL, pScreen, &m_rect);  
+    SDL_BlitSurface(m_pOld, NULL, pScreen, &m_rect);
+		
     //StimulusImg::Flip();
 
     // store background before drawing new one

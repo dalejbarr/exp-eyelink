@@ -46,6 +46,8 @@ char *trackerip = NULL; /* use default IP address */
 
 Experiment* g_pExperiment = NULL;
 
+extern Display_SDL * g_pDisplay;
+
 int exit_eyelink()
 {
   close_expt_graphics();           /* tell EXPTSPPT to release window */
@@ -227,6 +229,7 @@ int app_main(char * trackerip, DISPLAYINFO * disp)
 #ifdef WIN32
   edit_dialog(NULL,"Create EDF File", "Enter Tracker EDF file name:", our_file_name,260);
 #endif
+	
   if(trackerip)
     set_eyelink_address(trackerip);
 
