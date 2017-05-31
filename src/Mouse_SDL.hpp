@@ -39,12 +39,10 @@ class Mouse_SDL : public InputDev {
 protected:
   MPvec m_vPts;
   void NewPt(Uint32 ms, int x, int y);
-  bool m_bFirst;
-  StimulusImg * m_pCursor;
-  SDL_Surface * m_pOld;
-  //Template * m_pTemplate;
+  bool m_bFirst;            // has first sample been collected?
+  StimulusImg * m_pCursor;  // the bitmap with the mouse cursor
+  SDL_Surface * m_pOld;     // background 
   SDL_Rect m_rect;
-  SDL_Rect m_rectOld;
   bool m_bDraw;
   unsigned int m_xLast;
   unsigned int m_yLast;
@@ -60,7 +58,7 @@ public:
   void DrawCursor(int old_x, int old_y);
   inline unsigned int GetX() {return m_xLast;}
   inline unsigned int GetY() {return m_yLast;}
-  static unsigned int s_x0;
+  static unsigned int s_x0; // 
   static unsigned int s_y0;
   static unsigned int s_xLim0, s_xLim1;
   static unsigned int s_yLim0, s_yLim1;
