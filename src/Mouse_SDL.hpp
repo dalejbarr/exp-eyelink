@@ -18,7 +18,7 @@ public:
   unsigned int m_y;
   MousePoint();
   MousePoint(Uint32 ms, int x, int y);
-  const char * QueryStr(long idResp);
+  string QueryStr(long idResp);
 
   MousePoint( const MousePoint& source ):
     m_ms( source.m_ms ),

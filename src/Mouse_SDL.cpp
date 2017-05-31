@@ -181,14 +181,6 @@ void Mouse_SDL::Start() {
   WatchMouse::s_pMouse = this;
   SDL_Surface * pScreen = NULL;
 
-  static SDL_Rect r1, r2;
-  r1.x = 5;
-  r1.y = 5;
-  r1.w = 100;
-  r1.h = 100;
-  r2.x = 0;
-  r2.y = 0;
-  
   //m_rectOld.x = 0; m_rectOld.y = 0;
   //m_rectOld.w = m_pCursor->m_rect.w; m_rectOld.h = m_pCursor->m_rect.h;
 
@@ -196,19 +188,8 @@ void Mouse_SDL::Start() {
   if (m_bDraw) {
     m_rect.x = m_xLast; m_rect.y = m_yLast;
     m_rect.w = m_pCursor->m_rect.w; m_rect.h = m_pCursor->m_rect.h;
-    pScreen = Display_SDL::LockScreen();
-    //SDL_BlitSurface(pScreen, &m_rect, m_pOld, &r2);
-    //SDL_BlitSurface(pScreen, &r1, m_pOld, NULL);    
-    SDL_BlitSurface(pScreen, &m_rect, m_pOld, NULL);
+    SDL_BlitSurface(Display_SDL::LockScreen(), &m_rect, m_pOld, NULL);
 
-    if (m_pOld == NULL) {
-      g_pErr->Debug("old screen is null :(");
-    } else {
-      g_pErr->Debug(pastestr::paste("sdsd", "", "w:", (long) m_pOld->w,
-				    "h:", (long) m_pOld->h));
-      SDL_SaveBMP(m_pOld, "old.bmp");
-    }
-    SDL_BlitSurface(m_pOld, NULL, pScreen, &r1);
     Display_SDL::UnlockScreen();
     m_pCursor->Draw();
     Display_SDL::Flip1();
@@ -245,11 +226,13 @@ void Mouse_SDL::DrawCursor(int old_x, int old_y) {
   } else {}
 }
 
-const char * MousePoint::QueryStr(long idResp) {
+string MousePoint::QueryStr(long idResp) {
   string s1;
   s1.assign(pastestr::paste("dddds", ", ",
-			    idResp, (long) m_ms, (long) m_x, (long) m_y, "NULL"));
-  return s1.c_str();
+			    idResp,
+
+			    (long) m_ms, (long) m_x, (long) m_y, "NULL"));
+  return s1;
 }
 
 void Mouse_SDL::SetHome(const char * pcHome) {

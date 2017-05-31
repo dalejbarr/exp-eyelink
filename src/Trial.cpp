@@ -117,7 +117,7 @@ int Trial::StoreData(long tnum, long idSess, long idSubj) {
     if (m_mouseData.size() > 0) {
       g_prsStim->BeginTransaction();
       for (int i = 0; i < m_mouseData.size(); i++) {
-	g_prsResp->Insert("Mouse", m_mouseData[i].QueryStr(idResp));
+	g_prsResp->Insert("Mouse", m_mouseData[i].QueryStr(idResp).c_str());
       }
       g_prsStim->EndTransaction();
     } else {}

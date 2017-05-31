@@ -10,6 +10,7 @@
 #define EXP_CALIBRATE 4
 #define EXP_TRIAL_READY 5
 
+#include <bitset>
 #include "Template.hpp"
 #include "ItemCell.hpp"
 #include "Trial.hpp"
@@ -87,6 +88,7 @@ class Experiment
   int m_nTemplates;
   int m_nItems;
   int m_nTrials;
+
   TemplateMap m_mapTemplate;
   ItemCellMap m_mapItemCell;
   TrialMap m_mapTrial;
@@ -101,6 +103,7 @@ class Experiment
   string ItemQuery(long, int);
 
 public:
+  static std::bitset<4> g_bsFlag; // communication with events etc
   static unsigned int g_nSeed;
   Uint32 m_msExpBegin;
   bool m_bResume;
@@ -112,7 +115,7 @@ public:
   int InitializeDB(const char * expdb, const char * dbType);
   int InitializeExp(const char * pcMode, bool bResume = false);
   void InitReport();
-
+  
   static StimulusMap s_mapStimulus;
   static DeviceMMap s_mmapDevice;
 	static SocketListener * s_pSockListener;
@@ -122,7 +125,7 @@ public:
   static Stimulus * FindOrCreateStimulus(long id, 
 					 Template * pTemplate);
   static int SetDisplay(SDL_Surface * pSurface);
-
+  
   int StartSession();
   int LoadDevices();
 	int LoadConfiguration(unsigned long eid = 0);

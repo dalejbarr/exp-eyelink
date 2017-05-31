@@ -51,6 +51,7 @@ EXPConfig * g_pConfig = NULL;
 
 StimulusMap Experiment::s_mapStimulus;
 DeviceMMap Experiment::s_mmapDevice;
+std::bitset<4> Experiment::g_bsFlag = 0;
 
 SocketListener * Experiment::s_pSockListener = NULL;
 Webcam2 * Experiment::s_pCam = NULL;
@@ -140,7 +141,6 @@ int Experiment::InitializeDB(const char * expdb, const char *dbType) {
   g_pErr->DFO("Experiment::InitializeDB", 0L, 1);
 }
 
-
 int Experiment::InitializeExp(const char * pcMode, bool bResume) {
   g_pErr->DFI("Experiment::InitializeExp", (const char *) NULL);
 
@@ -151,7 +151,7 @@ int Experiment::InitializeExp(const char * pcMode, bool bResume) {
   } else {
     g_pErr->Debug("XThreads initialized");
   }
-
+  Experiment::g_bsFlag.reset();
   m_bRefreshNeeded = false;
   m_pCurTrial = NULL;
   m_id = 1;
@@ -879,6 +879,7 @@ int Experiment::SetDisplay(SDL_Surface * pSurface) {
   g_pDisplay = new Display_SDL(pSurface);
   return 0;
 }
+
 
 int Experiment::PrepareNextTrial() {
   g_pErr->DFI("Experiment::PrepareNextTrial", 0L, 1);

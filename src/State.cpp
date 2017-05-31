@@ -31,6 +31,7 @@ using pastestr::paste;
 #include "EventClear.hpp"
 #include "EventRepeatIf.hpp"
 #include "EventResetCounter.hpp"
+#include "EventSetFlag.hpp"
 #include "EventIncrementCounter.hpp"
 #include "EventSocketSendMsg.hpp"
 
@@ -311,6 +312,9 @@ ORDER BY Msec ASC"));
 	break;
       case SBX_EVENT_RESET_COUNTER :
 	pEvent = EventPtr(new EventResetCounter(idEvent, msec, idCmd, mmArgs, pTemplate));
+	break;
+      case SBX_EVENT_SET_FLAG :
+	pEvent = EventPtr(new EventSetFlag(idEvent, msec, idCmd, mmArgs, pTemplate));
 	break;
       case SBX_EVENT_REPEATIF :
 	pEvent = EventPtr(new EventRepeatIf(idEvent, msec, idCmd, mmArgs, pTemplate));
