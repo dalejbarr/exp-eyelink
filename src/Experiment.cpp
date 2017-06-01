@@ -1471,3 +1471,18 @@ int Experiment::LoadConfiguration(unsigned long eid) {
 
 	return 0;
 }
+
+string Experiment::GetEDFFilename() {
+	string pat = "";
+	string res = "";
+	char buff[100];
+
+	if (!g_pConfig->GetConfig("EDF_File_Pattern", &pat)) {
+		pat = "P%05d";
+	} else {}
+
+	sprintf(buff, pat.c_str(), GetSessionID());
+	res.assign(buff);
+
+	return(res);
+}

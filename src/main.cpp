@@ -77,21 +77,31 @@ int end_expt(char * our_file_name)
 
     if(our_file_name[0])   /* make sure we created a file */
       {
-	g_pErr->Debug("here: transferring file");
-	close_expt_graphics();           /* tell EXPTSPPT to release window */
-	receive_data_file(our_file_name, "", 0);
+				g_pErr->Debug("here: transferring file");
+				receive_data_file(our_file_name, "", 0);				
       }
     /* transfer the file, ask for a local name */
   } else {}
 
-  int nResult = exit_eyelink();
-
+	g_pDisplay->ClearScreen();
   g_pExperiment->StoreTrialData();
+	g_pErr->Debug("trial data stored");
 
   if (g_pExperiment) {
     delete g_pExperiment;
     g_pExperiment = NULL;
   } else {}
+
+	g_pErr->Debug("removed experiment");	
+	
+	close_expt_graphics();           /* tell EXPTSPPT to release window */
+
+	g_pErr->Debug("window released");	
+	
+  int nResult = exit_eyelink();
+
+	g_pErr->Debug("exiting eyelink");	
+	
 
   return nResult;
 }
@@ -303,7 +313,9 @@ int app_main(char * trackerip, DISPLAYINFO * disp)
   g_pExperiment->WaitKey();
   g_pDisplay->ClearScreen();
 
-  sprintf(our_file_name, "F%05d", g_pExperiment->GetSessionID());
+	// todo: get file pattern from experiment
+	sprintf(our_file_name, "%s", g_pExperiment->GetEDFFilename().c_str());	
+  // sprintf(our_file_name, "F%05d", g_pExperiment->GetSessionID());
   g_pErr->Debug(our_file_name);
   //exit(0);
 

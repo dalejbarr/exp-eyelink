@@ -169,6 +169,7 @@ public:
   Uint32 GetMSElapsed();
 	Uint32 GetTrialBegin();
   int Loop();
+	string GetEDFFilename();
 };
 
 #endif
