@@ -22,7 +22,9 @@ class StimulusWav : public Stimulus {
 protected:
 public:
   Mix_Chunk * m_pSound;
-
+	int m_nLoop;
+	int m_msStart;
+	int m_msEnd;
   StimulusWav(long id, Template * pTemplate, const char * pName);
   StimulusWav(long id, Template * pTemplate, long idCmd, ArgMMap mmArgs);
   void Initialize();

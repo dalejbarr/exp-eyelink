@@ -13,6 +13,14 @@ StimulusWav::StimulusWav(long id, Template * pTemplate,
   ii = pii.first;
   m_sResource = (*ii).second;
 
+	m_nLoop = 0;
+  pii = mmArgs.equal_range("Loops");
+  if (pii.first == pii.second) {
+    string s1( (*pii.first).second );
+    istringstream iss(s1);
+    iss >> m_nLoop;
+	}
+	
   g_pErr->DFI("StimulusWav::StimulusWav(mmArgs)", m_sResource.c_str(), 4);
   Initialize();
   g_pErr->DFO("StimulusWav::StimulusWav(mmArgs)", m_sResource.c_str(), 4);  
@@ -73,7 +81,7 @@ int StimulusWav::Action() {
     g_pErr->Report("error: sound object not defined!");
   } else {}
 
-  if (Mix_PlayChannel(-1, m_pSound, 0) == -1) {
+  if (Mix_PlayChannel(-1, m_pSound, m_nLoop) == -1) {
     g_pErr->Report("error playing back the audio");
   } else {}
 
