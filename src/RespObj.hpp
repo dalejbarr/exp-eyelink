@@ -11,7 +11,8 @@ public:
   RespObj(unsigned long msec = 0);
   virtual int StoreResp(long id, Recordset * pRS);
   virtual void Print();
-  const char * QueryStr(long idResp);
+  //const char * QueryStr(long idResp);
+  string QueryStr(long idResp);
 };
 
 #endif

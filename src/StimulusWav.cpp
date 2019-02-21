@@ -13,13 +13,14 @@ StimulusWav::StimulusWav(long id, Template * pTemplate,
   ii = pii.first;
   m_sResource = (*ii).second;
 
-	m_nLoop = 0;
+  m_nLoop = 0;
   pii = mmArgs.equal_range("Loops");
-  if (pii.first == pii.second) {
+  if (pii.first != pii.second) {
+    g_pErr->Debug("~- here -~");
     string s1( (*pii.first).second );
     istringstream iss(s1);
     iss >> m_nLoop;
-	}
+  }
 	
   g_pErr->DFI("StimulusWav::StimulusWav(mmArgs)", m_sResource.c_str(), 4);
   Initialize();
