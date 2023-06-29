@@ -107,6 +107,7 @@
 #define SBX_WATCH_GAMEPAD_MOVE 80
 #define SBX_WATCH_SOCKET_MSG 300
 #define SBX_WATCH_REMAIN 30
+#define SBX_WATCH_TRIALTIMEOUT 31
 
 // experiment specific watches
 #define SBX_WATCH_GSC1BUTTON 20001

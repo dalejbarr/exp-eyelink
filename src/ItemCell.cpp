@@ -55,7 +55,8 @@ WHERE ItemCellID=", m_id, "ORDER BY Code");
   while (g_prsStim->RowReady()) {
     m_mapResources[g_prsStim->Get(0)] = g_prsStim->Get(1);
     g_pErr->Debug(pastestr::paste("sss", "",
-				  g_prsStim->Get(0), "=", m_mapResources[g_prsStim->Get(0)].c_str()));
+				  g_prsStim->Get(0), "=",
+				  m_mapResources[g_prsStim->Get(0)].c_str()));
     g_prsStim->MoveNext();
   }
 
@@ -102,6 +103,8 @@ int ItemCell::Finish() {
 
 int ItemCell::Run() {
   m_pTemplate->Run();
+
+  return 0;
 }
 
 int ItemCell::HandleEvent(SDL_Event * pEvt) {
@@ -112,9 +115,9 @@ int ItemCell::Update() {
   return m_pTemplate->Update();
 }
 
-int ItemCell::Start() {
+int ItemCell::Start(Uint32 msBegin) {
   g_pErr->DFI("ItemCell::Start", m_id, 2);
-  return m_pTemplate->Start();
+  return m_pTemplate->Start(msBegin);
   g_pErr->DFO("ItemCell::Start", m_id, 2);
 }
 
@@ -220,9 +223,11 @@ int ItemCell::StoreData(long idTrial) {
   return 0;
 }
 
-string ItemCell::GetFilenameFromResource(string s1, bool prepend /* = false*/) {
+string ItemCell::GetFilenameFromResource(string s1,
+					 bool prepend /* = false*/) {
 
-  string sp1; 
+  string sp1, search, ss;
+  int found = 0;
 
   if (prepend) {
     sp1 = "resource/";
@@ -231,7 +236,20 @@ string ItemCell::GetFilenameFromResource(string s1, bool prepend /* = false*/) {
   }
 
   if (s1[0] == '$') {
-    s1 = sp1 + m_mapResources[s1.substr(1, s1.size()-1)];
+    search = s1.substr(1, s1.size()-1);
+    found = m_mapResources.count(search);
+    if (!found) {
+      // see if we can get it from Experiment variables
+      if (g_pConfig->GetConfig(search, &ss)) {
+	s1 = sp1 + ss;
+      } else {
+	g_pErr->Debug(pastestr::paste("sss", "",
+				      "warning: resource '", s1.c_str(),
+				      "' not found!"));
+      }
+    } else {
+      s1 = sp1 + m_mapResources[search];
+    }
   } else {
     s1 = sp1 + s1;
   }

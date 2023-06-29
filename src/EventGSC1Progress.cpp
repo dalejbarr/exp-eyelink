@@ -29,9 +29,6 @@ EventGSC1Progress::EventGSC1Progress(long id, long msec, long idCmd,
       m_msTotal = (Uint32) ms;
     }
   }
-
-
-
 }
 
 int EventGSC1Progress::StartProc() {
@@ -62,13 +59,13 @@ int EventGSC1Progress::FinalSweep(Template * pTemplate) {
   m_epDrawGrid = (EventGSC1DrawGrid *) ep.get();
 
   m_pEnc = StimulusPtr(new StimulusImg(0L, pTemplate, "pm1.bmp", 
-					m_epDrawGrid->m_nGridTopEncX, 
-					m_epDrawGrid->m_nGridTopEncY + m_epDrawGrid->m_nGridWidth,
-					-1, -1, 1));
+				       m_epDrawGrid->m_nGridTopEncX, 
+				       m_epDrawGrid->m_nGridTopEncY + m_epDrawGrid->m_nGridWidth,
+				       -1, -1, 1));
   m_pDec = StimulusPtr(new StimulusImg(0L, pTemplate, "pm1.bmp", 
-					m_epDrawGrid->m_nGridTopDecX, 
-					m_epDrawGrid->m_nGridTopDecY + m_epDrawGrid->m_nGridWidth,
-					-1, -1, 1));
+				       m_epDrawGrid->m_nGridTopDecX, 
+				       m_epDrawGrid->m_nGridTopDecY + m_epDrawGrid->m_nGridWidth,
+				       -1, -1, 1));
 
   m_pTemplate->InsertAOI("progressEnc", m_pEnc);
   m_pTemplate->InsertAOI("progressDec", m_pDec);

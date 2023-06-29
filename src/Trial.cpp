@@ -88,8 +88,8 @@ int Trial::Update() {
 int Trial::Start() {
   int nResult = 0;
   g_pErr->DFI("Trial::Start", m_id, 2);
-  nResult = m_pItemCell->Start();
   m_msBegin = ClockFn();
+  nResult = m_pItemCell->Start(m_msBegin);
   m_nTrialStatus = SBX_IN_PROGRESS;
   m_bVisited = 1;
   g_pErr->DFO("Trial::Start", m_id, 2);

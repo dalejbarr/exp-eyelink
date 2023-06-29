@@ -118,8 +118,8 @@ public:
   
   static StimulusMap s_mapStimulus;
   static DeviceMMap s_mmapDevice;
-	static SocketListener * s_pSockListener;
-	static Webcam2 * s_pCam;
+  static SocketListener * s_pSockListener;
+  static Webcam2 * s_pCam;
 
   static Device * FindOrCreateDevice(long, long);
   static Stimulus * FindOrCreateStimulus(long id, 
@@ -128,7 +128,7 @@ public:
   
   int StartSession();
   int LoadDevices();
-	int LoadConfiguration(unsigned long eid = 0);
+  int LoadConfiguration(unsigned long eid = 0);
   int LoadTemplates();
   int LoadItems();
   vector<listordinfo> SequenceItems();

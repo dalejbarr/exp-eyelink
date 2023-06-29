@@ -32,9 +32,17 @@ EventSetFlag::EventSetFlag(long idEvent, long msec, long idCmd,
 int EventSetFlag::Action() {
   g_pErr->DFI("EventSetFlag::Action", ID(), 3);
 
+  std::string bstr =
+    Experiment::g_bsFlag.to_string<char,
+				   std::string::traits_type,
+				   std::string::allocator_type>();
+  
+  g_pErr->Debug(pastestr::paste("ss", " ",
+				"bitstring was", bstr.c_str()));
+  
   Experiment::g_bsFlag.set(m_nFlag, true);
 
-  std::string bstr =
+  bstr =
     Experiment::g_bsFlag.to_string<char,
 				   std::string::traits_type,
 				   std::string::allocator_type>();

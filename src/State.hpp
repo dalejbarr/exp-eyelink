@@ -32,8 +32,9 @@ class State
   string m_strDebug;
   long m_lSeq;
   Uint32 m_nTimeout;
-	static SDL_Thread * s_pThread;
-	static bool s_bContinue;
+  Uint32 m_nTrialTimeout;
+  static SDL_Thread * s_pThread;
+  static bool s_bContinue;
   //bool m_bVisited;
 
   EventGrabAOI * m_pEvtMove;
@@ -43,14 +44,15 @@ class State
  public:
   EventMap m_mmapEvent;
   vector<Uint32> m_vMsBegin;
+  bool m_bTimedOut;
 
   static int s_nMouseX;
   static int s_nMouseY;
   static OpInt s_nMouseCurX;
   static OpInt s_nMouseCurY;
 
-	static bool s_bFinished;
-	static bool s_bTimedOut;
+  static bool s_bFinished;
+  static Uint32 s_msTrialBegin;
   
   WatchMap m_mmapWatch;
   State(long id, const char * pcName, long seq);
@@ -61,7 +63,7 @@ class State
   int LoadEvents(Template * pTemplate);
   int LoadWatches(Template * pTemplate);
   int Prepare();
-  int Start();
+  int Start(Uint32 msBegin);
   int Main();
   int Run();
   int Finish();
@@ -70,7 +72,7 @@ class State
   EventPtr FindEventByCmdID(long id);
 
   static Uint32 timeoutFn(Uint32 interval, void *param);
-	static int main(void * pVoid);
+  static int main(void * pVoid);
   Watch * HandleEvent(SDL_Event * pEvt, Template * pThis);
   Watch * ProcessMouseButton(SDL_Event * pEvt);
   inline long GetSeq() { return m_lSeq; }

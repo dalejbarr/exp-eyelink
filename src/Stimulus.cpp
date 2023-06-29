@@ -33,11 +33,26 @@ int Stimulus::Action() {
 }
 
 string Stimulus::GetResourceString(string s1) {
+  string s3 = "";
+  
   if (s1[0] == '$') {
     if (!g_pCurItemCell) {
       g_pErr->Report("Stimulus::GetResourceString; g_pCurItemCell undefined!");
     } else {}
-    s1 = g_pCurItemCell->m_mapResources[s1.substr(1, s1.size()-1)];
+    // first, check whether it is available in the Resource table
+    string s2 = s1.substr(1, s1.size()-1);
+    if (g_pCurItemCell->m_mapResources.count(s2) > 0) {
+      s1 = g_pCurItemCell->m_mapResources[s2];
+    } else {
+      // get it from experiment variables
+      if (g_pConfig->GetConfig(s2.c_str(), &s3)) {
+	s1 = s3;
+      } else {
+	g_pErr->Debug(pastestr::paste("sss", "",
+				      "WARNING: could not find resource '",
+				      s1, "'"));
+      }
+    }
   } else {
     s1 = s1;
   }

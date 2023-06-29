@@ -33,10 +33,10 @@ int exp_init(int argc, char * argv[]) {
     g_pErr->Report("Could not initialize Simple DirectMedia Layer.");
   } else {}
 	
-	int flags = IMG_INIT_JPG | IMG_INIT_PNG;
-	if (IMG_Init(flags) != flags) {
-		g_pErr->Report("image support not built in :(");
-	} else {}
+  int flags = IMG_INIT_JPG | IMG_INIT_PNG;
+  if (IMG_Init(flags) != flags) {
+    g_pErr->Report("image support not built in :(");
+  } else {}
 
   if (parseArgs(argc, argv)==1) {
     exit(1);
@@ -53,7 +53,7 @@ int exp_init(int argc, char * argv[]) {
     //string sMsg();
     g_pExperiment->Message(pastestr::paste("sd", "", "Your session ID is ", g_pExperiment->GetSessionID()).c_str());
     g_pExperiment->WaitKey();
-		Display_SDL::ClearScreen();
+    Display_SDL::ClearScreen();
   } else {
   }
 
@@ -78,7 +78,7 @@ int exp_cleanup() {
   if (!(g_nMainResult == SBX_ABORT_EXPERIMENT)) {
     SDL_Quit();
   } else {}
-	IMG_Quit();
+  IMG_Quit();
 }
 
 int main(int argc, char *argv[]){
@@ -102,13 +102,13 @@ int main(int argc, char *argv[]){
     }
 
     /*
-    if (nResult == SBX_END_EXPERIMENT) {
+      if (nResult == SBX_END_EXPERIMENT) {
       g_pExperiment->FinishTrial();
       break;
-    } else {
-    } 
+      } else {
+      } 
     */
-   // screen shot
+    // screen shot
     //sprintf(fname, "screenshots/%02d.bmp", nTrials++);
     //SDL_SaveBMP(g_pDisplay->GetSDLScreen(), fname);
     //g_pExperiment->FinishTrial();
@@ -147,7 +147,7 @@ int parseArgs(int argc, char **argv)
 	{
 	  i++;
 	  expdb.assign(argv[i]);
-	    //sprintf(expdb, "%s", argv[i]);
+	  //sprintf(expdb, "%s", argv[i]);
 	}
       else if (strcmp(argv[i],"-dbdriver") ==0 && argv[i+1]) 
 	{

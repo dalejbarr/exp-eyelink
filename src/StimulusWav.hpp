@@ -20,6 +20,10 @@ using std::string;
 
 class StimulusWav : public Stimulus {
 protected:
+  bool m_bConditional; // for conditional playback (using "Bit" arg)
+  bool m_bConditional_TargetValue; // for conditional playback (using "Value" arg)
+  int m_nBit;          // for conditional playback depending on
+                       // bits of Experiment::g_bsFlag
 public:
   Mix_Chunk * m_pSound;
 	int m_nLoop;

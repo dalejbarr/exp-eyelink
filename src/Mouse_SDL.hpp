@@ -30,6 +30,7 @@ public:
     m_ms = source.m_ms;
     m_x  = source.m_x;
     m_y  = source.m_y;
+    return *this;
   }
 };
 

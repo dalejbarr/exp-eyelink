@@ -61,14 +61,18 @@ OpInt State::s_nMouseCurX(0);
 OpInt State::s_nMouseCurY(0);
 
 bool State::s_bFinished = false;
-bool State::s_bTimedOut = false;
+// bool State::s_bTimedOut = false;
 bool State::s_bContinue = false;
+
+Uint32 State::s_msTrialBegin = 0;
 
 SDL_Thread * State::s_pThread = NULL;
 
 State::State(long id, const char * pcName, long seq) {
 
+  m_bTimedOut = false;
   m_nTimeout = 0;
+  m_nTrialTimeout = 0;
   m_id = id;
   m_strName.assign(pcName);
   m_lSeq = seq;
@@ -181,6 +185,14 @@ ORDER BY Msec ASC"));
       if (!Experiment::s_pCam) {
 	g_pErr->Debug("creating new webcam instance...");
 	string strDev;
+
+	/*
+	pair<ArgIter, ArgIter> pii;
+	ArgMMap::iterator ii;	  
+	int ix = 0;
+	pii = mmArgs.equal_range("Index");
+	*/
+	
 	if (!g_pConfig->GetConfig("Video_Device", &strDev)) {
 	  strDev.assign("/dev/video0");
 	}
@@ -425,7 +437,7 @@ ORDER BY WatchID ASC"));
       // mouse
     case SBX_WATCH_MOUSEBUTTON :
       pWatch = WatchPtr(new WatchMouse(idWatch, idNext, mmArgs, 
-																			 &(pTemplate->m_mmapAllAOI)));
+				       &(pTemplate->m_mmapAllAOI)));
       break;
     case SBX_WATCH_MOUSEMOVE :
       pWatch = WatchPtr(new WatchMouseMove(idWatch, idNext, mmArgs));
@@ -439,36 +451,51 @@ ORDER BY WatchID ASC"));
     case SBX_WATCH_TIMEOUT :
       pii = mmArgs.equal_range("Msec");
       if (pii.first == pii.second) {
-				g_pErr->Report("Argument Msec must be supplied to Watch TIMEOUT");
+	g_pErr->Report("Argument Msec must be supplied to Watch TIMEOUT");
       } else {
-				long msTime = 0;
-				from_string<long>(msTime, (*pii.first).second, std::dec);
-				m_nTimeout = (Uint32) msTime;
+	long msTime = 0;
+	from_string<long>(msTime, (*pii.first).second, std::dec);
+	m_nTimeout = (Uint32) msTime;
       }
       pWatch = WatchPtr(new Watch(idWatch, idNext));
-			break;
-		case SBX_WATCH_SOCKET_MSG :
-			{
-				// figure out which one
-				pair<ArgIter, ArgIter> pii;
-				ArgMMap::iterator ii;	  
-				unsigned short us = 0;
-				InputDevPtr pDev;
-				pii = mmArgs.equal_range("SocketID");
-				if (pii.first != pii.second) {
-						ii = pii.first;
-						us = boost::lexical_cast<unsigned short>((*ii).second.c_str());
-						g_pErr->Debug(pastestr::paste("sd"," ","socket index is",(long) us));
-						pDev = pTemplate->FindOrCreateInputDev(SBX_SOCKET_DEV, (int) us);
-				} else {
-					g_pErr->Report("Watch SOCKET_MSG requires argument 'SocketID'");
-				}  
-				if (Experiment::s_pSockListener == NULL) {
-					Experiment::s_pSockListener = new SocketListener(pDev);
-				}
-				pWatch = WatchPtr(new WatchSocketMsg(idWatch, idNext, mmArgs));
-			}
-			break;
+      break;
+    case SBX_WATCH_TRIALTIMEOUT : {
+      pii = mmArgs.equal_range("Msec");
+      if (pii.first == pii.second) {
+	g_pErr->Report("Argument Msec must be supplied to Watch TRIALTIMEOUT");
+      } else {
+	long msTime = 0;
+	from_string<long>(msTime, (*pii.first).second, std::dec);
+	m_nTrialTimeout = (Uint32) msTime;
+	g_pErr->Debug(pastestr::paste("sd", " ", "set trial timeout to: ",
+				      m_nTrialTimeout));
+      }
+      pWatch = WatchPtr(new Watch(idWatch, idNext));
+      break;
+    }
+      break;
+    case SBX_WATCH_SOCKET_MSG :
+      {
+	// figure out which one
+	pair<ArgIter, ArgIter> pii;
+	ArgMMap::iterator ii;	  
+	unsigned short us = 0;
+	InputDevPtr pDev;
+	pii = mmArgs.equal_range("SocketID");
+	if (pii.first != pii.second) {
+	  ii = pii.first;
+	  us = boost::lexical_cast<unsigned short>((*ii).second.c_str());
+	  g_pErr->Debug(pastestr::paste("sd"," ","socket index is",(long) us));
+	  pDev = pTemplate->FindOrCreateInputDev(SBX_SOCKET_DEV, (int) us);
+	} else {
+	  g_pErr->Report("Watch SOCKET_MSG requires argument 'SocketID'");
+	}  
+	if (Experiment::s_pSockListener == NULL) {
+	  Experiment::s_pSockListener = new SocketListener(pDev);
+	}
+	pWatch = WatchPtr(new WatchSocketMsg(idWatch, idNext, mmArgs));
+      }
+      break;
     }
 
     if (pWatch.get()) {
@@ -517,6 +544,7 @@ int State::Prepare() {
   m_vMsBegin.clear();
 
   LockWatches();
+  m_bTimedOut = false;
   g_pErr->DFO("State::Prepare", m_strDebug.c_str(), 2);
 
   return 0;
@@ -525,10 +553,10 @@ int State::Prepare() {
 int State::Finish() {
   g_pErr->DFI("State::Finish", m_strDebug.c_str(), 5);
 
-	State::s_bContinue = false;
-	int nStatus;
-	SDL_WaitThread(s_pThread, &nStatus);
-	State::s_pThread = NULL;
+  State::s_bContinue = false;
+  int nStatus;
+  SDL_WaitThread(s_pThread, &nStatus);
+  State::s_pThread = NULL;
   // finish events
   EventMap::iterator ei;
   for (ei = m_mmapEvent.begin(); ei != m_mmapEvent.end(); ei++) {
@@ -542,30 +570,36 @@ int State::Finish() {
   }
 
   LockWatches();
-
+  m_bTimedOut = false;
+  
   g_pErr->DFO("State::Finish", m_strDebug.c_str(), 5);
+
+  return 0;
 }
 
 int State::main(void * pVoid) { // static
-	State * pThis = (State *) pVoid;
-	pThis->Main();
+  State * pThis = (State *) pVoid;
+  pThis->Main();
+
+  return 0;
 }
 
-int State::Start() {
+int State::Start(Uint32 msBegin) {
   g_pErr->DFI("State::Start", m_strDebug.c_str(), 4);
 
-	State::s_bFinished = false;
-	State::s_bTimedOut = false;
-	State::s_bContinue = true;
+  State::s_msTrialBegin = msBegin;
+  State::s_bFinished = false;
+  State::s_bContinue = true;
+  m_bTimedOut = false;
 
   //m_bVisited = 1;
   m_pCurEvent = m_mmapEvent.begin();
 
   m_vMsBegin.push_back(ClockFn());
-	if (s_pThread) {
-		g_pErr->Report("thread already running!");
-	}
-	State::s_pThread = SDL_CreateThread(State::main, this);
+  if (s_pThread) {
+    g_pErr->Report("thread already running!");
+  }
+  State::s_pThread = SDL_CreateThread(State::main, this);
   //Update();
   UnlockWatches();
 
@@ -590,13 +624,23 @@ int State::Main() {
     (*wi).second->Activate();
   }
 
+  if (m_nTrialTimeout) {
+    g_pErr->Debug(pastestr::paste("sd", " ", "trial timeout at: ",
+				  m_nTrialTimeout));
+    g_pErr->Debug(pastestr::paste("sd", " ", "trial started at: ",
+				  s_msTrialBegin));
+  } else {
+    g_pErr->Debug("no trial timeout set");
+  }
+  
+  // THIS IS THE MAIN LOOP!
   while (State::s_bContinue) {
     msDiff = ClockFn() - m_vMsBegin.back();
-    if (m_nTimeout && !State::s_bTimedOut) {
+    if (m_nTimeout && !m_bTimedOut) {
       if (msDiff >= m_nTimeout) {
-	State::s_bTimedOut = true;
+	m_bTimedOut = true;
 	State::s_bFinished = true; // don't run any more events
-	//g_pErr->Report(pastestr::paste("sd", " ", "state timeout", m_id));
+	g_pErr->Debug(pastestr::paste("sd", " ", "state timeout", m_id));
 	m_pCurEvent = m_mmapEvent.end(); // make sure no more events will be triggered
 	userevent.type = SDL_USEREVENT;
 	userevent.code = SBX_WATCH_TIMEOUT;
@@ -606,7 +650,24 @@ int State::Main() {
 	event.user = userevent;
 	SDL_PushEvent(&event);
 	bExit = true;
-      } else {}
+      }
+    }
+    if (m_nTrialTimeout && State::s_msTrialBegin && !m_bTimedOut) {
+      msDiff = ClockFn() - s_msTrialBegin;
+      if (msDiff >= m_nTrialTimeout) {
+	m_bTimedOut = true;
+	State::s_bFinished = true; // don't run any more events
+	g_pErr->Debug(pastestr::paste("sd", " ", "trial timeout", m_id));
+	m_pCurEvent = m_mmapEvent.end(); // make sure no more events will be triggered
+	userevent.type = SDL_USEREVENT;
+	userevent.code = SBX_WATCH_TRIALTIMEOUT;
+	userevent.data1 = NULL;
+	userevent.data2 = NULL;
+	event.type = SDL_USEREVENT;
+	event.user = userevent;
+	SDL_PushEvent(&event);
+	bExit = true;	  
+      }
     } else {}
 
     if (!State::s_bFinished) {
@@ -619,7 +680,7 @@ int State::Main() {
 	    pEvent->Action();
 	    m_pCurEvent++;
 	    /*
-	    */
+	     */
 	  } // matches if ((msDiff))
 	} else { // matches if (pEvent)
 	  State::s_bFinished = true; // no events to process
@@ -636,11 +697,11 @@ int State::Main() {
 	sdlEventDone.user.data1=NULL;
 	sdlEventDone.user.data2=NULL;
 	SDL_PushEvent(&sdlEventDone);
-	if ((!m_nTimeout) || s_bTimedOut) {
+	if ((!m_nTimeout) || m_bTimedOut) {
 	  bExit = true;
 	} 
       } // matches if (m_pCurEvent)      
-    }
+	     }
     SDL_Delay(2);
   }
 
@@ -707,28 +768,28 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
     wmip = m_mmapWatch.equal_range(SBX_WATCH_KEYDOWN);
     if (wmip.first != wmip.second) {
       for (wmi = wmip.first; wmi != wmip.second; wmi++) {
-				pwk = (WatchKey *) (*wmi).second.get();
-				if (pwk->GetKey() == -1) {
-					pw1 = (Watch *) pwk;
-				} else {
-					if (pwk->GetKey() == pEvt->key.keysym.sym) {
-						pwSignaled = (Watch *) pwk;
-					} else {}
-				}
+	pwk = (WatchKey *) (*wmi).second.get();
+	if (pwk->GetKey() == -1) {
+	  pw1 = (Watch *) pwk;
+	} else {
+	  if (pwk->GetKey() == pEvt->key.keysym.sym) {
+	    pwSignaled = (Watch *) pwk;
+	  } else {}
+	}
       }
       if (!pwSignaled) {
-				if (pw1) {
-					g_pErr->Debug(pastestr::paste("sds", "", 
-																				"ANYKEY signaled (WatchID=", 
-																				pw1->GetID(), ")"));
-				} else {}
-				pwSignaled = pw1;
+	if (pw1) {
+	  g_pErr->Debug(pastestr::paste("sds", "", 
+					"ANYKEY signaled (WatchID=", 
+					pw1->GetID(), ")"));
+	} else {}
+	pwSignaled = pw1;
       } else {
-				g_pErr->Debug(pastestr::paste("sds", "", "key signaled (WatchID=", 
-																			pwSignaled->GetID(), ")"));
+	g_pErr->Debug(pastestr::paste("sds", "", "key signaled (WatchID=", 
+				      pwSignaled->GetID(), ")"));
       }
     }
-	}
+  }
     break;
 		
   case SDL_KEYUP :
@@ -739,56 +800,63 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
     // handle the watch for specific keys first, then default to ANYKEY.
   case SDL_USEREVENT : {
     //g_pErr->Debug(pastestr::paste("sd", " ", "the user event was", 
-		//(long) pEvt->user.code));
-		g_pErr->Debug(pastestr::paste("sdd", " ", "... user event", (long) pEvt->user.code,
-																	(long) ClockFn()));
-    switch (pEvt->user.code) {
-    case SBX_WATCH_DONE : {
-			// FIRST, make sure we didn't miss any socket signals between trials
-			if (Experiment::s_pSockListener != NULL) {
-				Experiment::s_pSockListener->CheckForMissedMessages();
-			}
-
-      wmip = m_mmapWatch.equal_range(SBX_WATCH_DONE);
-      if (wmip.first != wmip.second) {
-				for (wmi = wmip.first; wmi != wmip.second; wmi++) {
-					if ((*wmi).second->CheckCondition(pEvt)) {
-						pwSignaled = (*wmi).second.get();
-						g_pErr->Debug("done signaled");
-					} else {}
-				}
-      } else {}
-		}
-      break;
-    case SBX_WATCH_TIMEOUT : {
-      wmip = m_mmapWatch.equal_range(SBX_WATCH_TIMEOUT);
-      pwSignaled = (*wmip.first).second.get();
-      g_pErr->Debug("timeout signaled");
-		}
-      break;
-		case SBX_WATCH_SOCKET_MSG : {
-      wmip = m_mmapWatch.equal_range(SBX_WATCH_SOCKET_MSG);
-			for (wmi = wmip.first; wmi != wmip.second; wmi++) {
-				if ((*wmi).second->CheckCondition(pEvt)) {
-					pwSignaled = (*wmi).second.get();
-				} else {}
-			}
-			// TODO: do something
-		}
-			break;
-		case SBX_WATCH_REMAIN : {
-      wmip = m_mmapWatch.equal_range(SBX_WATCH_REMAIN);
-      if (wmip.first != wmip.second) {
-				for (wmi = wmip.first; wmi != wmip.second; wmi++) {
-					if ((*wmi).second->CheckCondition(pEvt)) {
-						pwSignaled = (*wmi).second.get();
-					}
-				}
-			}
-		}
-			break;
-    }
+	//(long) pEvt->user.code));
+	g_pErr->Debug(pastestr::paste("sdd", " ", "... user event",
+				      (long) pEvt->user.code,
+				      (long) ClockFn()));
+      switch (pEvt->user.code) {
+      case SBX_WATCH_DONE : {
+	// FIRST, make sure we didn't miss any socket signals between trials
+	if (Experiment::s_pSockListener != NULL) {
+	  Experiment::s_pSockListener->CheckForMissedMessages();
 	}
+
+	wmip = m_mmapWatch.equal_range(SBX_WATCH_DONE);
+	if (wmip.first != wmip.second) {
+	  for (wmi = wmip.first; wmi != wmip.second; wmi++) {
+	    if ((*wmi).second->CheckCondition(pEvt)) {
+	      pwSignaled = (*wmi).second.get();
+	      g_pErr->Debug("done signaled");
+	    } else {}
+	  }
+	} else {}
+      }
+	break;
+      case SBX_WATCH_TIMEOUT : {
+	wmip = m_mmapWatch.equal_range(SBX_WATCH_TIMEOUT);
+	pwSignaled = (*wmip.first).second.get();
+	g_pErr->Debug("timeout signaled");
+      }
+	break;
+      case SBX_WATCH_TRIALTIMEOUT : {
+	wmip = m_mmapWatch.equal_range(SBX_WATCH_TRIALTIMEOUT);
+	pwSignaled = (*wmip.first).second.get();
+	g_pErr->Debug("trial timeout signaled");
+      }
+	break;
+      case SBX_WATCH_SOCKET_MSG : {
+	wmip = m_mmapWatch.equal_range(SBX_WATCH_SOCKET_MSG);
+	for (wmi = wmip.first; wmi != wmip.second; wmi++) {
+	  if ((*wmi).second->CheckCondition(pEvt)) {
+	    pwSignaled = (*wmi).second.get();
+	  } else {}
+	}
+	// TODO: do something
+      }
+	break;
+      case SBX_WATCH_REMAIN : {
+	wmip = m_mmapWatch.equal_range(SBX_WATCH_REMAIN);
+	if (wmip.first != wmip.second) {
+	  for (wmi = wmip.first; wmi != wmip.second; wmi++) {
+	    if ((*wmi).second->CheckCondition(pEvt)) {
+	      pwSignaled = (*wmi).second.get();
+	    }
+	  }
+	}
+      }
+	break;
+      }
+  }
     break;
 
     // gamepad
@@ -796,10 +864,10 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
     wmip = m_mmapWatch.equal_range(SBX_WATCH_GAMEPAD_MOVE);
     for (wmi = wmip.first; wmi != wmip.second; wmi++) {
       if ((*wmi).second->CheckCondition(pEvt)) {
-				pwSignaled = (*wmi).second.get();
+	pwSignaled = (*wmi).second.get();
       } else {}
     }        
-	}
+  }
     break;
 
   case SDL_JOYBUTTONDOWN :
@@ -807,16 +875,16 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
       // TODO: find the associated GamePad device, and process the event.
       SDL_JoyButtonEvent * pJEvt = (SDL_JoyButtonEvent *) pEvt;
       GamePad_SDL * pGamePad = 
-				(GamePad_SDL *) (pThis->GetDevice(SBX_GAMEPAD_DEV,
-																					pJEvt->which)).get();
+	(GamePad_SDL *) (pThis->GetDevice(SBX_GAMEPAD_DEV,
+					  pJEvt->which)).get();
       if (!pGamePad) {
       } else {
       }
       wmip = m_mmapWatch.equal_range(SBX_WATCH_GAMEPAD_BUTTONDOWN);
       for (wmi = wmip.first; wmi != wmip.second; wmi++) {
-				if ((*wmi).second->CheckCondition(pEvt)) {
-					pwSignaled = (*wmi).second.get();
-				} else {}
+	if ((*wmi).second->CheckCondition(pEvt)) {
+	  pwSignaled = (*wmi).second.get();
+	} else {}
       }
     }
     break;
@@ -830,28 +898,28 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
     pwSignaled = ProcessMouseButton(pEvt);
 
   case SDL_MOUSEMOTION :
-	  // InputDevPtr pDev = pTemplate->FindOrCreateInputDev(SBX_MOUSE_DEV);
-		/*
-		// truncate values if limits are set and cursor goes beyond them
-		if ( ! ((s_xLim0==0) && (s_xLim1==0) && (s_yLim0==0) && (s_yLim1==0)) ) { // limits are set
-			g_pErr->Debug("checking limits");
-			if ((m_xLast < s_xLim0) || (m_xLast > s_yLim1)) {
-				g_pErr->Debug("out of x bounds");
-			} else {}
-			if ((m_xLast < s_yLim0) || (m_xLast > s_yLim1)) {
-				g_pErr->Debug("out of y bounds");
-			} else {}
-			m_xLast = (m_xLast<=s_xLim0) * s_xLim0 + 
-				((m_xLast>s_xLim0) && (m_xLast<s_xLim1)) * m_xLast +
-				(m_xLast>=s_xLim1) * s_xLim1;
-			m_yLast = (m_yLast<=s_yLim0) * s_yLim0 + 
-				((m_yLast>s_yLim0) && (m_yLast<s_yLim1)) * m_yLast +
-				(m_yLast>=s_yLim1) * s_yLim1;				
-		} else { // limits unset
-			g_pErr->Debug(pastestr::paste("sdddd", " ", ".limits",
-																		(long) s_xLim0, (long) s_yLim0, (long) s_xLim1, (long) s_yLim1));
-		}
-		*/
+    // InputDevPtr pDev = pTemplate->FindOrCreateInputDev(SBX_MOUSE_DEV);
+    /*
+    // truncate values if limits are set and cursor goes beyond them
+    if ( ! ((s_xLim0==0) && (s_xLim1==0) && (s_yLim0==0) && (s_yLim1==0)) ) { // limits are set
+    g_pErr->Debug("checking limits");
+    if ((m_xLast < s_xLim0) || (m_xLast > s_yLim1)) {
+    g_pErr->Debug("out of x bounds");
+    } else {}
+    if ((m_xLast < s_yLim0) || (m_xLast > s_yLim1)) {
+    g_pErr->Debug("out of y bounds");
+    } else {}
+    m_xLast = (m_xLast<=s_xLim0) * s_xLim0 + 
+    ((m_xLast>s_xLim0) && (m_xLast<s_xLim1)) * m_xLast +
+    (m_xLast>=s_xLim1) * s_xLim1;
+    m_yLast = (m_yLast<=s_yLim0) * s_yLim0 + 
+    ((m_yLast>s_yLim0) && (m_yLast<s_yLim1)) * m_yLast +
+    (m_yLast>=s_yLim1) * s_yLim1;				
+    } else { // limits unset
+    g_pErr->Debug(pastestr::paste("sdddd", " ", ".limits",
+    (long) s_xLim0, (long) s_yLim0, (long) s_xLim1, (long) s_yLim1));
+    }
+    */
     State::s_nMouseCurX.Set(pEvt->motion.x);
     State::s_nMouseCurY.Set(pEvt->motion.y);
 
@@ -859,7 +927,7 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
     wmip = m_mmapWatch.equal_range(SBX_WATCH_MOUSEMOVE);
     for (wmi = wmip.first; wmi != wmip.second; wmi++) {
       if ((*wmi).second->CheckCondition()) {
-				pwSignaled = (*wmi).second.get();
+	pwSignaled = (*wmi).second.get();
       } else {}
     }
 		
@@ -1031,4 +1099,6 @@ int State::PostTrial() {
 
   LockWatches();
   g_pErr->DFO("State::Finish", m_strDebug.c_str(), 5);
+
+  return 0;
 }

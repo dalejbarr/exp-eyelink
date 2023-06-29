@@ -40,6 +40,7 @@ Template::Template(long id, long timeout, const char * pcName)
   m_pItemCell = NULL;
   m_id = id;
   m_strName.assign(pcName);
+  m_msBegin = 0;
   ostringstream ostr;
   ostr << m_strName << " (" << m_id << ")";
   m_strDebug = ostr.str();
@@ -116,6 +117,8 @@ int Template::Cleanup() {
   m_mmapAOI.clear();
   m_nStatus = SBX_DEALLOCATED;
   //m_mapAOI.clear();
+
+  return 0;
 }
 
 int Template::LoadStates() {
@@ -305,7 +308,7 @@ int Template::HandleEvent(SDL_Event * pEvt) {
       
       if (pwSignaled->GetNextID() != 0) {
 	AttachState(m_mapState[pwSignaled->GetNextID()].get());
-	(m_mapState[pwSignaled->GetNextID()].get())->Start();
+	(m_mapState[pwSignaled->GetNextID()].get())->Start(m_msBegin);
 	//m_pCurState->Run();
       } else {
 	g_pErr->Debug("ending trial");
@@ -574,6 +577,8 @@ Operation * Template::FindVar(string s) {
       // TO DO : error
     }
   } else {}
+
+  return 0;
 }
 
 Operation Template::NewOplist(string s) {
@@ -615,10 +620,10 @@ int Template::Update() {
   return 0;
 }
 
-int Template::Start() {
+int Template::Start(Uint32 msBegin) {
   g_pErr->DFI("Template::Start", m_id, 3);
+  m_msBegin = msBegin;
   //AttachState(m_pCurState);
-  g_pErr->DFO("Template::Start", m_id, 3);
   m_nStatus = SBX_IN_PROGRESS;
   if (!GetCurTrial()) {
     g_pErr->Report("undefined");
@@ -626,7 +631,9 @@ int Template::Start() {
     //g_pErr->Report("defined");
   }
 
-  return m_pCurState->Start();
+  g_pErr->DFO("Template::Start", m_id, 3);
+  
+  return m_pCurState->Start(msBegin);
 }
 
 /*
@@ -843,6 +850,9 @@ InputDevPtr Template::FindOrCreateInputDev(unsigned long idDev, int nIndex /*=0*
   ii = Template::s_mmapInputDevPtr.equal_range(idDev);
   bool bExists = false;
 
+  g_pErr->Debug(pastestr::paste("sd", " ",
+				"looking for device index", nIndex));
+  
   if (DeviceExists(idDev, nIndex)) {
     pDev = GetDevice(idDev, nIndex);
   } else {

@@ -41,6 +41,8 @@ int EventSwapAOI::ProcessArgs() {
 				m_sAOI2.c_str()));
 
   g_pErr->DFO("EventSwapAOI::ProcessArgs", m_id, 4);
+
+  return 0;
 }
 
 int EventSwapAOI::Prepare() {

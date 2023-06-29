@@ -97,10 +97,14 @@ Display_SDL::~Display_SDL() {
 
 int Display_SDL::SetColorKey(int r, int g, int b) {
   m_SDL_mapRGB = SDL_MapRGB(Display_SDL::GetScreen()->format, r, g, b);
+
+  return 0;
 }
 
 int Display_SDL::Draw() {
   MyDisplay::Draw();
+
+  return 0;
 }
 
 int Display_SDL::CreateScreen(int x0, int y0, int w, int h, Uint32 nFlags) {
@@ -111,6 +115,8 @@ int Display_SDL::CreateScreen(int x0, int y0, int w, int h, Uint32 nFlags) {
   m_nHeight = h;
   // StimulusImg::SetScreen(this);
   m_bSelfAlloc = true;
+
+  return 0;
 }
 
 int Display_SDL::MessageXY(int x, int y, const char * pcMessage) {

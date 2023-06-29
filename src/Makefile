@@ -10,7 +10,7 @@ OBJS = 	Experiment.o Template.o State.o \
 	Event.o EventGrabAOI.o EventSwapAOI.o EventUpdateAOI.o \
 	EventUpdate.o EventRecord.o EventMsg.o StimulusShowAOI.o \
 	EventRepeatIf.o EventResetCounter.o EventIncrementCounter.o \
-	EventSocketSendMsg.o EventSetFlag.o \
+	EventSocketSendMsg.o EventSetFlag.o EventProgressMeter.o \
 	Watch.o WatchKey.o WatchMouse.o WatchDone.o \
 	WatchGamePadButton.o WatchGamePadMove.o \
 	WatchSocketMsg.o WatchRemain.o \

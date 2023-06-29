@@ -17,8 +17,8 @@ public:
   virtual ~Socket();
 	virtual void Initialize();
 	virtual void Destroy();
-	inline bool IsQueueEmpty() { m_qMessages.empty(); };
-	inline int QueueSize() { m_qMessages.size(); };
+  inline bool IsQueueEmpty() { return m_qMessages.empty(); };
+	inline int QueueSize() { return m_qMessages.size(); };
 	int ConnectToServer(string strAddress);
 	int StartServer(string strPort);
 	int SendMessage(string strMsg);

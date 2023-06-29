@@ -55,6 +55,7 @@ protected:
   ResourceMap m_mapResources;
   vector<EventPair> m_vEventsAsync;
   ItemCell * m_pItemCell;
+  Uint32 m_msBegin;
 
 public:	
   StimulusPtrMMap m_mmapAOI; 
@@ -93,7 +94,7 @@ public:
   int Finish();
   int HandleEvent(SDL_Event * pEvt);
   int AttachState(State * pState);
-  int Start();
+  int Start(Uint32 msBegin);
   int Update();
   inline void StoreMsg(Uint32 ms, MsgPair msg) { m_msgMap[ms] = msg; }
   int AddEventAsync(EventPtr pEvt, long id = -1);

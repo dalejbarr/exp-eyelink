@@ -193,6 +193,8 @@ int StimulusImg::Action() {
 
 int StimulusImg::SetColorkey(int r, int g, int b) {
   m_r = r; m_g = g; m_b = b; m_bColorKey = 1;
+
+  return 0;
 }
 
 int StimulusImg::InAOI(Uint16 x, Uint16 y) {
