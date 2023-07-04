@@ -98,7 +98,7 @@ int main(int argc, char *argv[]){
       break;
     } else {
       g_pExperiment->FinishTrial();
-      Display_SDL::ClearScreen();
+      //Display_SDL::ClearScreen();
     }
 
     /*

@@ -3,10 +3,10 @@ OBJS = 	Experiment.o Template.o State.o \
 	ItemCell.o Trial.o MyDisplay.o Device.o Display_SDL.o \
 	Audio.o Audio_SDL.o \
 	InputDev.o Mouse_SDL.o \
-	Webcam2.o \
+	Webcam2.o WebcamCV.o \
 	Stimulus.o StimulusDisplayOn.o StimulusImg.o \
 	StimulusWav.o StimulusTxt.o \
-	StimulusWebcam.o \
+	StimulusWebcam.o StimulusWebcamCV.o \
 	Event.o EventGrabAOI.o EventSwapAOI.o EventUpdateAOI.o \
 	EventUpdate.o EventRecord.o EventMsg.o StimulusShowAOI.o \
 	EventRepeatIf.o EventResetCounter.o EventIncrementCounter.o \
@@ -62,34 +62,35 @@ W32OBJS = \
 	$(W32L)/EventLC1Display.o \
 	$(W32L)/EventSwapAOI2.o
 
+OPENCV_CFLAGS := $(shell pkg-config opencv4 --cflags)
 CFLAGS = -std=c++11 -c -I. 
 
 W32CF = -c -I. -I/home/daleb/src/boost -D WIN32 $(shell /opt/SDL-win32/bin/sdl-config --cflags)
-#-I/usr/i586-mingw32msvc/include/SDL -I/home/daleb/src/boost -D WIN32
-#W32LF = -L/usr/i586-mingw32msvc/lib -lmingw32 -lSDLmain -lSDL -lSDL_ttf -lSDL_mixer
 W32LF = $(shell /opt/SDL-win32/bin/sdl-config --libs) -lSDL_mixer -lSDL_ttf
-
-#MYFLAGS = -I/usr/include/mysql
 
 W32MYF = -Iwin32/mysql/include
 
 MYFLAGS = -I/usr/include/mysql
 MYLINK=-L/usr/lib/mysql -lmysqlclient 
+
+OPENCV_LIBS := $(shell pkg-config opencv4 --libs)
+
 SDL_CFLAGS := $(shell sdl-config --cflags)
 RTAFLAGS = -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__
-#SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer
-#SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_mixer -lSDL_ttf
+
 SDL_LDFLAGS = $(shell sdl-config --libs) -lSDL -lpthread -lSDL_image -lSDL_mixer -lSDL_ttf -lX11 -ljpeg
-# ELINK_CFLAGS := -I$(HDIR)/include
+
 ELINK_CFLAGS := -I/usr/include
-#ELINK_LDFLAGS := -L$(HDIR)/libs -leyelink_core -leyelink_core_graphics  -lsdl_util `sdl-config --libs`   -lSDL_image -lSDL_mixer -lrt -lSDL_ttf -lSDL_gfx -lSDL_image
 ELINK_LDFLAGS := -L/usr/lib -leyelink_core -leyelink_core_graphics  -lsdl_util `sdl-config --libs`   -lSDL_image -lSDL_mixer -lrt -lSDL_gfx -lSDL_image -lSDL_ttf
 
+
+# the libraries
 sblib-debug.a : $(OBJS) ReportErrorDebug.o sqlite3.o global.hpp
 	ar -rv sblib-debug.a $(OBJS) sqlite3.o ReportErrorDebug.o
 
 sblib.a : $(OBJS) ReportError.o sqlite3.o global.hpp
 	ar -rv sblib.a $(OBJS) sqlite3.o ReportError.o
+
 
 main.o : main.cpp picture.h
 	$(CC) $(ELINK_CFLAGS) $(CFLAGS) $(SDL_CFLAGS) main.cpp
@@ -101,7 +102,7 @@ exp2 : $(OBJS) sblib.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
 	$(CC) $(RTAFLAGS) -o exp2 expshell2.o sblib.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) 
 
 expdebug2 : sblib-debug.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
-	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) -lX11 -std=c++11
+	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(OPENCV_LIBS) $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) -lX11 -std=c++11
 
 install : exp2 expdebug2
 	cp exp2 ../bin/exp2; cp expdebug2 ../bin/expdebug2
@@ -134,13 +135,13 @@ StimulusBmp.o : StimulusBmp.cpp StimulusBmp.hpp Stimulus.hpp Stimulus.cpp
 	$(CC) $(CFLAGS) $(SDL_CFLAGS) $<
 
 Experiment.o : Experiment.cpp Experiment.hpp
-	$(CC) $(CFLAGS) $(MYFLAGS) $(BOOST) $(SDL_CFLAGS) $<
+	$(CC) $(CFLAGS) $(OPENCV_CFLAGS) $(MYFLAGS) $(BOOST) $(SDL_CFLAGS) $<
 
-expshell.o : expshell.cc
-	$(CC) $(CFLAGS) $(SDL_CFLAGS) $(MYFLAGS) $<
+# expshell.o : expshell.cc
+# 	$(CC) $(CFLAGS) $(SDL_CFLAGS) $(MYFLAGS) $<
 
-expshell2.o : expshell2.cpp
-	$(CC) $(CFLAGS) $(SDL_CFLAGS) $(MYFLAGS) $<
+expshell2.o : expshell2.cpp Display_SDL.hpp Experiment.hpp global.hpp Audio_SDL.hpp
+	$(CC) $(CFLAGS) $(OPENCV_CFLAGS) $(SDL_CFLAGS) $(MYFLAGS) $<
 
 sqlite3.o : sqlite3.c sqlite3.h
 	gcc $(CFLAGS) $<
@@ -167,7 +168,7 @@ RtAudio.o : RtAudio.cpp RtAudio.h
 	g++ $(CFLAGS) $(RTAFLAGS) -O2 -Wall -Wextra -fPIC -o RtAudio.o RtAudio.cpp
 
 %.o : %.cpp %.hpp
-	$(CC) $(CFLAGS) $(SDL_CFLAGS) $<
+	$(CC) $(CFLAGS) $(OPENCV_CFLAGS) $(SDL_CFLAGS) $<
 
 # win 32
 

@@ -17,6 +17,7 @@
 #include "Stimulus.hpp"
 #include "SocketListener.hpp"
 #include "Webcam2.hpp"
+#include "WebcamCV.hpp"
 
 class listordinfo {
 public:
@@ -75,6 +76,7 @@ typedef map<long, TemplatePtr> TemplateMap;
 typedef map<long, ItemCellPtr> ItemCellMap;
 typedef map<long, TrialPtr> TrialMap;
 typedef map<string, long> CounterMap;
+typedef map<int, WebcamCVPtr> WebcamCVMap;
 
 class Experiment
 {
@@ -118,6 +120,8 @@ public:
   
   static StimulusMap s_mapStimulus;
   static DeviceMMap s_mmapDevice;
+  static WebcamCVMap s_mapWebcamCV;
+
   static SocketListener * s_pSockListener;
   static Webcam2 * s_pCam;
 

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <X11/Xlib.h>
 using std::cout;
 using std::endl;
 
@@ -23,6 +22,7 @@ using std::vector;
 #include <iomanip>
 
 #include "Experiment.hpp"
+#include <X11/Xlib.h>
 #include "RecordsetSqlite.hpp"
 #include "RecordsetMySQL.hpp"
 #include "EXPConfig.hpp"
@@ -51,6 +51,8 @@ EXPConfig * g_pConfig = NULL;
 
 StimulusMap Experiment::s_mapStimulus;
 DeviceMMap Experiment::s_mmapDevice;
+WebcamCVMap Experiment::s_mapWebcamCV;
+
 std::bitset<4> Experiment::g_bsFlag = 0;
 
 SocketListener * Experiment::s_pSockListener = NULL;
@@ -300,11 +302,13 @@ int Experiment::Cleanup() {
 
   g_pErr->Debug(".Deleting Recordsets.");
   m_mapCounter.clear();
+  
   if (s_pCam) {
     delete s_pCam;
     s_pCam = NULL;
   }
-
+  s_mapWebcamCV.clear();
+  
   return 0;
 }
 

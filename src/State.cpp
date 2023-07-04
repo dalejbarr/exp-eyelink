@@ -18,6 +18,7 @@ using pastestr::paste;
 #include "StimulusEyeLinkMsg.hpp"
 #include "StimulusTxt.hpp"
 #include "StimulusWebcam.hpp"
+#include "StimulusWebcamCV.hpp"
 #include "EventGrabAOI.hpp"
 #include "EventSwapAOI.hpp"
 #include "EventSwapAOI2.hpp"
@@ -186,13 +187,6 @@ ORDER BY Msec ASC"));
 	g_pErr->Debug("creating new webcam instance...");
 	string strDev;
 
-	/*
-	pair<ArgIter, ArgIter> pii;
-	ArgMMap::iterator ii;	  
-	int ix = 0;
-	pii = mmArgs.equal_range("Index");
-	*/
-	
 	if (!g_pConfig->GetConfig("Video_Device", &strDev)) {
 	  strDev.assign("/dev/video0");
 	}
@@ -210,7 +204,36 @@ ORDER BY Msec ASC"));
 	}
 	Experiment::s_pCam = new Webcam2(strDev.c_str(), w, h);
       } 
-      pStim = StimulusPtr(new StimulusWebcam(idEvent, mmArgs, pTemplate, Experiment::s_pCam));
+      pStim = StimulusPtr(new StimulusWebcam(idEvent, mmArgs, pTemplate,
+					     Experiment::s_pCam));
+      break;
+    case SBX_EVENT_WEBCAMCV_START :
+      pair<ArgIter, ArgIter> pii;
+      ArgMMap::iterator ii;	  
+      int id_dev = 0;
+      WebcamCVPtr p_wc;
+      pii = mmArgs.equal_range("Index");
+
+      p_wc.reset();
+      
+      if (pii.first != pii.second) {
+	ii = pii.first;
+	id_dev = boost::lexical_cast<int>((*ii).second.c_str());
+      }
+
+      if (Experiment::s_mapWebcamCV.find(id_dev) ==
+	  Experiment::s_mapWebcamCV.end()) {
+	g_pErr->Debug(pastestr::paste("sds", "",
+				      "webcam device ", id_dev,
+				      " not found: creating"));
+	p_wc = WebcamCVPtr(new WebcamCV(id_dev));
+	
+	Experiment::s_mapWebcamCV.insert(pair<int, WebcamCVPtr>(id_dev, p_wc));
+      } else {
+      }
+      
+      pStim = StimulusPtr(new StimulusWebcamCV(idEvent, mmArgs,
+					       pTemplate, p_wc));
       break;
     }
 
@@ -289,30 +312,18 @@ ORDER BY Msec ASC"));
 	  } else {
 	    g_pErr->Report("Event GAMEPADREC requires Argument 'Index'");
 	  }	  
-	  //((GamePad_SDL *) pDev.get())->SetRecMode(true);
 	  pEvent = EventPtr(new EventRecord(idEvent, msec, idCmd, mmArgs, pTemplate, vIDP));
 	}
 	break;
       case SBX_EVENT_MSG :
 	pEvent = EventPtr(new EventMsg(idEvent, msec, idCmd, mmArgs, pTemplate));
 	break;
-	//case SBX_EVENT_GSC1FEEDBACK :
-	//pEvent = EventPtr(new EventGSC1Feedback(idEvent, msec, idCmd, mmArgs, pTemplate, NULL));
-	//pGSC1Feedback = pEvent;
-	//break;
-	//case SBX_EVENT_GSC1DRAWGRID :
-	//pEvent = EventPtr(new EventGSC1DrawGrid(idEvent, msec, idCmd, mmArgs, pTemplate));
-	//pGSC1DrawGrid = pEvent;
-	//break;
       case SBX_EVENT_ASYNCSTART :
 	pEvent = EventPtr(new EventAsyncCtrl(idEvent, msec, idCmd, mmArgs, pTemplate, true));
 	break;
       case SBX_EVENT_ASYNCSTOP :
 	pEvent = EventPtr(new EventAsyncCtrl(idEvent, msec, idCmd, mmArgs, pTemplate, false));
 	break;
-	//case SBX_EVENT_LC1DISPLAY :
-	//pEvent = EventPtr(new EventLC1Display(idEvent, msec, idCmd, mmArgs, pTemplate));
-	//break;
       case SBX_EVENT_RECSOUND :
 	{
 	  InputDevPtr pDev = pTemplate->FindOrCreateInputDev(SBX_AUDIOREC_DEV);
@@ -360,9 +371,6 @@ ORDER BY Msec ASC"));
     if (pEvent.get()) {
       m_mmapEvent.insert(EventPair(pEvent->Msec(), pEvent));
     } else {
-      // TO DO; uncomment this line
-      //g_pErr->Report(pastestr::paste("ssssss", " ", "Couldn't find EventCmdID ", d[i][1].c_str(), "\n",
-      //d[i][0].c_str(), d[i][1].c_str(), d[i][2].c_str() ));
     }
   }
 

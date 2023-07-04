@@ -99,9 +99,17 @@ int StimulusWav::Prepare() {
 
 int StimulusWav::Finish() {
   g_pErr->DFI("StimulusWav::Finish", m_sResource.c_str(), 3);
+  g_pErr->DFO("StimulusWav::Finish", m_sResource.c_str(), 3);
+  
+  return 0;
+}
+
+int StimulusWav::Cleanup() {
+  g_pErr->DFI("StimulusWav::Cleanup", m_sResource.c_str(), 3);
   Mix_FreeChunk(m_pSound);
   m_pSound = NULL;
-  g_pErr->DFO("StimulusWav::Finish", m_sResource.c_str(), 3);
+  g_pErr->DFO("StimulusWav::Cleanup", m_sResource.c_str(), 3);
+
   return 0;
 }
 

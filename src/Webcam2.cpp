@@ -83,9 +83,6 @@ Webcam2::~Webcam2() {
     m_vd.framebuffer = NULL;
   }
 
-  if (m_vd.isstreaming)
-    DeactivateStreaming();
-
   if (m_buffer_stream) {
     SDL_RWclose(m_buffer_stream);		
     m_buffer_stream = NULL;
