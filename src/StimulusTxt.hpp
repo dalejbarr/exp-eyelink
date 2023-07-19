@@ -14,6 +14,6 @@ public:
   int m_y1;
 };
 
-extern Display_SDL * g_pDisplay;
+// extern Display_SDL * g_pDisplay;
 
 #endif

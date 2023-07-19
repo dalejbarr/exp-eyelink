@@ -117,7 +117,7 @@ bool WatchMouse::CheckCondition(SDL_Event * pEvt) {
 	for (ii = pii.first; ii != pii.second; ii++) {
 	  if (WatchMouse::s_pMouse) {
 	  } else {}
-	  if (((StimulusBmp *) (*ii).second.get())->InAOI(X, Y)) {
+	  if (((StimulusImg *) (*ii).second.get())->InAOI(X, Y)) {
 	    m_strSelectedAOIType = (*ii).first;
 	    m_pSelectedAOI = (*ii).second;
 	    nResult = true;
@@ -147,8 +147,8 @@ bool WatchMouse::CheckCondition(SDL_Event * pEvt) {
 
     if (m_pSelectedAOI) {
       g_pErr->Debug(pastestr::paste("sssdsds", "", "selected AOI type ", m_strSelectedAOIType.c_str(),
-				    " at (", (long) ((StimulusBmp *) m_pSelectedAOI.get())->m_x1, ", ", 
-				    (long) ((StimulusBmp *) m_pSelectedAOI.get())->m_y1, ")"));
+				    " at (", (long) ((StimulusImg *) m_pSelectedAOI.get())->m_x1, ", ", 
+				    (long) ((StimulusImg *) m_pSelectedAOI.get())->m_y1, ")"));
     } else {}
   } else {}
 

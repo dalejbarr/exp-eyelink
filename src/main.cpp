@@ -46,6 +46,8 @@ char *trackerip = NULL; /* use default IP address */
 
 Experiment* g_pExperiment = NULL;
 
+extern Display_SDL * g_pDisplay;
+
 int exit_eyelink()
 {
   close_expt_graphics();           /* tell EXPTSPPT to release window */
@@ -75,21 +77,31 @@ int end_expt(char * our_file_name)
 
     if(our_file_name[0])   /* make sure we created a file */
       {
-	g_pErr->Debug("here: transferring file");
-	close_expt_graphics();           /* tell EXPTSPPT to release window */
-	receive_data_file(our_file_name, "", 0);
+				g_pErr->Debug("here: transferring file");
+				receive_data_file(our_file_name, "", 0);				
       }
     /* transfer the file, ask for a local name */
   } else {}
 
-  int nResult = exit_eyelink();
-
+	g_pDisplay->ClearScreen();
   g_pExperiment->StoreTrialData();
+	g_pErr->Debug("trial data stored");
 
   if (g_pExperiment) {
     delete g_pExperiment;
     g_pExperiment = NULL;
   } else {}
+
+	g_pErr->Debug("removed experiment");	
+	
+	close_expt_graphics();           /* tell EXPTSPPT to release window */
+
+	g_pErr->Debug("window released");	
+	
+  int nResult = exit_eyelink();
+
+	g_pErr->Debug("exiting eyelink");	
+	
 
   return nResult;
 }
@@ -113,7 +125,15 @@ int get_tracker_sw_version(char* verstr)
 int single_trial() {
   int nResult = 0;
   int error;        /* trial result code */
+  bool bCalibrate = false;
 
+  if (g_nTrialsCompleted == 0) bCalibrate = true;
+
+  if (Experiment::g_bsFlag.test(0)) {
+    bCalibrate = true;
+    Experiment::g_bsFlag.set(0, false);
+  } else {}
+  
   // drift correct
   while (1) {
     {
@@ -121,7 +141,10 @@ int single_trial() {
       if(!eyelink_is_connected()) return ABORT_EXPT;
       // We let do_drift_correct() draw target in this example
       // 3rd argument would be 0 if we already drew the fixation target
-      error = do_drift_correct((INT16)(512), (INT16)(SCRHEIGHT/2), 1, 1);
+      if (bCalibrate) {
+	error = do_drift_correct((INT16)(512), (INT16)(SCRHEIGHT/2), 1, 1);
+      } else {}
+      
       // repeat if ESC was pressed to access Setup menu
       if(error!=27) break;
     }
@@ -227,6 +250,7 @@ int app_main(char * trackerip, DISPLAYINFO * disp)
 #ifdef WIN32
   edit_dialog(NULL,"Create EDF File", "Enter Tracker EDF file name:", our_file_name,260);
 #endif
+	
   if(trackerip)
     set_eyelink_address(trackerip);
 
@@ -289,7 +313,9 @@ int app_main(char * trackerip, DISPLAYINFO * disp)
   g_pExperiment->WaitKey();
   g_pDisplay->ClearScreen();
 
-  sprintf(our_file_name, "F%05d", g_pExperiment->GetSessionID());
+	// todo: get file pattern from experiment
+	sprintf(our_file_name, "%s", g_pExperiment->GetEDFFilename().c_str());	
+  // sprintf(our_file_name, "F%05d", g_pExperiment->GetSessionID());
   g_pErr->Debug(our_file_name);
   //exit(0);
 

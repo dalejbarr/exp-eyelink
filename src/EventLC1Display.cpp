@@ -1,7 +1,7 @@
 #include "EventLC1Display.hpp"
 #include "Template.hpp"
 #include "xy.hpp"
-#include "StimulusBmp.hpp"
+#include "StimulusImg.hpp"
 
 EventLC1Display::EventLC1Display(long id, long msec, long idCmd, ArgMMap mmArgs, Template * pTemplate) :
   Event(id, msec, idCmd, mmArgs, pTemplate) {
@@ -12,9 +12,9 @@ int EventLC1Display::Action() {
 
   StimulusPtrMMap::iterator ii;
   pair<StimulusPtrMMap::iterator, StimulusPtrMMap::iterator> rii;
-  StimulusBmp * pStim = NULL;
-  StimulusBmp * ppMain[4];
-  StimulusBmp * ppBack[4];
+  StimulusImg * pStim = NULL;
+  StimulusImg * ppMain[4];
+  StimulusImg * ppBack[4];
   vector<string> vName;
   vector<int> vOrd;
 
@@ -31,12 +31,12 @@ int EventLC1Display::Action() {
   rii = m_pTemplate->m_mmapAllAOI.equal_range("bkgd");
 
   for (int i = 0; i < 4; i++) {
-    ppMain[i] = (StimulusBmp *) m_pTemplate->m_mmapAllAOI.find(vName[i].c_str())->second.get();
+    ppMain[i] = (StimulusImg *) m_pTemplate->m_mmapAllAOI.find(vName[i].c_str())->second.get();
   }
   
   for (int i = 0; i < 4; i++) {
     for (ii = rii.first; ii != rii.second; ii++) {
-      pStim = (StimulusBmp *) ii->second.get();
+      pStim = (StimulusImg *) ii->second.get();
       if ( (ppMain[i]->m_x1 == (pStim->m_x1 + 2)) &&
 	   (ppMain[i]->m_y1 == (pStim->m_y1 + 2)) ) {
 	ppBack[i] = pStim;
@@ -61,7 +61,7 @@ int EventLC1Display::Action() {
     ppBack[vOrd[i]]->Draw(false);
     ppMain[vOrd[i]]->Draw(false);
   }
-  StimulusBmp::Flip1();
+  Display_SDL::Flip1();
 
   // TO DO : change this to "pump_delay"
   SDL_Delay(3000);
@@ -83,7 +83,7 @@ int EventLC1Display::Action() {
       ppBack[vOrd[j]]->Draw(false);
       ppMain[vOrd[j]]->Draw(false);
     }
-    StimulusBmp::Flip1();
+    Display_SDL::Flip1();
     // TO DO : change this to "pump_delay"
     SDL_Delay(msDelay);
   }

@@ -1,5 +1,5 @@
 #include "EventGSC1Progress.hpp"
-#include "StimulusBmp.hpp"
+#include "StimulusImg.hpp"
 #include "Template.hpp"
 
 EventGSC1Progress::EventGSC1Progress(long id, long msec, long idCmd,
@@ -29,9 +29,6 @@ EventGSC1Progress::EventGSC1Progress(long id, long msec, long idCmd,
       m_msTotal = (Uint32) ms;
     }
   }
-
-
-
 }
 
 int EventGSC1Progress::StartProc() {
@@ -45,9 +42,9 @@ int EventGSC1Progress::Prepare() {
   m_pEnc->Prepare();
   m_pDec->Prepare();
 
-  StimulusBmp * pStim = (StimulusBmp *) m_pEnc.get();
+  StimulusImg * pStim = (StimulusImg *) m_pEnc.get();
   pStim->DrawRect(1, 1, 374, 9, 255, 0, 0);
-  pStim = (StimulusBmp *) m_pDec.get();
+  pStim = (StimulusImg *) m_pDec.get();
   pStim->DrawRect(1, 1, 374, 9, 255, 0, 0);
 
   m_pTemplate->Redraw(true);
@@ -61,14 +58,14 @@ int EventGSC1Progress::FinalSweep(Template * pTemplate) {
   ep = pTemplate->FindEvent(m_idDrawGrid);
   m_epDrawGrid = (EventGSC1DrawGrid *) ep.get();
 
-  m_pEnc = StimulusPtr(new StimulusBmp(0L, pTemplate, "pm1.bmp", 
-					m_epDrawGrid->m_nGridTopEncX, 
-					m_epDrawGrid->m_nGridTopEncY + m_epDrawGrid->m_nGridWidth,
-					-1, -1, 1));
-  m_pDec = StimulusPtr(new StimulusBmp(0L, pTemplate, "pm1.bmp", 
-					m_epDrawGrid->m_nGridTopDecX, 
-					m_epDrawGrid->m_nGridTopDecY + m_epDrawGrid->m_nGridWidth,
-					-1, -1, 1));
+  m_pEnc = StimulusPtr(new StimulusImg(0L, pTemplate, "pm1.bmp", 
+				       m_epDrawGrid->m_nGridTopEncX, 
+				       m_epDrawGrid->m_nGridTopEncY + m_epDrawGrid->m_nGridWidth,
+				       -1, -1, 1));
+  m_pDec = StimulusPtr(new StimulusImg(0L, pTemplate, "pm1.bmp", 
+				       m_epDrawGrid->m_nGridTopDecX, 
+				       m_epDrawGrid->m_nGridTopDecY + m_epDrawGrid->m_nGridWidth,
+				       -1, -1, 1));
 
   m_pTemplate->InsertAOI("progressEnc", m_pEnc);
   m_pTemplate->InsertAOI("progressDec", m_pDec);
@@ -84,11 +81,11 @@ int EventGSC1Progress::NextFrame() {
   if (msElapsed <= m_msTotal) {
     float pmwidth = msElapsed == m_msTotal ? 0.0 : ((float) (m_msTotal - msElapsed))/m_msTotal;
 
-    StimulusBmp * pStim = (StimulusBmp *) m_pEnc.get();
+    StimulusImg * pStim = (StimulusImg *) m_pEnc.get();
     pStim->DrawRect(1, 1, m_epDrawGrid->m_nGridWidth-1, 9, 0, 0, 0);
     pStim->DrawRect(1, 1, 1+(m_epDrawGrid->m_nGridWidth-2)*pmwidth, 9, 255, 0, 0);
 
-    pStim = (StimulusBmp *) m_pDec.get();
+    pStim = (StimulusImg *) m_pDec.get();
     pStim->DrawRect(1, 1, m_epDrawGrid->m_nGridWidth-1, 9, 0, 0, 0);
     pStim->DrawRect(1, 1, 1+(m_epDrawGrid->m_nGridWidth-2)*pmwidth, 9, 255, 0, 0);
 

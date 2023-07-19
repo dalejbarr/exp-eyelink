@@ -22,6 +22,7 @@ using std::vector;
 #include <iomanip>
 
 #include "Experiment.hpp"
+#include <X11/Xlib.h>
 #include "RecordsetSqlite.hpp"
 #include "RecordsetMySQL.hpp"
 #include "EXPConfig.hpp"
@@ -30,7 +31,7 @@ using std::vector;
 using pastestr::paste;
 
 #include "global.hpp"
-#include "StimulusBmp.hpp"
+#include "StimulusImg.hpp"
 
 #include "Display_SDL.hpp"
 #include "Audio_SDL.hpp"
@@ -50,15 +51,19 @@ EXPConfig * g_pConfig = NULL;
 
 StimulusMap Experiment::s_mapStimulus;
 DeviceMMap Experiment::s_mmapDevice;
+WebcamCVMap Experiment::s_mapWebcamCV;
+
+std::bitset<4> Experiment::g_bsFlag = 0;
 
 SocketListener * Experiment::s_pSockListener = NULL;
+Webcam2 * Experiment::s_pCam = NULL;
 
 unsigned int Experiment::g_nSeed = 0;
 
 /*
-trialtodo::trialtodo(long icid, long ord) {
+  trialtodo::trialtodo(long icid, long ord) {
   assign(icid,ord);
-}
+  }
 */
 
 listordinfo::listordinfo(long idItemCell, long idBlock, long idPhase, long ord) {
@@ -136,14 +141,21 @@ int Experiment::InitializeDB(const char * expdb, const char *dbType) {
   } else {}
 
   g_pErr->DFO("Experiment::InitializeDB", 0L, 1);
-}
 
+  return 0;
+}
 
 int Experiment::InitializeExp(const char * pcMode, bool bResume) {
   g_pErr->DFI("Experiment::InitializeExp", (const char *) NULL);
 
   g_pErr->Debug(pastestr::paste("ss", "", "mode is ", pcMode));
 
+  if (XInitThreads() == 0) {
+    g_pErr->Report("Couldn't initialize threads");
+  } else {
+    g_pErr->Debug("XThreads initialized");
+  }
+  Experiment::g_bsFlag.reset();
   m_bRefreshNeeded = false;
   m_pCurTrial = NULL;
   m_id = 1;
@@ -179,7 +191,7 @@ int Experiment::InitializeExp(const char * pcMode, bool bResume) {
   CreateOrPurgeResponseDir(bResume);
 
   if (StartSession()) { 
-   g_pErr->Report(paste("sds", " ",
+    g_pErr->Report(paste("sds", " ",
 			 "SessionID", m_idSession, "not found in database."));
   } else {}
 
@@ -190,7 +202,7 @@ int Experiment::InitializeExp(const char * pcMode, bool bResume) {
     g_pErr->Debug(pastestr::paste("su", "", "established seed of ", Experiment::g_nSeed));
   } else {
     g_prsStim->Exec(pastestr::paste("sd", "", "SELECT Seed FROM Session WHERE SessionID=", 
-																		GetSessionID()));
+				    GetSessionID()));
     if (!g_prsStim->RowReady()) {
       g_pErr->Report("error in Experiment::InitializeExp");
     } else {}
@@ -201,7 +213,7 @@ int Experiment::InitializeExp(const char * pcMode, bool bResume) {
 
   UpdateSessionStatus("IN_PROGRESS");
 
-	LoadConfiguration();
+  LoadConfiguration();
 
   LoadOrCreateSubjects();
 
@@ -222,6 +234,8 @@ int Experiment::InitializeExp(const char * pcMode, bool bResume) {
   m_itTrial = m_mapTrial.begin();  // start at the beginning
 
   g_pErr->DFO("Experiment::InitializeExp", (const char *) NULL);
+
+  return 0;
 }
 
 Experiment::~Experiment()
@@ -248,9 +262,9 @@ Experiment::~Experiment()
 }
 
 int Experiment::Cleanup() {
-	if (s_pSockListener) {
-		delete s_pSockListener;
-	}
+  if (s_pSockListener) {
+    delete s_pSockListener;
+  }
 
   g_pErr->Debug(".Deleting Trials.");
   m_mapTrial.clear();
@@ -282,12 +296,20 @@ int Experiment::Cleanup() {
     g_prsResp = NULL;
   } else {}
 
-	if (g_pConfig) {
-		delete g_pConfig;
-	} else {}
+  if (g_pConfig) {
+    delete g_pConfig;
+  } else {}
 
   g_pErr->Debug(".Deleting Recordsets.");
   m_mapCounter.clear();
+  
+  if (s_pCam) {
+    delete s_pCam;
+    s_pCam = NULL;
+  }
+  s_mapWebcamCV.clear();
+  
+  return 0;
 }
 
 int Experiment::LoadTemplates() {
@@ -378,11 +400,11 @@ GROUP BY Item.ItemCellID, Item.TemplateID");
     pic = new ItemCell(atol(g_prsStim->Get(0)),
 		       m_mapTemplate[atol(g_prsStim->Get(1))]);
     m_mapItemCell[atol(g_prsStim->Get(0))] = ItemCellPtr(pic);
-						    /*
-    m_ppItemCell[i] = new ItemCell(atol(g_prsStim->Get(0)),
-				   atol(g_prsStim->Get(1)),
-				   m_ppTemplate, m_nTemplates);
-						    */
+    /*
+      m_ppItemCell[i] = new ItemCell(atol(g_prsStim->Get(0)),
+      atol(g_prsStim->Get(1)),
+      m_ppTemplate, m_nTemplates);
+    */
     
     g_prsStim->MoveNext();
   }
@@ -498,7 +520,7 @@ void DumpSequence(vector<long> vi) {
 }
 
 /*
-int Experiment::SequenceItems() {
+  int Experiment::SequenceItems() {
 
   g_pErr->DFI("Experiment::SequenceItems", (const char *) NULL);
 
@@ -507,73 +529,73 @@ int Experiment::SequenceItems() {
   vector<long> vlItems;
 
   string q1 = paste("sds", " ", "\
-SELECT Block.BlockID, Block.OrderConstraint \n\
-FROM Block \n\
-INNER JOIN Phase ON Block.BlockID=Phase.BlockID \n\
-INNER JOIN ListOrder ON Phase.PhaseID=ListOrder.PhaseID \n\
-WHERE (ListID=", m_idList, ") AND (Block.OrderConstraint IS NOT NULL) \n\
-GROUP BY Block.OrderConstraint, Block.BlockID");
+  SELECT Block.BlockID, Block.OrderConstraint \n\
+  FROM Block \n\
+  INNER JOIN Phase ON Block.BlockID=Phase.BlockID \n\
+  INNER JOIN ListOrder ON Phase.PhaseID=ListOrder.PhaseID \n\
+  WHERE (ListID=", m_idList, ") AND (Block.OrderConstraint IS NOT NULL) \n\
+  GROUP BY Block.OrderConstraint, Block.BlockID");
 
   string q2 = paste("sdss", " ", "\
-SELECT Block.BlockID \n\
-FROM Block \n\
-INNER JOIN Phase ON Block.BlockID=Phase.BlockID \n\
-INNER JOIN ListOrder ON Phase.PhaseID=ListOrder.PhaseID \n\
-WHERE (ListID=", m_idList, ") AND (Block.OrderConstraint IS NULL) \n\
-GROUP BY Block.BlockID \n\
-ORDER BY", g_prsStim->RandCmd());
+  SELECT Block.BlockID \n\
+  FROM Block \n\
+  INNER JOIN Phase ON Block.BlockID=Phase.BlockID \n\
+  INNER JOIN ListOrder ON Phase.PhaseID=ListOrder.PhaseID \n\
+  WHERE (ListID=", m_idList, ") AND (Block.OrderConstraint IS NULL) \n\
+  GROUP BY Block.BlockID \n\
+  ORDER BY", g_prsStim->RandCmd());
 
   vlBlocks = Sequence(q1.c_str(), q2.c_str());
   if (vlBlocks.size() == 0) {
-    g_pErr->Report(paste("sds", " ",
-			"No blocks found for ListID", m_idList, "."));
+  g_pErr->Report(paste("sds", " ",
+  "No blocks found for ListID", m_idList, "."));
   } else {}
   g_pErr->Debug("Block order is:");
   DumpSequence(vlBlocks);
 
   int m = 0;
   for (int i = 0; i < vlBlocks.size(); i++) {
-    vlPhases = Sequence(PhaseQuery(vlBlocks[i], 0).c_str(),
-			PhaseQuery(vlBlocks[i], 1).c_str());
-    if (vlPhases.size() == 0) {
-      g_pErr->Report(paste("sds", " ", 
-			   "No phases found for BlockID", vlBlocks[i],
-			   "."));
-    } else {}
-    g_pErr->Debug("Phase order is:");
-    DumpSequence(vlPhases);
+  vlPhases = Sequence(PhaseQuery(vlBlocks[i], 0).c_str(),
+  PhaseQuery(vlBlocks[i], 1).c_str());
+  if (vlPhases.size() == 0) {
+  g_pErr->Report(paste("sds", " ", 
+  "No phases found for BlockID", vlBlocks[i],
+  "."));
+  } else {}
+  g_pErr->Debug("Phase order is:");
+  DumpSequence(vlPhases);
 
-    for (int j = 0; j < vlPhases.size(); j++) {
-      vlItems = Sequence(ItemQuery(vlPhases[j], 0).c_str(), 
-			 ItemQuery(vlPhases[j], 1).c_str());
-      if (vlItems.size() == 0) {
-	g_pErr->Debug(paste("sds", " ",
-			     "No items found for PhaseID", 
-			     vlPhases[j], "."));
-      } else {
-	g_pErr->Debug("Item order is:");
-	DumpSequence(vlItems);
-      }
+  for (int j = 0; j < vlPhases.size(); j++) {
+  vlItems = Sequence(ItemQuery(vlPhases[j], 0).c_str(), 
+  ItemQuery(vlPhases[j], 1).c_str());
+  if (vlItems.size() == 0) {
+  g_pErr->Debug(paste("sds", " ",
+  "No items found for PhaseID", 
+  vlPhases[j], "."));
+  } else {
+  g_pErr->Debug("Item order is:");
+  DumpSequence(vlItems);
+  }
 
-      for (int k = 0; k < vlItems.size(); k++, m++) {
-	map<long, ItemCellPtr>::iterator it;
-	it = m_mapItemCell.find(vlItems[k]);
-	if (it == m_mapItemCell.end()) {
-	  g_pErr->Report("Problem in SequenceItems()");
-	} else {}
-	m_mapTrial[(long) m+1] = TrialPtr(new Trial(m+1,vlBlocks[i],vlPhases[j],it->second));
-      }
-    }
+  for (int k = 0; k < vlItems.size(); k++, m++) {
+  map<long, ItemCellPtr>::iterator it;
+  it = m_mapItemCell.find(vlItems[k]);
+  if (it == m_mapItemCell.end()) {
+  g_pErr->Report("Problem in SequenceItems()");
+  } else {}
+  m_mapTrial[(long) m+1] = TrialPtr(new Trial(m+1,vlBlocks[i],vlPhases[j],it->second));
+  }
+  }
   }
 
   m_itTrial = m_mapTrial.begin();
 
   g_pErr->Debug(paste("sds", "", "There are ", m_mapTrial.size(), 
-		      " trials in all"));
+  " trials in all"));
   g_pErr->DFO("Experiment::SequenceItems", (const char *) NULL);
 
   return 0;
-}
+  }
 */
 
 vector<listordinfo> Experiment::SequenceItems() {
@@ -607,7 +629,7 @@ ORDER BY", g_prsStim->RandCmd());
   vlBlocks = Sequence(q1.c_str(), q2.c_str());
   if (vlBlocks.size() == 0) {
     g_pErr->Report(paste("sds", " ",
-			"No blocks found for ListID", m_idList, "."));
+			 "No blocks found for ListID", m_idList, "."));
   } else {}
   g_pErr->Debug("Block order is:");
   DumpSequence(vlBlocks);
@@ -634,8 +656,8 @@ ORDER BY", g_prsStim->RandCmd());
 
       if (vl1.size() == 0) {
 	g_pErr->Debug(paste("sds", " ",
-			     "No items found for PhaseID", 
-			     vlPhases[j], "."));
+			    "No items found for PhaseID", 
+			    vlPhases[j], "."));
       } else {
 	g_pErr->Debug("Item order is:");
 	DumpSequence(vl1);
@@ -645,21 +667,21 @@ ORDER BY", g_prsStim->RandCmd());
   }
 
   /*
-      for (int k = 0; k < vlItems.size(); k++, m++) {
-	map<long, ItemCellPtr>::iterator it;
-	it = m_mapItemCell.find(vlItems[k]);
-	if (it == m_mapItemCell.end()) {
-	  g_pErr->Report("Problem in SequenceItems()");
-	} else {}
-	m_mapTrial[(long) m+1] = TrialPtr(new Trial(m+1,vlBlocks[i],vlPhases[j],it->second));
-      }
+    for (int k = 0; k < vlItems.size(); k++, m++) {
+    map<long, ItemCellPtr>::iterator it;
+    it = m_mapItemCell.find(vlItems[k]);
+    if (it == m_mapItemCell.end()) {
+    g_pErr->Report("Problem in SequenceItems()");
+    } else {}
+    m_mapTrial[(long) m+1] = TrialPtr(new Trial(m+1,vlBlocks[i],vlPhases[j],it->second));
+    }
 
-      m_itTrial = m_mapTrial.begin();
+    m_itTrial = m_mapTrial.begin();
 
-     g_pErr->Debug(paste("sds", "", "There are ", m_mapTrial.size(), 
-		      " trials in all"));
+    g_pErr->Debug(paste("sds", "", "There are ", m_mapTrial.size(), 
+    " trials in all"));
 
-   */
+  */
 
   g_pErr->DFO("Experiment::SequenceItems", (const char *) NULL);
 
@@ -676,18 +698,18 @@ Stimulus * Experiment::FindOrCreateStimulus(long id, Template * pTemplate) {
     StimulusMap::iterator it = Experiment::s_mapStimulus.find(pcFile);
 
     if (it == Experiment::s_mapStimulus.end()) {
-      switch (id) {
-      case EXP_STIMULUS_BITMAP :
-	pStim = new StimulusBmp();
-	break;
-      case EXP_STIMULUS_AOI :
-	pStim = new StimulusAOI();
-	break;
-      }
-      ptrStim = StimulusPtr(pStim);
-      Experiment::s_mapStimulus[pcFile] = ptrStim;
+    switch (id) {
+    case EXP_STIMULUS_BITMAP :
+    pStim = new StimulusImg();
+    break;
+    case EXP_STIMULUS_AOI :
+    pStim = new StimulusAOI();
+    break;
+    }
+    ptrStim = StimulusPtr(pStim);
+    Experiment::s_mapStimulus[pcFile] = ptrStim;
     } else {
-      ptrStim = it->second;
+    ptrStim = it->second;
     }
     pStim = ptrStim.get();
     //}
@@ -752,9 +774,7 @@ Trial * Experiment::NextTrial() {
 int Experiment::Prepare(SDL_Surface * pDisplay /* = null */, bool bFullScreen /* = 0 */) {
   g_pErr->DFI("Experiment::Prepare", 0L, 1);
 
-  g_pErr->Debug("here1");
   g_pDisplay = new Display_SDL(pDisplay);
-  g_pErr->Debug("here2");
 
   if (pDisplay == NULL) {
     g_pErr->Debug("display not initialized");
@@ -769,13 +789,13 @@ int Experiment::Prepare(SDL_Surface * pDisplay /* = null */, bool bFullScreen /*
       g_pDisplay->CreateScreen(0, 0, sdlVid->current_w, sdlVid->current_h, 
 			       SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_FULLSCREEN );
     } else {
-			string cstr;
-			int scrwidth = 1024;
-			int scrheight = 768;
-			g_pConfig->GetConfigInt("Display_Width", &scrwidth);
-			g_pConfig->GetConfigInt("Display_Height", &scrheight);
-			g_pDisplay->CreateScreen(0, 0, scrwidth, scrheight, 
-															 SDL_DOUBLEBUF | SDL_HWSURFACE);
+      string cstr;
+      int scrwidth = 1024;
+      int scrheight = 768;
+      g_pConfig->GetConfigInt("Display_Width", &scrwidth);
+      g_pConfig->GetConfigInt("Display_Height", &scrheight);
+      g_pDisplay->CreateScreen(0, 0, scrwidth, scrheight, 
+			       SDL_DOUBLEBUF | SDL_HWSURFACE);
     }
   } else {}
   g_pErr->Debug("display initialized");
@@ -795,6 +815,11 @@ int Experiment::Prepare(SDL_Surface * pDisplay /* = null */, bool bFullScreen /*
   m_pCurTrial = NULL;
 
   m_msExpBegin = ClockFn();
+
+  int nShowCursor = 1;
+  if (g_pConfig->GetConfigInt("Mouse_Cursor", &nShowCursor)) {
+    SDL_ShowCursor(nShowCursor);
+  }
 
   g_pErr->DFO("Experiment::Prepare", 0L, 1);
 
@@ -822,36 +847,36 @@ int Experiment::Run() {
     switch (event.type) {
     case SDL_QUIT :
       if (pTrial) {
-				pTrial->Finish();
+	pTrial->Finish();
       } else {}
       pTrial = NULL;
       break;
     case SDL_USEREVENT :
       switch (event.user.code) {
       case SBX_FINISHED :
-				g_pErr->Debug("trial completed");
-				pTrial->Finish();
-				pTrial = NextTrial();
-				if (pTrial) {
-					//cout << pTrial->m_pItemCell->m_pTemplate.m_mmapAOI.size();
-					pTrial->Prepare();
-					pTrial->Run();
-				} else {
-					g_pErr->Debug("EXPERIMENT COMPLETED");
-				}
-				break;
+	g_pErr->Debug("trial completed");
+	pTrial->Finish();
+	pTrial = NextTrial();
+	if (pTrial) {
+	  //cout << pTrial->m_pItemCell->m_pTemplate.m_mmapAOI.size();
+	  pTrial->Prepare();
+	  pTrial->Run();
+	} else {
+	  g_pErr->Debug("EXPERIMENT COMPLETED");
+	}
+	break;
       }
     case SDL_KEYDOWN :
       {
-				g_pErr->Debug("here1");
-				sprintf(charinfo, "key %s (%d) pressed", SDL_GetKeyName(event.key.keysym.sym), 
-								event.key.keysym.sym);
-				g_pErr->Debug(charinfo);
+	g_pErr->Debug("here1");
+	sprintf(charinfo, "key %s (%d) pressed", SDL_GetKeyName(event.key.keysym.sym), 
+		event.key.keysym.sym);
+	g_pErr->Debug(charinfo);
       }
       break;
     default :
       if (pTrial) {
-				pTrial->HandleEvent(&event);      
+	pTrial->HandleEvent(&event);      
       } else {}
     }
   }
@@ -864,15 +889,19 @@ int Experiment::SetDisplay(SDL_Surface * pSurface) {
   return 0;
 }
 
+
 int Experiment::PrepareNextTrial() {
   g_pErr->DFI("Experiment::PrepareNextTrial", 0L, 1);
   int nResult = EXP_TRIAL_READY;
+
+  Experiment::g_bsFlag.reset();
+  
   //trialtodo tt;
   
   /*
-  if (m_bRefreshNeeded) {
+    if (m_bRefreshNeeded) {
     g_pErr->Report("############## refresh needed!!");
-  } else {}
+    } else {}
   */
 
   //do {
@@ -943,7 +972,7 @@ int Experiment::PollEvent() {
     switch (event.type) {
     case SDL_QUIT :
       if (m_pCurTrial) {
-				m_pCurTrial->Finish();
+	m_pCurTrial->Finish();
       } else {}
       m_pCurTrial = NULL;
       nResult = SBX_ABORT_EXPERIMENT;
@@ -952,12 +981,12 @@ int Experiment::PollEvent() {
     case SDL_USEREVENT :
       switch (event.user.code) {
       case SBX_FINISHED :
-				g_pErr->Debug("trial completed");
-				nResult = SBX_FINISHED;
-				break;
+	g_pErr->Debug("trial completed");
+	nResult = SBX_FINISHED;
+	break;
       }
       if (m_pCurTrial) {
-				m_pCurTrial->HandleEvent(&event);      
+	m_pCurTrial->HandleEvent(&event);      
       } else {}
       break;
     case SDL_KEYDOWN :
@@ -1077,7 +1106,7 @@ int Experiment::UpdateSessionStatus(const char * pc) {
   } else {}
 
   g_prsResp->Exec(pastestr::paste("sssd", "",
-		  "UPDATE Session SET Completion='", pc, "' WHERE SessionID=",
+				  "UPDATE Session SET Completion='", pc, "' WHERE SessionID=",
 				  m_idSession));
 
   if (!strcmp(pc, "IN_PROGRESS")) {
@@ -1103,13 +1132,15 @@ int Experiment::StoreTrialData() {
   }
   //g_prsStim->Exec("BEGIN TRANSACTION");
   //g_prsStim->Exec("COMMIT");
+
+  return 0;
 }
 
 long Experiment::LoadOrCreateSubjects() {
   long idSubj = 0;
   g_prsResp->ExecCount(pastestr::paste("sd", "",
-				  "SELECT SubjID FROM Subject WHERE SessionID=",
-				  m_idSession));
+				       "SELECT SubjID FROM Subject WHERE SessionID=",
+				       m_idSession));
   if (g_prsResp->NumRows() > 1) {
     g_pErr->Debug("WARNING: experiment software not yet set up for multiple subjects");
     idSubj = atol(g_prsResp->Get(0));
@@ -1371,7 +1402,7 @@ void Experiment::CreateTrialObjects(vector<listordinfo> vlItems, int nBegin) {
   for (int k = 0; k < vlItems.size(); k++) {
     it = m_mapItemCell.find(vlItems[k].m_idItemCell);
     if (it == m_mapItemCell.end()) {
-      g_pErr->Report(pastestr::paste("sd", "", "Problem in SequenceItems(); missing ID ", vlItems[k].m_idItemCell));
+      g_pErr->Report(pastestr::paste("sd", "", "Problem in SequenceItems(); missing ItemCellID ", vlItems[k].m_idItemCell));
     } else {}
     m_mapTrial[(long) k+nBegin] = TrialPtr(new Trial(k+nBegin, vlItems[k].m_idBlock, vlItems[k].m_idPhase ,it->second));
   }
@@ -1420,7 +1451,7 @@ void Experiment::IncrementCounter(const char * pcCtr) {
 }
 
 void Experiment::ResetCounter(const char * pcCtr) {
-   // TODO: reset the counter named by pcCtr
+  // TODO: reset the counter named by pcCtr
   m_mapCounter[pcCtr] = 0;
   g_pErr->Debug(pastestr::paste("sssd", " ", "*** reset counter", pcCtr, "to", m_mapCounter[pcCtr]));
 }
@@ -1434,13 +1465,38 @@ Uint32 Experiment::GetMSElapsed() {
   return (ClockFn()-m_msExpBegin);
 }
 
+Uint32 Experiment::GetTrialBegin() {
+  Uint32 msBegin = 0;
+
+  if (m_pCurTrial) {
+    msBegin = m_pCurTrial->m_msBegin;
+  } 
+
+  return msBegin;
+}
+
 int Experiment::LoadConfiguration(unsigned long eid) {
-	if (g_pConfig) {
-		delete g_pConfig;
-	} else {}
+  if (g_pConfig) {
+    delete g_pConfig;
+  } else {}
 
-	g_pErr->Debug("LOADING EXPERIMENT CONFIGURATION...");
-	g_pConfig = new EXPConfig(eid);
+  g_pErr->Debug("LOADING EXPERIMENT CONFIGURATION...");
+  g_pConfig = new EXPConfig(eid);
 
-	return 0;
+  return 0;
+}
+
+string Experiment::GetEDFFilename() {
+  string pat = "";
+  string res = "";
+  char buff[100];
+
+  if (!g_pConfig->GetConfig("EDF_File_Pattern", &pat)) {
+    pat = "P%05d";
+  } else {}
+
+  sprintf(buff, pat.c_str(), GetSessionID());
+  res.assign(buff);
+
+  return(res);
 }

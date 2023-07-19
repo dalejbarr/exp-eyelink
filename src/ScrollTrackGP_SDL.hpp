@@ -6,11 +6,11 @@
 //#include "global.hpp"
 #include "GamePad_SDL.hpp"
 #include "Display_SDL.hpp"
-#include "StimulusBmp.hpp"
+#include "StimulusImg.hpp"
 
 class ScrollTrackGP_SDL : public GamePad_SDL {
 protected:
-  StimulusBmp * m_pDisp;
+  StimulusImg * m_pDisp;
   string m_sResource;
   SDL_Rect m_rect;
   SDL_Rect m_rectOld;
@@ -25,6 +25,6 @@ public:
   virtual void Redraw(bool bForce = false);
 };
 
-extern Display_SDL * g_pDisplay;
+// extern Display_SDL * g_pDisplay;
 
 #endif

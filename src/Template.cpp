@@ -1,5 +1,7 @@
 #include <cstdlib>
 #include <sstream>
+#include <regex>
+using namespace std;
 using std::ostringstream;
 
 #include "Template.hpp"
@@ -11,6 +13,7 @@ using pastestr::paste;
 #include "WatchKey.hpp"
 #include "WatchMouse.hpp"
 #include "WatchMouseMove.hpp"
+#include "WatchSocketMsg.hpp"
 #include "Mouse_SDL.hpp"
 #include "SDL.h"
 #include "EventAsync.hpp"
@@ -37,6 +40,7 @@ Template::Template(long id, long timeout, const char * pcName)
   m_pItemCell = NULL;
   m_id = id;
   m_strName.assign(pcName);
+  m_msBegin = 0;
   ostringstream ostr;
   ostr << m_strName << " (" << m_id << ")";
   m_strDebug = ostr.str();
@@ -113,6 +117,8 @@ int Template::Cleanup() {
   m_mmapAOI.clear();
   m_nStatus = SBX_DEALLOCATED;
   //m_mapAOI.clear();
+
+  return 0;
 }
 
 int Template::LoadStates() {
@@ -166,7 +172,7 @@ int Template::LoadAOIs() {
 
 int Template::AddAOIs(StimulusPtrMMap m, bool bTemplateAlso /*=true*/) {
   // used to add AOIs from Item to Template
-  StimulusBmp * pt = NULL;
+  StimulusImg * pt = NULL;
 
   g_pErr->DFI("Template::AddAOIs", m_strDebug.c_str(), 2);
   StimulusPtrMMap::iterator ii;
@@ -178,8 +184,8 @@ int Template::AddAOIs(StimulusPtrMMap m, bool bTemplateAlso /*=true*/) {
     m_mmapAllAOI = StimulusPtrMMap(m_mmapAOI.begin(), m_mmapAOI.end());
     
     for (ii = m_mmapAOI.begin(); ii != m_mmapAOI.end(); ii++) {
-      m_mmapAllAOI2.insert(StimulusPair2( ((StimulusBmp *) (*ii).second.get())->m_nLayer, (*ii).second));
-      pt = (StimulusBmp *) ii->second.get();
+      m_mmapAllAOI2.insert(StimulusPair2( ((StimulusImg *) (*ii).second.get())->m_nLayer, (*ii).second));
+      pt = (StimulusImg *) ii->second.get();
       g_pErr->Debug(pastestr::paste("sddd", ", ",
 				    ii->first.c_str(),
 				    (long) pt->m_x1, (long) pt->m_y1, (long) pt->m_nLayer));
@@ -188,7 +194,7 @@ int Template::AddAOIs(StimulusPtrMMap m, bool bTemplateAlso /*=true*/) {
   } else {}
 
   for (ii = m.begin(); ii != m.end(); ii++) {
-    m_mmapAllAOI2.insert(StimulusPair2( ((StimulusBmp *) (*ii).second.get())->m_nLayer, (*ii).second));
+    m_mmapAllAOI2.insert(StimulusPair2( ((StimulusImg *) (*ii).second.get())->m_nLayer, (*ii).second));
     m_mmapAllAOI.insert(StimulusPair( (*ii).first, (*ii).second));
   }
 
@@ -274,7 +280,8 @@ int Template::Run() {
   if (m_pCurState) {
     m_pCurState->Run();
   } else {
-    g_pErr->Report(pastestr::paste("ss", " ", "no states found for Template", m_strName.c_str()));
+    g_pErr->Report(pastestr::paste("ss", " ", "no states found for Template", 
+				   m_strName.c_str()));
   }
 
   g_pErr->DFO("Template::Run", m_id, 1);
@@ -300,22 +307,21 @@ int Template::HandleEvent(SDL_Event * pEvt) {
       g_pErr->DFI("Template::HandleEvent", m_id, 1);
       
       if (pwSignaled->GetNextID() != 0) {
-				AttachState(m_mapState[pwSignaled->GetNextID()].get());
-				(m_mapState[pwSignaled->GetNextID()].get())->Start();
-				//m_pCurState->Run();
+	AttachState(m_mapState[pwSignaled->GetNextID()].get());
+	(m_mapState[pwSignaled->GetNextID()].get())->Start(m_msBegin);
+	//m_pCurState->Run();
       } else {
-				g_pErr->Debug("ending trial");
-				Finish();
-				SDL_Event event;
-				event.type = SDL_USEREVENT;
-				event.user.code = SBX_FINISHED;
-				SDL_PushEvent(&event);
+	g_pErr->Debug("ending trial");
+	Finish();
+	SDL_Event event;
+	event.type = SDL_USEREVENT;
+	event.user.code = SBX_FINISHED;
+	SDL_PushEvent(&event);
       }
-
       g_pErr->DFO("Template::HandleEvent", m_id, 1);
     } else {}
   } else {}
-
+  
   return 0;
 }
 
@@ -369,9 +375,9 @@ int Template::Redraw(setStimulus setExcluding, bool bMem /* = FALSE */) {
 
   for (ii = m_mmapAllAOI2.begin(); ii != m_mmapAllAOI2.end(); ii++) {
     pAOI = (*ii).second;
-    ((StimulusBmp *) pAOI.get())->Draw(bMem);
+    ((StimulusImg *) pAOI.get())->Draw(bMem);
     //if (setExcluding.find(pAOI)) {
-      //pAOI->
+    //pAOI->
     //} else {}
   }
 
@@ -379,29 +385,21 @@ int Template::Redraw(setStimulus setExcluding, bool bMem /* = FALSE */) {
 }
 
 int Template::Redraw(bool bMem /* = FALSE */) {
-  /*
-  if (bMem) {
-    g_pErr->Debug("redraw to memory");
-  } else {
-    g_pErr->Debug("redraw to screen");
-  }
-  */
-
   StimulusPtr pAOI;
   StimulusPtrMMap2::iterator ii;
   for (ii = m_mmapAllAOI2.begin(); ii != m_mmapAllAOI2.end(); ii++) {
     pAOI = (*ii).second;
-    ((StimulusBmp *) pAOI.get())->Draw(bMem);
+    ((StimulusImg *) pAOI.get())->Draw(bMem);
   }
-  StimulusBmp::Flip1(bMem);
+  Display_SDL::Flip1(bMem);
 
   return 0;
 }
 
-StimulusPtr * Template::AOIArg(string s) {
-  StimulusPtr * ppStim = NULL;
-  ostringstream ostr;
+Watch * Template::FindWatchFromIDString(string s) {
+  WatchMouse * pwm = NULL;
   long idWatch = -1;
+  ostringstream ostr;  
 
   if (s[0] == '@') { // variable search
     for (int i = 7; i < s.size(); i++) {
@@ -413,28 +411,91 @@ StimulusPtr * Template::AOIArg(string s) {
     }
     idWatch = atol(ostr.str().c_str());
     g_pErr->Debug(pastestr::paste("dss"," ",(long) idWatch, " watchID ", ostr.str().c_str()));
-    WatchMouse * pwm = (WatchMouse *) FindWatch(idWatch);
-    if (pwm) {
-      ppStim = &pwm->m_pSelectedAOI;
-    } else {
-      g_pErr->Report(pastestr::paste("sd", "", "couldn't find watchID ", (long) idWatch));
-    }
+    pwm = (WatchMouse *) FindWatch(idWatch);
+  } else {}
+
+  return pwm;
+}
+
+StimulusPtr * Template::AOIArg(string s) {
+  StimulusPtr * ppStim = NULL;
+
+  WatchMouse * pwm = (WatchMouse *) FindWatchFromIDString(s);
+  
+  if (pwm) {
+    ppStim = &pwm->m_pSelectedAOI;
   } else { // search by name, if not found, return NULL
     pair<StimulusPtrMMap::iterator, StimulusPtrMMap::iterator> ppp;
     ppp = m_mmapAllAOI.equal_range(s);
     if (ppp.first != ppp.second) {
       ppStim = &((*ppp.first).second);
     } else {
-      //g_pErr->Debug(pastestr::paste("ds", " ", m_mmapAllAOI.size(), "elements"));
       g_pErr->Debug(pastestr::paste("ss", "", "!!! couldn't find AOI ", s.c_str()));
     }
-    //m_mmapAllAOI
   }
 
   return ppStim;
 }
 
-int Template::Reinsert(StimulusBmp * pAOI) {
+string Template::GetMessageFromWatchID(string s) {
+  WatchSocketMsg * wsocket = (WatchSocketMsg *) FindWatchFromIDString(s);
+
+  if (!wsocket) {
+    g_pErr->Report(pastestr::paste("ss", " ", "Couldn't find message", s.c_str()));
+  }
+
+  return wsocket->GetMsgReceived();
+}
+
+string Template::ReplaceWatchStringWithAOIName(string s) {
+  long idWatch = -1;
+
+  regex rx("@watch\\[[0-9]+\\]");
+  regex rxnum("[0-9]+");
+
+  sregex_iterator it(s.begin(), s.end(), rx);
+  sregex_iterator it_end;
+
+  smatch wmatch, nmatch;
+  string match_str;
+
+  string res = "";
+  
+  if (!regex_search(s, rxnum)) {
+    res = s;
+  } else {
+    while (it != it_end) {
+      wmatch = *it;
+      match_str = wmatch.str();
+      res += wmatch.prefix();
+
+      if (regex_search(match_str, nmatch, rxnum)) {
+	// nmatch.str() has the watchID number
+	//res += nmatch.str();
+	idWatch = atol(nmatch.str().c_str());
+	WatchMouse * pwm = (WatchMouse *) FindWatch(idWatch);
+	if (pwm) {
+	  res += pwm->m_strSelectedAOIType;
+	  //res += FindAOINameFromPointer(*ppStim);
+	} else {
+	  g_pErr->Report(pastestr::paste("sd", "", "couldn't find watchID ", (long) idWatch));
+	}      
+      } else {
+	cout << "ERROR\n";
+      }
+
+      it++;
+      if (it == it_end) {
+	res += wmatch.suffix();
+      }
+    }
+  }
+
+  return res;
+}
+
+
+int Template::Reinsert(StimulusImg * pAOI) {
   //AOIPtr ptrAOI;
   //AOIPtr ptrAOIold;
   StimulusPtrMMap2::iterator pi;
@@ -446,8 +507,8 @@ int Template::Reinsert(StimulusBmp * pAOI) {
   for (pi = m_mmapAllAOI2.begin(); pi != m_mmapAllAOI2.end(); pi++) {
     if (pi->second.get() == pAOI) {
       nFound = 1;
-      ((StimulusBmp *) pi->second.get())->swap(*pAOI);
-      m_mmapAllAOI2.insert(StimulusPair2(((StimulusBmp *) pi->second.get())->m_nLayer, pi->second));
+      ((StimulusImg *) pi->second.get())->swap(*pAOI);
+      m_mmapAllAOI2.insert(StimulusPair2(((StimulusImg *) pi->second.get())->m_nLayer, pi->second));
       //ptrAOI = pi->second;
       m_mmapAllAOI2.erase(pi);
       break;
@@ -468,8 +529,8 @@ string GetBracketedValue(string s) {
   string::size_type p2 = s.find_first_of("]");
 
   if ( (p2 == string::npos) || (p2 < p1) || (p1 == string::npos)  ) {
-  //g_pErr->Report(pastestr::paste("sss", "",
-  //			   "Error in argument string '", s.c_str(), "'"));
+    //g_pErr->Report(pastestr::paste("sss", "",
+    //			   "Error in argument string '", s.c_str(), "'"));
   } else {
     sResult = s.substr(p1+1, (p2-p1));
   }
@@ -516,6 +577,8 @@ Operation * Template::FindVar(string s) {
       // TO DO : error
     }
   } else {}
+
+  return 0;
 }
 
 Operation Template::NewOplist(string s) {
@@ -527,7 +590,7 @@ Operation Template::NewOplist(string s) {
   for (pi = OpChain::g_mapUnassignedPtrs.begin();
        pi != OpChain::g_mapUnassignedPtrs.end(); pi++) {
     g_pErr->Debug(pastestr::paste("ss", " ", 
-			     (*pi).first.c_str(), " "));
+				  (*pi).first.c_str(), " "));
     //*((*ii).second) = ;
   }
 
@@ -553,51 +616,53 @@ int Template::Update() {
   }
 
   //g_pErr->DFO("Template::Update", GetID(), 1);
-
-  return m_pCurState->Update();
+  //return m_pCurState->Update();
+  return 0;
 }
 
-int Template::Start() {
+int Template::Start(Uint32 msBegin) {
   g_pErr->DFI("Template::Start", m_id, 3);
+  m_msBegin = msBegin;
   //AttachState(m_pCurState);
-  g_pErr->DFO("Template::Start", m_id, 3);
   m_nStatus = SBX_IN_PROGRESS;
   if (!GetCurTrial()) {
     g_pErr->Report("undefined");
   } else {
-   //g_pErr->Report("defined");
+    //g_pErr->Report("defined");
   }
 
-  return m_pCurState->Start();
+  g_pErr->DFO("Template::Start", m_id, 3);
+  
+  return m_pCurState->Start(msBegin);
 }
 
 /*
-string Template::ParseResource(string s) {
+  string Template::ParseResource(string s) {
   string sr(s);
   g_pErr->DFI("Template::ParseResource", GetName().c_str(), 1);
 
   if (s.length() > 0) {
-    if (s[0] == '$') {
-      s.erase(0, 1);
-      sr = m_mapResources[s];
-      //sr = s;
-    } else {
-    }
+  if (s[0] == '$') {
+  s.erase(0, 1);
+  sr = m_mapResources[s];
+  //sr = s;
+  } else {
+  }
   } else {}
 
   g_pErr->DFO("Template::ParseResource", GetName().c_str(), 1);
   return sr;
-}
+  }
 */
 
 /*
-int Template::SetResourceMap(ResourceMap m) {
+  int Template::SetResourceMap(ResourceMap m) {
   g_pErr->DFI("Template::SetResourceMap", GetName().c_str(), 1);
   m_mapResources = m;
 
   g_pErr->DFO("Template::SetResourceMap", GetName().c_str(), 1);
   return 0;
-}
+  }
 */
 
 
@@ -653,7 +718,7 @@ int Template::InsertAOIs(StimulusPtrMMap m) {
 
   for (ii = m.begin(); ii != m.end(); ii++) {
     InsertAOI((*ii).first, (*ii).second);
-    //m_mmapAllAOI2.insert(StimulusPair2( ((StimulusBmp *) (*ii).second.get())->m_nLayer, (*ii).second));
+    //m_mmapAllAOI2.insert(StimulusPair2( ((StimulusImg *) (*ii).second.get())->m_nLayer, (*ii).second));
     //m_mmapAllAOI.insert(StimulusPair( (*ii).first, (*ii).second));
   }
 
@@ -662,7 +727,7 @@ int Template::InsertAOIs(StimulusPtrMMap m) {
 }
 
 int Template::InsertAOI(string strName, StimulusPtr pStim) {
-  StimulusBmp * pStimBMP = (StimulusBmp *) pStim.get();
+  StimulusImg * pStimBMP = (StimulusImg *) pStim.get();
   ostringstream osstr;
 
   osstr << strName.c_str() << " " << pStimBMP->m_x1 << " " << pStimBMP->m_y1;
@@ -752,8 +817,8 @@ bool Template::DeviceExists(unsigned long idDev, int n) {
   } else {
     for (ii = pii.first; ii != pii.second; ii++) {
       if (ii->second->GetIndex() == n) {
-				bResult = true;
-				break;
+	bResult = true;
+	break;
       } else {}
     }
   }
@@ -785,6 +850,9 @@ InputDevPtr Template::FindOrCreateInputDev(unsigned long idDev, int nIndex /*=0*
   ii = Template::s_mmapInputDevPtr.equal_range(idDev);
   bool bExists = false;
 
+  g_pErr->Debug(pastestr::paste("sd", " ",
+				"looking for device index", nIndex));
+  
   if (DeviceExists(idDev, nIndex)) {
     pDev = GetDevice(idDev, nIndex);
   } else {
@@ -792,40 +860,40 @@ InputDevPtr Template::FindOrCreateInputDev(unsigned long idDev, int nIndex /*=0*
     switch (idDev) {
     case SBX_MOUSE_DEV :
       {
-				g_pErr->Debug("creating mouse device");
-				pDev = InputDevPtr(new Mouse_SDL());
+	g_pErr->Debug("creating mouse device");
+	pDev = InputDevPtr(new Mouse_SDL());
       }
       break;
     case SBX_GAMEPAD_DEV :
       {
-				g_pErr->Debug("creating gamepad device");
-				pDev = InputDevPtr(new GamePad_SDL(SBX_GAMEPAD_DEV, nIndex));
+	g_pErr->Debug("creating gamepad device");
+	pDev = InputDevPtr(new GamePad_SDL(SBX_GAMEPAD_DEV, nIndex));
       }
       break;
     case SBX_SCROLLTRACKGP_DEV :
       {
-				g_pErr->Debug("creating periscopic display device");
-				pDev = InputDevPtr(new ScrollTrackGP_SDL(SBX_SCROLLTRACKGP_DEV, nIndex));
+	g_pErr->Debug("creating periscopic display device");
+	pDev = InputDevPtr(new ScrollTrackGP_SDL(SBX_SCROLLTRACKGP_DEV, nIndex));
       }
       break;
     case SBX_AUDIOREC_DEV :
       {
 #ifndef WIN32
-				g_pErr->Debug("creating audioinput device");
-				//pDev = InputDevPtr(new AlsaSoundIn(SBX_AUDIOREC_DEV));
-				pDev = InputDevPtr(new SoundInput(SBX_AUDIOREC_DEV));
+	g_pErr->Debug("creating audioinput device");
+	//pDev = InputDevPtr(new AlsaSoundIn(SBX_AUDIOREC_DEV));
+	pDev = InputDevPtr(new SoundInput(SBX_AUDIOREC_DEV));
 #endif
       }
       break;
-		case SBX_SOCKET_DEV :
-			{
-				g_pErr->Debug("creating socket device");
-				pDev = InputDevPtr(new Socket(SBX_SOCKET_DEV, nIndex));
-			}
-			break;
+    case SBX_SOCKET_DEV :
+      {
+	g_pErr->Debug("creating socket device");
+	pDev = InputDevPtr(new Socket(SBX_SOCKET_DEV, nIndex));
+      }
+      break;
     default:
       {
-				g_pErr->Report("error in Template::FindOrCreateInputDev");
+	g_pErr->Report("error in Template::FindOrCreateInputDev");
       }
       break;
     }
@@ -890,3 +958,19 @@ long Template::GetCounter(const char * pcCtr) {
 Uint32 Template::GetMSElapsed() {
   return Template::g_pExperiment->GetMSElapsed();
 }
+
+/*
+  string Template::FindAOINameFromPointer(StimulusPtr p) {
+  pair<StimulusPtrMMap::iterator, StimulusPtrMMap::iterator> ppp;
+  ppp = m_mmapAllAOI.equal_range(s);
+  if (ppp.first != ppp.second) {
+  ppStim = &((*ppp.first).second);
+  } else {
+  //g_pErr->Debug(pastestr::paste("ds", " ", m_mmapAllAOI.size(), "elements"));
+  g_pErr->Debug(pastestr::paste("ss", "", "!!! couldn't find AOI ", s.c_str()));
+  }
+  string s = "";
+
+  return s;
+  }
+*/

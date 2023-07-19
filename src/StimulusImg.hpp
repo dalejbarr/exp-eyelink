@@ -1,11 +1,12 @@
-#ifndef EXP_STIMULUSBMP_INCLUDED
-#define EXP_STIMULUSBMP_INCLUDED
+#ifndef EXP_STIMULUSIMG_INCLUDED
+#define EXP_STIMULUSIMG_INCLUDED
 
 #include <string>
 using std::string;
 
 #include "Stimulus.hpp"
 #include "SDL.h"
+#include "Display_SDL.hpp"
 #include "global.hpp"
 
 #include <map>
@@ -17,11 +18,10 @@ using std::string;
 
 #include "Operation.hpp"
 
-class StimulusBmp : public Stimulus {
+class StimulusImg : public Stimulus {
 protected:
   SDL_Surface * m_pSurface;
-  static SDL_Surface * m_pScreen;
-  static SDL_Surface * m_pMemSurface;
+	// static Display_SDL * s_pDisplay;
   bool m_bColorKey;
   bool m_bHighlight;
   unsigned int m_nHighlightWidth;
@@ -45,7 +45,7 @@ public:
   //virtual Oplist * GetAttr(string s);
   SDL_Rect m_rect;
 
-  void swap(StimulusBmp &other) {
+  void swap(StimulusImg &other) {
     std::swap(m_pSurface, other.m_pSurface);
     std::swap(m_rect, other.m_rect);
     std::swap(m_bColorKey, other.m_bColorKey);
@@ -65,32 +65,31 @@ public:
     std::swap(m_nLayer, other.m_nLayer);
   }
 
-  StimulusBmp & operator =(StimulusBmp other) {
+  StimulusImg & operator =(StimulusImg other) {
     swap(other);
     return *this;
   }
 
-  StimulusBmp(long id, Template * pTemplate, const char * pName, int x1, int y1, int x2 = -1, int y2 = -1, int nLayer = 0);
-  StimulusBmp(long id, Template * pTemplate, long idCmd, ArgMMap mmArgs);
-  virtual ~StimulusBmp();
+  StimulusImg(long id, Template * pTemplate, const char * pName, 
+							int x1, int y1, int x2 = -1, int y2 = -1, int nLayer = 0);
+  StimulusImg(long id, Template * pTemplate, long idCmd, ArgMMap mmArgs);
+  virtual ~StimulusImg();
   virtual int Prepare();
   virtual int Action();
   virtual int Finish();
   virtual int Erase(bool bMem = false);
   int Draw(bool bMem = 0);
   int SetColorkey(int r, int g, int b);
-  static void Flip1(bool bMem = 0);
-  static void SetScreen(SDL_Surface * pSurface);
-  static void InitMemSurface();
-  static void FlipMemoryToScreen();
-  static void ClearScreen(bool bMem = false);
+	// int CheckFileType(const char *);
   int InAOI(Uint16 x, Uint16 y);
   //inline void SetpXY(int *px, int *py) { m_x = px; m_y = py; }
   int SetLayer(int nLayer);
   void ResetLoc();
   void Highlight(const char * pHinfo);
+  void HighlightOff();  
   inline SDL_Surface * GetSurface() { return m_pSurface; }
-  int LoadBMP(string s1);
+  virtual int Load(string s1);
+	virtual SDL_Surface * LoadImage(string s1); // specific to image type
   int DrawRect(int x1, int y1, int x2, int y2, int r, int g, int b);
 };
 

@@ -88,8 +88,8 @@ int Trial::Update() {
 int Trial::Start() {
   int nResult = 0;
   g_pErr->DFI("Trial::Start", m_id, 2);
-  nResult = m_pItemCell->Start();
   m_msBegin = ClockFn();
+  nResult = m_pItemCell->Start(m_msBegin);
   m_nTrialStatus = SBX_IN_PROGRESS;
   m_bVisited = 1;
   g_pErr->DFO("Trial::Start", m_id, 2);
@@ -117,7 +117,7 @@ int Trial::StoreData(long tnum, long idSess, long idSubj) {
     if (m_mouseData.size() > 0) {
       g_prsStim->BeginTransaction();
       for (int i = 0; i < m_mouseData.size(); i++) {
-	g_prsResp->Insert("Mouse", m_mouseData[i].QueryStr(idResp));
+	g_prsResp->Insert("Mouse", m_mouseData[i].QueryStr(idResp).c_str());
       }
       g_prsStim->EndTransaction();
     } else {}

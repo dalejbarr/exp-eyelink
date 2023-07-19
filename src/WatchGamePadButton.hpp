@@ -6,7 +6,7 @@
 #include "Watch.hpp"
 #include "SDL.h"
 #include "Stimulus.hpp"
-#include "StimulusBmp.hpp"
+#include "StimulusImg.hpp"
 #include "GamePad_SDL.hpp"
 
 #include <vector>

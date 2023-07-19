@@ -49,7 +49,7 @@ class ItemCell {
   int Run();
   int Finish();
   int HandleEvent(SDL_Event * pEvt);
-  int Start();
+  int Start(Uint32 msBegin);
   int Update();
   int StoreData(long idTrial);
   string GetFilenameFromResource(string s1, bool prepend = false);

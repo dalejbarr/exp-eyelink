@@ -2,9 +2,9 @@
 #include <boost/lexical_cast.hpp>
 #include "Stimulus.hpp"
 
-EventSocketSendMsg::EventSocketSendMsg(long idEvent, long msec, long idCmd, 
-																			 ArgMMap mmArgs, Template * pTemplate, 
-																			 InputDevPtr pDev) :
+EventSocketSendMsg::EventSocketSendMsg(long idEvent, long msec, long idCmd,
+				       ArgMMap mmArgs, Template * pTemplate, 
+				       InputDevPtr pDev) :
   Event(idEvent, msec, idCmd, mmArgs, pTemplate) {
   g_pErr->DFI("EventSocketSendMsg::EventSocketSendMsg", idEvent, 3);
 
@@ -34,9 +34,15 @@ EventSocketSendMsg::EventSocketSendMsg(long idEvent, long msec, long idCmd,
 
 int EventSocketSendMsg::Action() {
   g_pErr->DFI("EventSocketSendMsg::Action", ID(), 3);
+  g_pErr->Debug(pastestr::paste("ss", " ", "message now:", m_strMessage.c_str()));
   string s1 = Stimulus::GetResourceString(m_strMessage.c_str());
-
-	((Socket *) m_pDev.get())->SendMessage(s1);
+  g_pErr->Debug(pastestr::paste("ss", " ", "message now:", s1.c_str()));  
+  string s2 = m_pTemplate->ReplaceWatchStringWithAOIName(s1);
+  
+  g_pErr->Debug(pastestr::paste("sss", "", "Sending Socket Message: '",
+				s2.c_str(), "'"));
+  
+  ((Socket *) m_pDev.get())->SendMessage(s2);
   g_pErr->DFO("EventSocketSendMsg::Action", ID(), 3);
 
   return Event::Action();

@@ -8,16 +8,18 @@ WatchSocketMsg::WatchSocketMsg(long id, long idNext, ArgMMap mmap) :
 	Watch(id, idNext) {
   g_pErr->DFI("WatchSocketMsg::WatchSocketMsg", id, 4);
 
-	pair<ArgIter, ArgIter> pii;
-	m_strMsg.assign("");
+  pair<ArgIter, ArgIter> pii;
+  m_strMsgTarget.assign("");
 
-	m_bAny = true;
+  m_bAny = true;
   pii = mmap.equal_range("Message");
   if (pii.first != pii.second) {
-		m_strMsg.assign((pii.first)->second);
-		m_bAny = false;
-	} else {}
+    m_strMsgTarget.assign((pii.first)->second);
+    m_bAny = false;
+  } else {}
 
+  m_strMsgReceived = "";
+  
   g_pErr->DFO("WatchSocketMsg::WatchSocketMsg", m_id, 4);
 }
 
@@ -27,34 +29,31 @@ WatchSocketMsg::~WatchSocketMsg() {
 bool WatchSocketMsg::CheckCondition(SDL_Event * pEvt) {
   // if we get this far, a message has been received; just have to check which one
   bool bResult = false;
-	string strTarget = Stimulus::GetResourceString(m_strMsg.c_str());
+  string strTarget = Stimulus::GetResourceString(m_strMsgTarget.c_str());
 
-	if (m_bAny) {
-		bResult = true;
-	} else {
-		Socket * pSock = (Socket *) pEvt->user.data1;
-		string strMsg(pSock->PopMessage());
-		if (strMsg == strTarget) {
-			bResult = true;
-		} else {
-			g_pErr->Debug(pastestr::paste("sssss", "", 
-																		"tgt: '", strTarget.c_str(), "' versus '",
-																		strMsg.c_str(), "'"));
-		}
-	}
-	/*
-  if ( CheckWhich(pEvt->jbutton.which) ) {
-
-    if (m_vButton.size() == 0) {
+  Socket * pSock = (Socket *) pEvt->user.data1;
+  
+  if (m_bAny) {
+    bResult = true;
+    m_strMsgReceived.assign(pSock->PopMessage());
+    g_pErr->Debug(pastestr::paste("ss", "", "got the message:",
+				  m_strMsgReceived.c_str()));
+  } else {
+    string strMsg(pSock->PopMessage());
+    if (strMsg == strTarget) {
       bResult = true;
     } else {
-      bResult = TargetButton((*pEvt).jbutton.button);
+      g_pErr->Debug(pastestr::paste("sssss", "", 
+				    "watching for: '", strTarget.c_str(), "' but got '",
+				    strMsg.c_str(), "'"));
     }
-
-  } else {}
-	*/
+  }
 
   return bResult;
+}
+
+string WatchSocketMsg::GetMsgReceived() {
+  return m_strMsgReceived;
 }
 
 /*

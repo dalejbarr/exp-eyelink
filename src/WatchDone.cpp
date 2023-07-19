@@ -39,10 +39,9 @@ bool WatchDone::CheckCondition(SDL_Event * pEvt) {
     g_pErr->Debug(pastestr::paste("sdsd", " ",
 				  "looking for", m_idEvent, "found", *pData));
   } else {
-		// make sure all events are done
-		bResult = true;
-	}
-
+    // make sure all events are done
+    bResult = true;
+  }
   g_pErr->DFO("WatchDone::CheckCondition", GetID(), 3);
 
   return bResult;

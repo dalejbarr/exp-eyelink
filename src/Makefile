@@ -1,20 +1,22 @@
 OBJS = 	Experiment.o Template.o State.o \
   EXPConfig.o \
-	ItemCell.o Trial.o Display.o Device.o Display_SDL.o \
+	ItemCell.o Trial.o MyDisplay.o Device.o Display_SDL.o \
 	Audio.o Audio_SDL.o \
 	InputDev.o Mouse_SDL.o \
-	Stimulus.o StimulusDisplayOn.o StimulusBmp.o \
+	Webcam2.o WebcamCV.o \
+	Stimulus.o StimulusDisplayOn.o StimulusImg.o \
 	StimulusWav.o StimulusTxt.o \
+	StimulusWebcam.o StimulusWebcamCV.o \
 	Event.o EventGrabAOI.o EventSwapAOI.o EventUpdateAOI.o \
 	EventUpdate.o EventRecord.o EventMsg.o StimulusShowAOI.o \
 	EventRepeatIf.o EventResetCounter.o EventIncrementCounter.o \
-  EventSocketSendMsg.o \
+	EventSocketSendMsg.o EventSetFlag.o EventProgressMeter.o \
 	Watch.o WatchKey.o WatchMouse.o WatchDone.o \
 	WatchGamePadButton.o WatchGamePadMove.o \
-	WatchSocketMsg.o \
+	WatchSocketMsg.o WatchRemain.o \
 	AlsaSoundIn.o \
 	SoundInput.o RtAudio.o \
-  Socket.o SocketListener.o \
+	Socket.o SocketListener.o \
 	StartupInfo.o pastestr.o \
 	Operation.o \
 	Recordset.o RecordsetMySQL.o RecordsetSqlite.o helpers.o \
@@ -23,7 +25,8 @@ OBJS = 	Experiment.o Template.o State.o \
 	RespObj.o RespData.o \
 	GamePad_SDL.o GPEvent.o ScrollTrackGP_SDL.o EventSTRecord.o \
 	xy.o \
-	EventLC1Display.o
+	EventLC1Display.o \
+	EventSwapAOI2.o
 
 W32L = win32/obj
 CC = g++
@@ -32,18 +35,20 @@ HDIR=$(shell cd;pwd)
 
 W32OBJS = \
 	$(W32L)/Experiment.o $(W32L)/Template.o $(W32L)/State.o \
-	$(W32L)/ItemCell.o $(W32L)/Trial.o $(W32L)/Display.o $(W32L)/Device.o $(W32L)/Display_SDL.o \
+	$(W32L)/ItemCell.o $(W32L)/Trial.o $(W32L)/MyDisplay.o $(W32L)/Device.o $(W32L)/Display_SDL.o \
 	$(W32L)/Audio.o $(W32L)/Audio_SDL.o \
 	$(W32L)/InputDev.o $(W32L)/Mouse_SDL.o \
-	$(W32L)/Stimulus.o $(W32L)/StimulusDisplayOn.o $(W32L)/StimulusBmp.o \
+	$(W32L)/Webcam2.o \
+	$(W32L)/Stimulus.o $(W32L)/StimulusDisplayOn.o $(W32L)/StimulusImg.o \
 	$(W32L)/StimulusWav.o $(W32L)/StimulusTxt.o \
+	$(W32L)/StimulusWebcam.o \
 	$(W32L)/Event.o $(W32L)/EventGrabAOI.o $(W32L)/EventSwapAOI.o $(W32L)/EventUpdateAOI.o \
 	$(W32L)/EventUpdate.o $(W32L)/EventRecord.o $(W32L)/EventMsg.o $(W32L)/StimulusShowAOI.o \
 	$(W32L)/EventRepeatIf.o $(W32L)/EventResetCounter.o $(W32L)/EventIncrementCounter.o \
-	$(W32L)/EventSocketSendMsg.o \
+	$(W32L)/EventSocketSendMsg.o $(W32L)/EventSetFlag.o \
 	$(W32L)/Watch.o $(W32L)/WatchKey.o $(W32L)/WatchMouse.o $(W32L)/WatchDone.o \
 	$(W32L)/WatchGamePadButton.o $(W32L).WatchGamePadMove.o \
-	$(W32L)/WatchSocketMsg.o \
+	$(W32L)/WatchSocketMsg.o $(W32L)/WatchRemain.o \
 	$(W32L)/PASoundIn.o \
   $(W32L)/Socket.o $(W32L)/SocketListener.o \
 	$(W32L)/StartupInfo.o $(W32L)/pastestr.o \
@@ -54,38 +59,41 @@ W32OBJS = \
 	$(W32L)/RespObj.o $(W32L)/RespData.o \
 	$(W32L)/GamePad_SDL.o $(W32L)/GPEvent.o $(W32L)/ScrollTrackGP_SDL.o $(W32L)/EventSTRecord.o \
 	$(W32L)/xy.o \
-	$(W32L)/EventLC1Display.o
+	$(W32L)/EventLC1Display.o \
+	$(W32L)/EventSwapAOI2.o
 
-CFLAGS = -c -I. 
+OPENCV_CFLAGS := $(shell pkg-config opencv4 --cflags)
+CFLAGS = -std=c++11 -c -I. 
 
 W32CF = -c -I. -I/home/daleb/src/boost -D WIN32 $(shell /opt/SDL-win32/bin/sdl-config --cflags)
-#-I/usr/i586-mingw32msvc/include/SDL -I/home/daleb/src/boost -D WIN32
-#W32LF = -L/usr/i586-mingw32msvc/lib -lmingw32 -lSDLmain -lSDL -lSDL_ttf -lSDL_mixer
 W32LF = $(shell /opt/SDL-win32/bin/sdl-config --libs) -lSDL_mixer -lSDL_ttf
-
-#MYFLAGS = -I/usr/include/mysql
 
 W32MYF = -Iwin32/mysql/include
 
 MYFLAGS = -I/usr/include/mysql
 MYLINK=-L/usr/lib/mysql -lmysqlclient 
+
+OPENCV_LIBS := $(shell pkg-config opencv4 --libs)
+
 SDL_CFLAGS := $(shell sdl-config --cflags)
 RTAFLAGS = -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__
-#SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_ttf -lSDL_mixer
-#SDL_LDFLAGS := $(shell sdl-config --libs) -lSDL_mixer -lSDL_ttf
-SDL_LDFLAGS = $(shell sdl-config --libs) -lSDL -lpthread -lSDL_image -lSDL_mixer -lSDL_ttf
-ELINK_CFLAGS := -I$(HDIR)/include
-#ELINK_LDFLAGS := -L$(HDIR)/libs -leyelink_core -leyelink_core_graphics  -lsdl_util `sdl-config --libs`   -lSDL_image -lSDL_mixer -lrt -lSDL_ttf -lSDL_gfx -lSDL_image
-ELINK_LDFLAGS := -L$(HDIR)/libs -leyelink_core -leyelink_core_graphics  -lsdl_util `sdl-config --libs`   -lSDL_image -lSDL_mixer -lrt -lSDL_gfx -lSDL_image -lSDL_ttf
 
+SDL_LDFLAGS = $(shell sdl-config --libs) -lSDL -lpthread -lSDL_image -lSDL_mixer -lSDL_ttf -lX11 -ljpeg
+
+ELINK_CFLAGS := -I/usr/include
+ELINK_LDFLAGS := -L/usr/lib -leyelink_core -leyelink_core_graphics  -lsdl_util `sdl-config --libs`   -lSDL_image -lSDL_mixer -lrt -lSDL_gfx -lSDL_image -lSDL_ttf
+
+
+# the libraries
 sblib-debug.a : $(OBJS) ReportErrorDebug.o sqlite3.o global.hpp
 	ar -rv sblib-debug.a $(OBJS) sqlite3.o ReportErrorDebug.o
 
 sblib.a : $(OBJS) ReportError.o sqlite3.o global.hpp
 	ar -rv sblib.a $(OBJS) sqlite3.o ReportError.o
 
+
 main.o : main.cpp picture.h
-	$(CC) $(CFLAGS) $(ELINK_CFLAGS) $(SDL_CFLAGS) main.cpp
+	$(CC) $(ELINK_CFLAGS) $(CFLAGS) $(SDL_CFLAGS) main.cpp
 
 pp3main.o : pp3main.cpp picture.h
 	$(CC) $(CFLAGS) $(ELINK_CFLAGS) $(SDL_CFLAGS) pp3main.cpp
@@ -94,7 +102,7 @@ exp2 : $(OBJS) sblib.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
 	$(CC) $(RTAFLAGS) -o exp2 expshell2.o sblib.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) 
 
 expdebug2 : sblib-debug.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
-	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) 
+	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(OPENCV_LIBS) $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) -lX11 -std=c++11
 
 install : exp2 expdebug2
 	cp exp2 ../bin/exp2; cp expdebug2 ../bin/expdebug2
@@ -109,7 +117,7 @@ expeyelinkpp3 : sblib.a pp3main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
 	$(CC) -o expeyelinkpp3 pp3main.o sblib.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound  
 
 expeyelinkdebug : sblib-debug.a main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
-	$(CC) -o expeyelinkdebug main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound 
+	$(CC) -o expeyelinkdebug main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound -lX11
 
 expeyelinkpp3debug : sblib-debug.a pp3main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
 	$(CC) -o expeyelinkpp3debug pp3main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound 
@@ -127,13 +135,13 @@ StimulusBmp.o : StimulusBmp.cpp StimulusBmp.hpp Stimulus.hpp Stimulus.cpp
 	$(CC) $(CFLAGS) $(SDL_CFLAGS) $<
 
 Experiment.o : Experiment.cpp Experiment.hpp
-	$(CC) $(CFLAGS) $(MYFLAGS) $(BOOST) $(SDL_CFLAGS) $<
+	$(CC) $(CFLAGS) $(OPENCV_CFLAGS) $(MYFLAGS) $(BOOST) $(SDL_CFLAGS) $<
 
-expshell.o : expshell.cc
-	$(CC) $(CFLAGS) $(SDL_CFLAGS) $(MYFLAGS) $<
+# expshell.o : expshell.cc
+# 	$(CC) $(CFLAGS) $(SDL_CFLAGS) $(MYFLAGS) $<
 
-expshell2.o : expshell2.cc
-	$(CC) $(CFLAGS) $(SDL_CFLAGS) $(MYFLAGS) $<
+expshell2.o : expshell2.cpp Display_SDL.hpp Experiment.hpp global.hpp Audio_SDL.hpp
+	$(CC) $(CFLAGS) $(OPENCV_CFLAGS) $(SDL_CFLAGS) $(MYFLAGS) $<
 
 sqlite3.o : sqlite3.c sqlite3.h
 	gcc $(CFLAGS) $<
@@ -160,7 +168,7 @@ RtAudio.o : RtAudio.cpp RtAudio.h
 	g++ $(CFLAGS) $(RTAFLAGS) -O2 -Wall -Wextra -fPIC -o RtAudio.o RtAudio.cpp
 
 %.o : %.cpp %.hpp
-	$(CC) $(CFLAGS) $(SDL_CFLAGS) $<
+	$(CC) $(CFLAGS) $(OPENCV_CFLAGS) $(SDL_CFLAGS) $<
 
 # win 32
 

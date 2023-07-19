@@ -15,6 +15,8 @@ public:
 	SocketListener(InputDevPtr pDev);
 	int static mainThread(void * pVoid);
 	int Main();
+	int CheckForMissedMessages();
+	int Signal();
 	virtual ~SocketListener();
 };
 
