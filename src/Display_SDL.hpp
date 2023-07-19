@@ -32,7 +32,8 @@ public:
   static void FlipMemoryToScreen();
   static void ClearScreen(bool bMem = false);
   int Message(const char * pcMessage);
-  static int MessageXY(int x, int y, const char * pcMessage);
+  static int MessageXY(int x, int y, const char * pcMessage,
+		       const char * pcFontFile, int ptsize);
 };
 
 #endif

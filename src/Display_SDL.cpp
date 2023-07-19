@@ -2,6 +2,8 @@
 #include "StimulusImg.hpp"
 #include <stdio.h>
 
+#include "pastestr.hpp"
+
 SDL_Surface * Display_SDL::s_pScreen = NULL;
 SDL_mutex * Display_SDL::s_pScreenMutex = NULL;
 SDL_Surface * Display_SDL::s_pMemScreen = NULL;
@@ -119,17 +121,18 @@ int Display_SDL::CreateScreen(int x0, int y0, int w, int h, Uint32 nFlags) {
   return 0;
 }
 
-int Display_SDL::MessageXY(int x, int y, const char * pcMessage) {
-  int ptsize = 24;
+int Display_SDL::MessageXY(int x, int y, const char * pcMessage,
+			   const char * pcFontFile, int ptsize) {
   TTF_Font * font = NULL;
   SDL_Color forecol = { 0xFF, 0xFF, 0xFF, 0 };
   SDL_Color backcol = { 0x00, 0x00, 0x00, 0 };
   SDL_Surface * text = NULL;
   SDL_Rect dstrect;
 
-  font = TTF_OpenFont("seguibk.ttf", ptsize);
+  font = TTF_OpenFont(pcFontFile, ptsize);
   if (font == NULL) {
-    g_pErr->Report("couldn't open font file seguibk.ttf");
+    g_pErr->Report(pastestr::paste("ss", " ",
+				   "couldn't open font file", pcFontFile));
   } else {}
 
   TTF_SetFontStyle(font, TTF_STYLE_NORMAL);

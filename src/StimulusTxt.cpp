@@ -1,6 +1,7 @@
 #include "StimulusTxt.hpp"
 #include "StimulusImg.hpp"
 #include "Template.hpp"
+#include "SDL.h"
 
 StimulusTxt::StimulusTxt(long id, Template * pTemplate, long idCmd, ArgMMap mmArgs) : Stimulus(id, pTemplate) {
 
@@ -19,21 +20,29 @@ StimulusTxt::StimulusTxt(long id, Template * pTemplate, long idCmd, ArgMMap mmAr
   pii = mmArgs.equal_range("y"); ii = pii.first;
   m_y1 = atoi((*ii).second.c_str());
 
-  /*
-  pii = mmArgs.equal_range("ColorKey"); 
+  m_strFontFile = "seguibk.ttf";
+  pii = mmArgs.equal_range("fontfile"); 
+  if (pii.first != pii.second) {
+    m_strFontFile = (*pii.first).second;
+  }
+
+  m_ptsize = 24;
+  pii = mmArgs.equal_range("pointsize"); 
   if (pii.first != pii.second) {
     ii = pii.first;
-    int r, g, b;
-    istringstream iss((*pii.first).second);
-    iss >> r >> g >> b;
-    SetColorkey(r, g, b);      
-    //g_pErr->Report(pastestr::paste("ddd", " ", (long) r, (long) g, (long) b));
-    //m_nLayer = atoi((*ii).second.c_str());
-  } else {
-    //m_nLayer = 1;
+    m_ptsize = atoi((*ii).second.c_str());
   }
-  */
-
+  
+  // TODO: make sure font file exists and can be opened
+  TTF_Font * font = NULL;
+  font = TTF_OpenFont(m_strFontFile.c_str(), m_ptsize);
+  if (font == NULL) {
+    g_pErr->Report(pastestr::paste("ss", " ",
+				   "couldn't open font file",
+				   m_strFontFile.c_str()));
+  } else {}
+  TTF_CloseFont(font);
+  
   g_pErr->DFO("StimulusTxt::StimulusTxt()", m_sResource.c_str(), 4);  
 }
 
@@ -47,7 +56,8 @@ int StimulusTxt::Action() {
 
   //g_pErr->Debug(pastestr::paste("sssdd", " ", "*", s1.c_str(), "*", m_x1, m_y1));
   if (s1.length()>0) {
-    Display_SDL::MessageXY(m_x1, m_y1, s1.c_str());
+    Display_SDL::MessageXY(m_x1, m_y1, s1.c_str(), m_strFontFile.c_str(),
+			   m_ptsize);
   } else {}
 
   g_pErr->DFO("StimulusTxt::Action", 0L, 2);
