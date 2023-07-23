@@ -12,6 +12,8 @@ public:
   virtual int Action();
   int m_x1;
   int m_y1;
+  string m_strPoint;
+  string m_strFontFile;
 };
 
 // extern Display_SDL * g_pDisplay;

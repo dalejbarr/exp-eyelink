@@ -2,10 +2,60 @@
 #include "StimulusImg.hpp"
 #include <stdio.h>
 
+#include "pastestr.hpp"
+
 SDL_Surface * Display_SDL::s_pScreen = NULL;
 SDL_mutex * Display_SDL::s_pScreenMutex = NULL;
 SDL_Surface * Display_SDL::s_pMemScreen = NULL;
 SDL_mutex * Display_SDL::s_pMemMutex = NULL;
+FontMap Display_SDL::s_mapFont;
+
+Display_SDL::Display_SDL(long id) : MyDisplay(id) {  
+  m_bSelfAlloc = false;
+}
+
+Display_SDL::Display_SDL(SDL_Surface * pSurface) {
+  if (pSurface) {
+    m_bSelfAlloc = false;
+    Display_SDL::s_pScreen = pSurface;
+    // StimulusImg::SetScreen(this);
+  } else {}
+  Display_SDL::s_pScreenMutex = SDL_CreateMutex();
+  Display_SDL::s_pMemMutex = SDL_CreateMutex();
+}
+
+Display_SDL::~Display_SDL() {
+  if (m_bSelfAlloc) {
+    if (Display_SDL::GetScreen()) {
+      SDL_FreeSurface(Display_SDL::s_pScreen);
+    } else {}
+    Display_SDL::s_pScreen = NULL;
+  }
+  if (Display_SDL::s_pScreenMutex) {
+    SDL_DestroyMutex(Display_SDL::s_pScreenMutex);
+    Display_SDL::s_pScreenMutex = NULL;
+  }
+
+  if (Display_SDL::s_pMemScreen) {
+    SDL_FreeSurface(Display_SDL::s_pMemScreen);
+    Display_SDL::s_pMemScreen = NULL;
+  } else {}
+  if (Display_SDL::s_pMemMutex) {
+    SDL_DestroyMutex(Display_SDL::s_pMemMutex);
+    Display_SDL::s_pMemMutex = NULL;
+  }
+
+  bool bFirst = true;
+  FontMap::const_iterator it;
+  for (it = s_mapFont.begin(); it != s_mapFont.end(); it++) {
+    if (bFirst) {
+      g_pErr->Debug("deallocating fonts...");
+      bFirst = false;
+    }
+    TTF_CloseFont(it->second);
+  }
+  s_mapFont.clear();
+}
 
 SDL_Surface * Display_SDL::GetScreen() {
   return Display_SDL::s_pScreen;
@@ -59,41 +109,29 @@ int Display_SDL::UnlockMemScreen() {
   return n;
 }
 
-Display_SDL::Display_SDL(long id) : MyDisplay(id) {
-  m_bSelfAlloc = false;
-}
+TTF_Font * Display_SDL::FindOrCreateFont(string strFont,
+					 int pt /* = 24*/) {
+  TTF_Font * fp;
 
-Display_SDL::Display_SDL(SDL_Surface * pSurface) {
-  if (pSurface) {
-    m_bSelfAlloc = false;
-    Display_SDL::s_pScreen = pSurface;
-    // StimulusImg::SetScreen(this);
-  } else {}
-  Display_SDL::s_pScreenMutex = SDL_CreateMutex();
-  Display_SDL::s_pMemMutex = SDL_CreateMutex();
-}
-
-Display_SDL::~Display_SDL() {
-  if (m_bSelfAlloc) {
-    if (Display_SDL::GetScreen()) {
-      SDL_FreeSurface(Display_SDL::s_pScreen);
+  pair<string, int> thisFont = {strFont, pt};
+  fIter ii = s_mapFont.find(thisFont);
+  if (ii != s_mapFont.end()) {
+    g_pErr->Debug("found font");
+    fp = ii->second;
+  } else {
+    g_pErr->Debug("couldn't find font... allocating");
+    fp = TTF_OpenFont(strFont.c_str(), pt);
+    if (fp == NULL) {
+      g_pErr->Report(pastestr::paste("ss", " ",
+				     "couldn't open font file", strFont.c_str()));
     } else {}
-    Display_SDL::s_pScreen = NULL;
-  }
-  if (Display_SDL::s_pScreenMutex) {
-    SDL_DestroyMutex(Display_SDL::s_pScreenMutex);
-    Display_SDL::s_pScreenMutex = NULL;
+
+    s_mapFont.insert(std::make_pair(thisFont, fp));
+    //s_mapFont.insert(std::pair<string, TTF_Font *>());
   }
 
-  if (Display_SDL::s_pMemScreen) {
-    SDL_FreeSurface(Display_SDL::s_pMemScreen);
-    Display_SDL::s_pMemScreen = NULL;
-  } else {}
-  if (Display_SDL::s_pMemMutex) {
-    SDL_DestroyMutex(Display_SDL::s_pMemMutex);
-    Display_SDL::s_pMemMutex = NULL;
-  }
-}
+  return fp;
+};
 
 int Display_SDL::SetColorKey(int r, int g, int b) {
   m_SDL_mapRGB = SDL_MapRGB(Display_SDL::GetScreen()->format, r, g, b);
@@ -119,21 +157,21 @@ int Display_SDL::CreateScreen(int x0, int y0, int w, int h, Uint32 nFlags) {
   return 0;
 }
 
-int Display_SDL::MessageXY(int x, int y, const char * pcMessage) {
-  int ptsize = 24;
+int Display_SDL::MessageXY(int x, int y, const char * pcMessage,
+			   const char * pcFontFile, int ptsize) {
   TTF_Font * font = NULL;
   SDL_Color forecol = { 0xFF, 0xFF, 0xFF, 0 };
   SDL_Color backcol = { 0x00, 0x00, 0x00, 0 };
   SDL_Surface * text = NULL;
   SDL_Rect dstrect;
+  string strFont(pcFontFile);
 
-  font = TTF_OpenFont("seguibk.ttf", ptsize);
-  if (font == NULL) {
-    g_pErr->Report("couldn't open font file seguibk.ttf");
-  } else {}
+  font = FindOrCreateFont(strFont, ptsize);
+  // font = TTF_OpenFont(pcFontFile, ptsize);
 
   TTF_SetFontStyle(font, TTF_STYLE_NORMAL);
-  text = TTF_RenderText_Solid(font, pcMessage, forecol);
+  // text = TTF_RenderUNICODE_Solid(font, pcMessage, forecol);
+  text = TTF_RenderUTF8_Solid(font, pcMessage, forecol);
 
   if (text == NULL) {
     g_pErr->Report("error rendering font");
@@ -148,7 +186,7 @@ int Display_SDL::MessageXY(int x, int y, const char * pcMessage) {
     SDL_Flip(Display_SDL::GetScreen());
   }
 
-  TTF_CloseFont(font);
+  // TTF_CloseFont(font);
 
   return 0;
 }
@@ -168,7 +206,7 @@ int Display_SDL::Message(const char * pcMessage) {
   } else {}
 
   TTF_SetFontStyle(font, TTF_STYLE_NORMAL);
-  text = TTF_RenderText_Solid(font, pcMessage, forecol);
+  text = TTF_RenderUTF8_Solid(font, pcMessage, forecol);
 
   if (text == NULL) {
     g_pErr->Report("error rendering font");

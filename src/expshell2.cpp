@@ -79,6 +79,8 @@ int exp_cleanup() {
     SDL_Quit();
   } else {}
   IMG_Quit();
+
+  return 0;
 }
 
 int main(int argc, char *argv[]){
