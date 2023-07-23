@@ -4,12 +4,20 @@
 #include "MyDisplay.hpp"
 #include "SDL.h"
 
+#include <map>
+using std::map;
+
+typedef std::pair<string, int> font; // <filename, point>
+typedef map<font, TTF_Font *> FontMap;
+
 class Display_SDL : public MyDisplay {
 protected:
   static SDL_Surface * s_pScreen;
-	static SDL_mutex * s_pScreenMutex;
+  static SDL_mutex * s_pScreenMutex;
   static SDL_Surface * s_pMemScreen;
-	static SDL_mutex * s_pMemMutex;
+  static SDL_mutex * s_pMemMutex;
+  static FontMap s_mapFont;
+  
   Uint32 m_SDL_mapRGB;
   bool m_bSelfAlloc;
 public:
@@ -31,9 +39,12 @@ public:
   static void Flip1(bool bMem = false);
   static void FlipMemoryToScreen();
   static void ClearScreen(bool bMem = false);
+  static TTF_Font * FindOrCreateFont(string strFont, int pt = 24);
   int Message(const char * pcMessage);
   static int MessageXY(int x, int y, const char * pcMessage,
 		       const char * pcFontFile, int ptsize);
 };
+
+typedef std::map<std::pair<std::string, int>, TTF_Font *>::iterator fIter;
 
 #endif

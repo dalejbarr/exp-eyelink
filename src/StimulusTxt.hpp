@@ -12,7 +12,7 @@ public:
   virtual int Action();
   int m_x1;
   int m_y1;
-  int m_ptsize;
+  string m_strPoint;
   string m_strFontFile;
 };
 

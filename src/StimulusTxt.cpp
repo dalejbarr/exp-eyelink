@@ -26,14 +26,16 @@ StimulusTxt::StimulusTxt(long id, Template * pTemplate, long idCmd, ArgMMap mmAr
     m_strFontFile = (*pii.first).second;
   }
 
-  m_ptsize = 24;
+  m_strPoint = "24";
   pii = mmArgs.equal_range("pointsize"); 
   if (pii.first != pii.second) {
-    ii = pii.first;
-    m_ptsize = atoi((*ii).second.c_str());
+    m_strPoint = (*pii.first).second;
   }
   
   // TODO: make sure font file exists and can be opened
+  /*
+    ## commented this out because it won't work if m_strFontFile can be
+    ## a resource string, defined at runtime
   TTF_Font * font = NULL;
   font = TTF_OpenFont(m_strFontFile.c_str(), m_ptsize);
   if (font == NULL) {
@@ -42,6 +44,7 @@ StimulusTxt::StimulusTxt(long id, Template * pTemplate, long idCmd, ArgMMap mmAr
 				   m_strFontFile.c_str()));
   } else {}
   TTF_CloseFont(font);
+  */
   
   g_pErr->DFO("StimulusTxt::StimulusTxt()", m_sResource.c_str(), 4);  
 }
@@ -53,11 +56,24 @@ int StimulusTxt::Action() {
   g_pErr->DFI("StimulusTxt::Action", 0L, 2);
 
   string s1 = Stimulus::GetResourceString(m_sResource.c_str());
+  string s2 = Stimulus::GetResourceString(m_strFontFile.c_str());
+  string s3 = Stimulus::GetResourceString(m_strPoint.c_str());
+  std::wstring text = L"你好世界";
+  
+  int ptsize = atoi(s3.c_str());
 
-  //g_pErr->Debug(pastestr::paste("sssdd", " ", "*", s1.c_str(), "*", m_x1, m_y1));
+  g_pErr->Debug(pastestr::paste("sssssdsdsd", "",
+				"string: *",
+				s1.c_str(),
+				"* font: ",
+				s2.c_str(),
+				" (", ptsize, ") at ",
+				m_x1, " ",
+				m_y1));
+  
   if (s1.length()>0) {
-    Display_SDL::MessageXY(m_x1, m_y1, s1.c_str(), m_strFontFile.c_str(),
-			   m_ptsize);
+    Display_SDL::MessageXY(m_x1, m_y1, s1.c_str(), s2.c_str(),
+			   ptsize);
   } else {}
 
   g_pErr->DFO("StimulusTxt::Action", 0L, 2);
