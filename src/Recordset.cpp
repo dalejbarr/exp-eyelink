@@ -228,3 +228,15 @@ int Recordset::DeleteWhere(const char * pcTable, const char * pcWhere) {
 
   return 0;
 }
+
+int Recordset::CreateTable(const char * pcTable, const char * pcSchema) {
+  string sql1;
+
+  sql1.assign(pastestr::paste("sssss", "",
+			      "CREATE TABLE IF NOT EXISTS ", pcTable, " (",
+			      pcSchema, ");"));
+
+  m_pErr->Debug(sql1.c_str());
+  
+  return Exec(sql1.c_str());
+}

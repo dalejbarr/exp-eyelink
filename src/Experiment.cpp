@@ -57,6 +57,7 @@ std::bitset<4> Experiment::g_bsFlag = 0;
 
 SocketListener * Experiment::s_pSockListener = NULL;
 Webcam2 * Experiment::s_pCam = NULL;
+PupilLabsTracker * Experiment::s_pPupilLabsTracker = NULL;
 
 unsigned int Experiment::g_nSeed = 0;
 
@@ -281,6 +282,12 @@ int Experiment::Cleanup() {
   g_pErr->Debug(".Deleting Devices.");
   s_mmapDevice.clear();
 
+  if (s_pPupilLabsTracker) {
+    g_pErr->Debug(".Deleting PupilLabs Tracker");
+    delete s_pPupilLabsTracker;
+    s_pPupilLabsTracker = NULL;
+  }
+  
   g_pErr->Debug(".Deleting Recordsets.");
   if (g_prsStim == g_prsResp) {
     g_prsResp = NULL;
@@ -304,6 +311,7 @@ int Experiment::Cleanup() {
   m_mapCounter.clear();
   
   if (s_pCam) {
+    g_pErr->Debug(".Deleting Webcam.");
     delete s_pCam;
     s_pCam = NULL;
   }

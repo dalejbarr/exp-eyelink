@@ -35,6 +35,7 @@ using pastestr::paste;
 #include "EventSetFlag.hpp"
 #include "EventIncrementCounter.hpp"
 #include "EventSocketSendMsg.hpp"
+#include "EventPupilLabsMsg.hpp"
 
 //#include "EventGSC1Feedback.hpp"
 //#include "EventGSC1DrawGrid.hpp"
@@ -359,6 +360,21 @@ ORDER BY Msec ASC"));
 	}  
 	pEvent = EventPtr(new EventSocketSendMsg(idEvent, msec, idCmd, 
 						 mmArgs, pTemplate, pDev));
+      }
+	break;
+      case SBX_EVENT_PUPILLABSMSG : {
+	if (!Experiment::s_pPupilLabsTracker) {
+	  g_pErr->Debug("creating new PupilLabs instance...");
+	  string sURL;
+	  if (!g_pConfig->GetConfig("PupilLabsIP", &sURL)) {
+	    g_pErr->Report("'PupilLabsIP' not defined in EXPConfig table");
+	  }
+	  Experiment::s_pPupilLabsTracker = new PupilLabsTracker(sURL);
+	  EventPupilLabsMsg::s_pPupilLabsTracker =
+	    Experiment::s_pPupilLabsTracker;
+	} 
+	pEvent = EventPtr(new EventPupilLabsMsg(idEvent, msec, idCmd,
+						mmArgs, pTemplate));
       }
 	break;
       default :

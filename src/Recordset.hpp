@@ -89,6 +89,7 @@ class Recordset
   virtual int DeleteWhere(const char * pcTable, const char * pcWhere);
   virtual bool TableExists(const char * pcTable) = 0;
   virtual const char * IDType();
+  virtual int CreateTable(const char * pcTable, const char * pcSchema);
 };
 
 #endif // !defined(AFX_RECORDSET_H__2A7BB2CB_6F19_4C0D_9F07_CA1DE0C6494B__INCLUDED_)

@@ -18,6 +18,7 @@
 #include "SocketListener.hpp"
 #include "Webcam2.hpp"
 #include "WebcamCV.hpp"
+#include "PupilLabsTracker.hpp"
 
 class listordinfo {
 public:
@@ -124,6 +125,7 @@ public:
 
   static SocketListener * s_pSockListener;
   static Webcam2 * s_pCam;
+  static PupilLabsTracker * s_pPupilLabsTracker;
 
   static Device * FindOrCreateDevice(long, long);
   static Stimulus * FindOrCreateStimulus(long id, 
@@ -171,9 +173,9 @@ public:
   void ResetCounter(const char * pcCtr);
   long GetCounter(const char * pcCtr);
   Uint32 GetMSElapsed();
-	Uint32 GetTrialBegin();
+  Uint32 GetTrialBegin();
   int Loop();
-	string GetEDFFilename();
+  string GetEDFFilename();
 };
 
 #endif

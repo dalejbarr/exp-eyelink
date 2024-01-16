@@ -2,8 +2,8 @@ OBJS = 	Experiment.o Template.o State.o \
   EXPConfig.o \
 	ItemCell.o Trial.o MyDisplay.o Device.o Display_SDL.o \
 	Audio.o Audio_SDL.o \
-	InputDev.o Mouse_SDL.o \
-	Webcam2.o WebcamCV.o \
+	InputDev.o Mouse_SDL.o HttpRestAPI.o \
+	Webcam2.o WebcamCV.o PupilLabsTracker.o \
 	Stimulus.o StimulusDisplayOn.o StimulusImg.o \
 	StimulusWav.o StimulusTxt.o \
 	StimulusWebcam.o StimulusWebcamCV.o \
@@ -11,6 +11,7 @@ OBJS = 	Experiment.o Template.o State.o \
 	EventUpdate.o EventRecord.o EventMsg.o StimulusShowAOI.o \
 	EventRepeatIf.o EventResetCounter.o EventIncrementCounter.o \
 	EventSocketSendMsg.o EventSetFlag.o EventProgressMeter.o \
+	EventPupilLabsMsg.o \
 	Watch.o WatchKey.o WatchMouse.o WatchDone.o \
 	WatchGamePadButton.o WatchGamePadMove.o \
 	WatchSocketMsg.o WatchRemain.o \
@@ -37,8 +38,8 @@ W32OBJS = \
 	$(W32L)/Experiment.o $(W32L)/Template.o $(W32L)/State.o \
 	$(W32L)/ItemCell.o $(W32L)/Trial.o $(W32L)/MyDisplay.o $(W32L)/Device.o $(W32L)/Display_SDL.o \
 	$(W32L)/Audio.o $(W32L)/Audio_SDL.o \
-	$(W32L)/InputDev.o $(W32L)/Mouse_SDL.o \
-	$(W32L)/Webcam2.o \
+	$(W32L)/InputDev.o $(W32L)/Mouse_SDL.o $(W32L)/HttpRestAPI.o \
+	$(W32L)/Webcam2.o $(W32L)/PupilLabsTracker.o \
 	$(W32L)/Stimulus.o $(W32L)/StimulusDisplayOn.o $(W32L)/StimulusImg.o \
 	$(W32L)/StimulusWav.o $(W32L)/StimulusTxt.o \
 	$(W32L)/StimulusWebcam.o \
@@ -46,6 +47,7 @@ W32OBJS = \
 	$(W32L)/EventUpdate.o $(W32L)/EventRecord.o $(W32L)/EventMsg.o $(W32L)/StimulusShowAOI.o \
 	$(W32L)/EventRepeatIf.o $(W32L)/EventResetCounter.o $(W32L)/EventIncrementCounter.o \
 	$(W32L)/EventSocketSendMsg.o $(W32L)/EventSetFlag.o \
+	$(W32L)/EventPupilLabsMsg.o \
 	$(W32L)/Watch.o $(W32L)/WatchKey.o $(W32L)/WatchMouse.o $(W32L)/WatchDone.o \
 	$(W32L)/WatchGamePadButton.o $(W32L).WatchGamePadMove.o \
 	$(W32L)/WatchSocketMsg.o $(W32L)/WatchRemain.o \
@@ -71,7 +73,7 @@ W32LF = $(shell /opt/SDL-win32/bin/sdl-config --libs) -lSDL_mixer -lSDL_ttf
 W32MYF = -Iwin32/mysql/include
 
 MYFLAGS = -I/usr/include/mysql
-MYLINK=-L/usr/lib/mysql -lmysqlclient 
+MYLINK=-L/usr/lib/mysql -lmysqlclient -lcurl
 
 OPENCV_LIBS := $(shell pkg-config opencv4 --libs)
 
@@ -102,25 +104,25 @@ exp2 : $(OBJS) sblib.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
 	$(CC) $(RTAFLAGS) -o exp2 expshell2.o sblib.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) 
 
 expdebug2 : sblib-debug.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
-	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(OPENCV_LIBS) $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) -lX11 -std=c++11
+	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(OPENCV_LIBS) $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound -lcurl $(MYLINK) -lX11 -std=c++11
 
 install : exp2 expdebug2
 	cp exp2 ../bin/exp2; cp expdebug2 ../bin/expdebug2
 
 expdebug2pp3 : sblib-debug.a pp3main.o ClockFn.o StimulusEyeLinkMsg-notrack.o
-	$(CC) -o expdebug2 pp3main.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK)
+	$(CC) -o expdebug2 pp3main.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound -lcurl $(MYLINK)
 
 expeyelink : sblib.a main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
-	$(CC) -o expeyelink main.o sblib.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound  
+	$(CC) -o expeyelink main.o sblib.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound -lcurl
 
 expeyelinkpp3 : sblib.a pp3main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
-	$(CC) -o expeyelinkpp3 pp3main.o sblib.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound  
+	$(CC) -o expeyelinkpp3 pp3main.o sblib.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound -lcurl
 
 expeyelinkdebug : sblib-debug.a main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
-	$(CC) -o expeyelinkdebug main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound -lX11
+	$(CC) -o expeyelinkdebug main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound -lX11 -lcurl
 
 expeyelinkpp3debug : sblib-debug.a pp3main.o ClockFn-eyelink.o StimulusEyeLinkMsg.o
-	$(CC) -o expeyelinkpp3debug pp3main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound 
+	$(CC) -o expeyelinkpp3debug pp3main.o sblib-debug.a ClockFn-eyelink.o StimulusEyeLinkMsg.o $(MYLINK) $(ELINK_LDFLAGS) -ldl -pthread -lrt -lpthread -lasound -lcurl
 
 assigncontroller : assigncontroller.o sblib-debug.a ClockFn.o
 	$(CC) -ldl -pthread $(MYLINK) $(SDL_LDFLAGS) -o assigncontroller assigncontroller.o sblib-debug.a ClockFn.o
