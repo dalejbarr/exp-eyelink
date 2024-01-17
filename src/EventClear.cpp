@@ -33,4 +33,6 @@ int EventClear::Action() {
   } else {
     Display_SDL::ClearRegion(m_x1, m_y1, m_x2, m_y2);
   }
+
+  return Event::Action();
 }
