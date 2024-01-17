@@ -23,7 +23,10 @@ class Trial {
   long m_id;
   bool m_bVisited;
   vector<RespData> m_vRespData;
-
+  
+  vector<EventTimePtr> m_vStateTiming;
+  vector<EventTimePtr> m_vEventTiming;
+  
  public:
   static Experiment * g_pExp;
   long m_idBlock;

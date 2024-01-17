@@ -147,7 +147,7 @@ bool PupilLabsTracker::CheckDBTable() {
   
   if (!g_prsResp->TableExists("PupilLabsTracker")) {
     g_pErr->Debug("'PupilLabsTracker' table missing from database... creating...");
-    string s = "\n PLID INTEGER PRIMARY KEY AUTOINCREMENT,\n SessionID INTEGER,\n TrialID INTEGER,\n \n Data TEXT";
+    string s = "\n PLID INTEGER PRIMARY KEY AUTOINCREMENT,\n SessionID INTEGER,\n TrialOrder INTEGER,\n \n Data TEXT";
     
     result = g_prsResp->CreateTable("PupilLabsTracker", s.c_str());
   } else {
