@@ -53,6 +53,9 @@ int Trial::Finish() {
 
   if (m_nTrialStatus != SBX_FINISHED) {
     m_msEnd = ClockFn();
+
+    // TODO: store the event timings
+    
     nResult = m_pItemCell->Finish();
     m_nTrialStatus = SBX_FINISHED;
 

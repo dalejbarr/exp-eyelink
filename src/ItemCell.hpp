@@ -23,9 +23,12 @@ class ItemCell {
   TemplatePtr m_pTemplate;
   StimulusPtrMMap m_mmapAOI;
   ResourceMap m_mapResources;
+
+  // TODO: these should be in the Trial class, not in ItemCell
   vector<EventTimePtr> m_vStateTiming;
   vector<EventTimePtr> m_vEventTiming;
   vector<RespData> m_vRespData;
+  
   // If I knew c++ properly, I wouldnt need these lines:
   //  vector<GSC1SoundButton> m_vGSC1SoundButton;
   //vector<GSC1Toggle> m_vGSC1Toggle;

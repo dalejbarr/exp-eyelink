@@ -17,6 +17,8 @@ ItemCell::~ItemCell() {
   g_pErr->DFI("ItemCell::~ItemCell", m_id, 2);
   m_mapResources.clear();
   m_mmapAOI.clear();
+
+  // these really belong to the "Trial" class, not ItemCell class
   m_vEventTiming.clear();
   m_vStateTiming.clear();
 
@@ -86,8 +88,10 @@ int ItemCell::Finish() {
     g_pErr->Report("ItemCell::Finish curtrial undefined");
   }
 
+  // TODO: these should belong to Trial not ItemCell
   m_vStateTiming = m_pTemplate->GetStateTiming();
   m_vEventTiming = m_pTemplate->GetEventTiming();
+  
   m_msgMap = m_pTemplate->m_msgMap;
   m_vRespData = m_pTemplate->m_vRespData;
 
