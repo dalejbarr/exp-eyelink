@@ -19,8 +19,8 @@ ItemCell::~ItemCell() {
   m_mmapAOI.clear();
 
   // these really belong to the "Trial" class, not ItemCell class
-  m_vEventTiming.clear();
-  m_vStateTiming.clear();
+  // m_vEventTiming.clear();
+  // m_vStateTiming.clear();
 
   g_pErr->DFO("ItemCell::~ItemCell", m_id, 2);
 }
@@ -89,8 +89,8 @@ int ItemCell::Finish() {
   }
 
   // TODO: these should belong to Trial not ItemCell
-  m_vStateTiming = m_pTemplate->GetStateTiming();
-  m_vEventTiming = m_pTemplate->GetEventTiming();
+  // m_vStateTiming = m_pTemplate->GetStateTiming();
+  // m_vEventTiming = m_pTemplate->GetEventTiming();
   
   m_msgMap = m_pTemplate->m_msgMap;
   m_vRespData = m_pTemplate->m_vRespData;
@@ -127,28 +127,7 @@ int ItemCell::Start(Uint32 msBegin) {
 
 int ItemCell::StoreData(long idTrial) {
   g_pErr->DFI("ItemCell::StoreData", m_id, 3);
-
   string s1;
-
-  if (m_vStateTiming.size() > 0) {
-    g_prsResp->BeginTransaction();
-    for (int i = 0; i < m_vStateTiming.size(); i++) {
-      s1.assign(pastestr::paste("ddd", ", ", idTrial, m_vStateTiming[i]->m_id,
-				m_vStateTiming[i]->m_ms));
-      g_prsResp->Insert("StateTiming", s1.c_str());
-    }
-    g_prsResp->EndTransaction();
-  } else {}  
-
-  if (m_vEventTiming.size() > 0) {
-    g_prsResp->BeginTransaction();
-    for (int i = 0; i < m_vEventTiming.size(); i++) {
-      s1.assign(pastestr::paste("ddd", ", ", idTrial, m_vEventTiming[i]->m_id,
-				m_vEventTiming[i]->m_ms));
-      g_prsResp->Insert("EventTiming", s1.c_str());
-    }
-    g_prsResp->EndTransaction();
-  } else {}  
 
   if (m_msgMap.size() > 0) {
     g_prsResp->BeginTransaction();

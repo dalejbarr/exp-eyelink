@@ -25,8 +25,8 @@ class ItemCell {
   ResourceMap m_mapResources;
 
   // TODO: these should be in the Trial class, not in ItemCell
-  vector<EventTimePtr> m_vStateTiming;
-  vector<EventTimePtr> m_vEventTiming;
+  // vector<EventTimePtr> m_vStateTiming;
+  // vector<EventTimePtr> m_vEventTiming;
   vector<RespData> m_vRespData;
   
   // If I knew c++ properly, I wouldnt need these lines:
@@ -37,6 +37,7 @@ class ItemCell {
   //vector<GSC1Locs> m_vGSC1Flags;
   //vector<RespObj> m_vRespData;
 
+  // not really sure what this is for anymore...
   MsgMap m_msgMap;
 
   ItemCell(long id, TemplatePtr ptt);// : m_id(id), m_pTemplate(ptt) {};

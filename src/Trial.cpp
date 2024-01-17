@@ -55,6 +55,8 @@ int Trial::Finish() {
     m_msEnd = ClockFn();
 
     // TODO: store the event timings
+    m_vStateTiming = m_pItemCell->m_pTemplate->GetStateTiming();
+    m_vEventTiming = m_pItemCell->m_pTemplate->GetEventTiming();
     
     nResult = m_pItemCell->Finish();
     m_nTrialStatus = SBX_FINISHED;
@@ -131,10 +133,29 @@ int Trial::StoreData(long tnum, long idSess, long idSubj) {
       //m_vRespData[i].Print();
       m_vRespData[i].Store(idResp, g_prsResp);
     }
-
+    
     // store the state + event data.
-    m_pItemCell->StoreData(idTrial);
+    // m_pItemCell->StoreData(idTrial);
+    if (m_vStateTiming.size() > 0) {
+      g_prsResp->BeginTransaction();
+      for (int i = 0; i < m_vStateTiming.size(); i++) {
+	s1.assign(pastestr::paste("ddd", ", ", idTrial, m_vStateTiming[i]->m_id,
+				  m_vStateTiming[i]->m_ms));
+	g_prsResp->Insert("StateTiming", s1.c_str());
+      }
+      g_prsResp->EndTransaction();
+    } else {}  
 
+    if (m_vEventTiming.size() > 0) {
+      g_prsResp->BeginTransaction();
+      for (int i = 0; i < m_vEventTiming.size(); i++) {
+	s1.assign(pastestr::paste("ddd", ", ", idTrial, m_vEventTiming[i]->m_id,
+				  m_vEventTiming[i]->m_ms));
+	g_prsResp->Insert("EventTiming", s1.c_str());
+      }
+      g_prsResp->EndTransaction();
+    } else {}  
+    
   } else {}
 
   return 0;
