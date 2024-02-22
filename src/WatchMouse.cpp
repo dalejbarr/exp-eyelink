@@ -5,7 +5,9 @@
 
 Mouse_SDL * WatchMouse::s_pMouse = NULL;
 
-WatchMouse::WatchMouse(long id, long idNext, ArgMMap mmap, StimulusPtrMMap * pmmapAOI) : Watch(id, idNext) {
+WatchMouse::WatchMouse(long id, long idNext, ArgMMap mmap,
+		       StimulusPtrMMap * pmmapAOI) :
+  Watch(id, idNext) {
   g_pErr->DFI("WatchMouse::WatchMouse", id, 4);
   m_nRegion = WATCHMOUSE_NOREGION;
   m_pmmapAOI = pmmapAOI;

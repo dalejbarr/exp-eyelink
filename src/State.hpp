@@ -3,6 +3,8 @@
 
 #define EXP_EVENT_TIMER_RESOLUTION 3
 
+#include <atomic>
+
 #include <string>
 using std::string;
 
@@ -34,7 +36,7 @@ class State
   Uint32 m_nTimeout;
   Uint32 m_nTrialTimeout;
   static SDL_Thread * s_pThread;
-  static bool s_bContinue;
+  static std::atomic<bool> s_bContinue;
   //bool m_bVisited;
 
   EventGrabAOI * m_pEvtMove;

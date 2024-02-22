@@ -9,6 +9,7 @@
 #define SBX_AUDIOREC_DEV 3
 #define SBX_SCROLLTRACKGP_DEV 4
 #define SBX_SOCKET_DEV 5
+#define SBX_EYELINKMONITOR_DEV 6
 
 class ItemCell;
 

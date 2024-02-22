@@ -50,6 +50,7 @@ using pastestr::paste;
 #include "WatchGamePadMove.hpp"
 #include "WatchSocketMsg.hpp"
 #include "WatchRemain.hpp"
+#include "WatchEyeLinkAOI.hpp"
 //#include "boost/lexical_cast.hpp"
 
 //#include "WatchGSC1Button.hpp"
@@ -64,7 +65,7 @@ OpInt State::s_nMouseCurY(0);
 
 bool State::s_bFinished = false;
 // bool State::s_bTimedOut = false;
-bool State::s_bContinue = false;
+std::atomic<bool> State::s_bContinue(false);
 
 Uint32 State::s_msTrialBegin = 0;
 
@@ -472,7 +473,7 @@ ORDER BY WatchID ASC"));
     case SBX_WATCH_REMAIN :
       pWatch = WatchPtr(new WatchRemain(idWatch, idNext, mmArgs));
       break;
-    case SBX_WATCH_TIMEOUT :
+    case SBX_WATCH_TIMEOUT : {
       pii = mmArgs.equal_range("Msec");
       if (pii.first == pii.second) {
 	g_pErr->Report("Argument Msec must be supplied to Watch TIMEOUT");
@@ -482,6 +483,7 @@ ORDER BY WatchID ASC"));
 	m_nTimeout = (Uint32) msTime;
       }
       pWatch = WatchPtr(new Watch(idWatch, idNext));
+    }
       break;
     case SBX_WATCH_TRIALTIMEOUT : {
       pii = mmArgs.equal_range("Msec");
@@ -495,7 +497,6 @@ ORDER BY WatchID ASC"));
 				      m_nTrialTimeout));
       }
       pWatch = WatchPtr(new Watch(idWatch, idNext));
-      break;
     }
       break;
     case SBX_WATCH_SOCKET_MSG :
@@ -518,6 +519,15 @@ ORDER BY WatchID ASC"));
 	  Experiment::s_pSockListener = new SocketListener(pDev);
 	}
 	pWatch = WatchPtr(new WatchSocketMsg(idWatch, idNext, mmArgs));
+      }
+      break;
+    case SBX_WATCH_EYELINKAOI :
+      {
+	// TODO
+	InputDevPtr pDev = pTemplate->FindOrCreateInputDev(SBX_EYELINKMONITOR_DEV);
+	pWatch = WatchPtr(new WatchEyeLinkAOI(idWatch, idNext, mmArgs,
+					      &(pTemplate->m_mmapAllAOI)));
+	WatchEyeLinkAOI::m_pEyelink = (EyeLinkMonitor *) pDev.get();
       }
       break;
     }
@@ -644,6 +654,7 @@ int State::Main() {
   bool bExit = false;
   WatchMap::iterator wi;
 
+  // we should really only be doing this once the corresponding state is entered
   for (wi = m_mmapWatch.begin(); wi != m_mmapWatch.end(); wi++) {
     (*wi).second->Activate();
   }
@@ -676,6 +687,7 @@ int State::Main() {
 	bExit = true;
       }
     }
+    
     if (m_nTrialTimeout && State::s_msTrialBegin && !m_bTimedOut) {
       msDiff = ClockFn() - s_msTrialBegin;
       if (msDiff >= m_nTrialTimeout) {
@@ -824,62 +836,74 @@ Watch * State::HandleEvent(SDL_Event * pEvt, Template * pThis) {
     // handle the watch for specific keys first, then default to ANYKEY.
   case SDL_USEREVENT : {
     //g_pErr->Debug(pastestr::paste("sd", " ", "the user event was", 
-	//(long) pEvt->user.code));
-	g_pErr->Debug(pastestr::paste("sdd", " ", "... user event",
-				      (long) pEvt->user.code,
-				      (long) ClockFn()));
-      switch (pEvt->user.code) {
-      case SBX_WATCH_DONE : {
-	// FIRST, make sure we didn't miss any socket signals between trials
-	if (Experiment::s_pSockListener != NULL) {
-	  Experiment::s_pSockListener->CheckForMissedMessages();
-	}
-
-	wmip = m_mmapWatch.equal_range(SBX_WATCH_DONE);
-	if (wmip.first != wmip.second) {
-	  for (wmi = wmip.first; wmi != wmip.second; wmi++) {
-	    if ((*wmi).second->CheckCondition(pEvt)) {
-	      pwSignaled = (*wmi).second.get();
-	      g_pErr->Debug("done signaled");
-	    } else {}
-	  }
-	} else {}
+    //(long) pEvt->user.code));
+    g_pErr->Debug(pastestr::paste("sdd", " ", "... user event",
+				  (long) pEvt->user.code,
+				  (long) ClockFn()));
+    
+    switch (pEvt->user.code) {
+    case SBX_WATCH_DONE : {
+      // FIRST, make sure we didn't miss any socket signals between trials
+      if (Experiment::s_pSockListener != NULL) {
+	Experiment::s_pSockListener->CheckForMissedMessages();
       }
-	break;
-      case SBX_WATCH_TIMEOUT : {
-	wmip = m_mmapWatch.equal_range(SBX_WATCH_TIMEOUT);
-	pwSignaled = (*wmip.first).second.get();
-	g_pErr->Debug("timeout signaled");
-      }
-	break;
-      case SBX_WATCH_TRIALTIMEOUT : {
-	wmip = m_mmapWatch.equal_range(SBX_WATCH_TRIALTIMEOUT);
-	pwSignaled = (*wmip.first).second.get();
-	g_pErr->Debug("trial timeout signaled");
-      }
-	break;
-      case SBX_WATCH_SOCKET_MSG : {
-	wmip = m_mmapWatch.equal_range(SBX_WATCH_SOCKET_MSG);
+	  
+      wmip = m_mmapWatch.equal_range(SBX_WATCH_DONE);
+      if (wmip.first != wmip.second) {
 	for (wmi = wmip.first; wmi != wmip.second; wmi++) {
 	  if ((*wmi).second->CheckCondition(pEvt)) {
 	    pwSignaled = (*wmi).second.get();
+	    g_pErr->Debug("done signaled");
 	  } else {}
 	}
-	// TODO: do something
+      } else {}
+    }
+      break;
+    case SBX_WATCH_TIMEOUT : {
+      wmip = m_mmapWatch.equal_range(SBX_WATCH_TIMEOUT);
+      pwSignaled = (*wmip.first).second.get();
+      g_pErr->Debug("timeout signaled");
+    }
+      break;
+    case SBX_WATCH_TRIALTIMEOUT : {
+      wmip = m_mmapWatch.equal_range(SBX_WATCH_TRIALTIMEOUT);
+      pwSignaled = (*wmip.first).second.get();
+      g_pErr->Debug("trial timeout signaled");
+    }
+      break;
+    case SBX_WATCH_SOCKET_MSG : {
+      wmip = m_mmapWatch.equal_range(SBX_WATCH_SOCKET_MSG);
+      for (wmi = wmip.first; wmi != wmip.second; wmi++) {
+	if ((*wmi).second->CheckCondition(pEvt)) {
+	  pwSignaled = (*wmi).second.get();
+	} else {}
       }
-	break;
-      case SBX_WATCH_REMAIN : {
-	wmip = m_mmapWatch.equal_range(SBX_WATCH_REMAIN);
-	if (wmip.first != wmip.second) {
-	  for (wmi = wmip.first; wmi != wmip.second; wmi++) {
-	    if ((*wmi).second->CheckCondition(pEvt)) {
-	      pwSignaled = (*wmi).second.get();
-	    }
+      // TODO: do something
+    }
+      break;
+    case SBX_WATCH_REMAIN : {
+      wmip = m_mmapWatch.equal_range(SBX_WATCH_REMAIN);
+      if (wmip.first != wmip.second) {
+	for (wmi = wmip.first; wmi != wmip.second; wmi++) {
+	  if ((*wmi).second->CheckCondition(pEvt)) {
+	    pwSignaled = (*wmi).second.get();
 	  }
 	}
       }
-	break;
+    }
+      break;
+    case SBX_WATCH_EYELINKAOI : {
+      wmip = m_mmapWatch.equal_range(SBX_WATCH_EYELINKAOI);
+      if (wmip.first != wmip.second) {
+	for (wmi = wmip.first; wmi != wmip.second; wmi++) {
+	  if ((*wmi).second->CheckCondition(pEvt)) {
+	    pwSignaled = (*wmi).second.get();
+	  }
+	}
       }
+    }
+      break;
+    }
   }
     break;
 

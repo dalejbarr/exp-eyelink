@@ -25,6 +25,7 @@ using pastestr::paste;
 #include "Experiment.hpp"
 #include "SoundInput.hpp"
 #include "Socket.hpp"
+#include "EyeLinkMonitor.hpp"
 
 #ifndef WIN32
 #include "AlsaSoundIn.hpp"
@@ -276,6 +277,9 @@ int Template::Prepare() {
 int Template::Run() {
   g_pErr->DFI("Template::Run", m_id, 1);
 
+  // NOTE: I DON'T THINK THIS FUNCTION IS EVER CALLED BY ANYTHING??
+  // SEE Template::Start() instead
+  
   m_nStatus = SBX_IN_PROGRESS;
   if (m_pCurState) {
     m_pCurState->Run();
@@ -623,7 +627,13 @@ int Template::Update() {
 int Template::Start(Uint32 msBegin) {
   g_pErr->DFI("Template::Start", m_id, 3);
   m_msBegin = msBegin;
-  //AttachState(m_pCurState);
+
+  // start the input devices
+  for (InputDevPtrMMap::iterator jj = s_mmapInputDevPtr.begin();
+       jj != s_mmapInputDevPtr.end(); jj++) {
+    (*jj).second->Start();
+  }
+  
   m_nStatus = SBX_IN_PROGRESS;
   if (!GetCurTrial()) {
     g_pErr->Report("undefined");
@@ -842,7 +852,8 @@ InputDevPtr Template::GetDevice(unsigned long idDev, int n) {
   return pDev;
 }
 
-InputDevPtr Template::FindOrCreateInputDev(unsigned long idDev, int nIndex /*=0*/) {
+InputDevPtr Template::FindOrCreateInputDev(unsigned long idDev,
+					   int nIndex /*=0*/) {
   g_pErr->DFI("Template::FindOrCreateInputDev", 0L, 1);
 
   InputDevPtr pDev;
@@ -889,6 +900,12 @@ InputDevPtr Template::FindOrCreateInputDev(unsigned long idDev, int nIndex /*=0*
       {
 	g_pErr->Debug("creating socket device");
 	pDev = InputDevPtr(new Socket(SBX_SOCKET_DEV, nIndex));
+      }
+      break;
+    case SBX_EYELINKMONITOR_DEV :
+      {
+	g_pErr->Debug("creating EyeLinkMonitor device");
+	pDev = InputDevPtr(new EyeLinkMonitor(SBX_EYELINKMONITOR_DEV, nIndex));
       }
       break;
     default:

@@ -29,7 +29,8 @@ public:
   //StimulusBmp * m_pSelectedAOI;
   string m_strSelectedAOIType;
   StimulusPtr m_pSelectedAOI;
-  WatchMouse(long id, long idNext, ArgMMap mmap, StimulusPtrMMap * pmmapAOI = NULL);
+  WatchMouse(long id, long idNext, ArgMMap mmap,
+	     StimulusPtrMMap * pmmapAOI = NULL);
   inline Uint8 GetButton() { return m_nButton; }
   inline Uint8 GetState() { return m_nState; }
   inline int GetRegion() { return m_nRegion; }

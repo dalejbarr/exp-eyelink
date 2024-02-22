@@ -18,9 +18,7 @@ int StimulusDisplayOn::Action() {
 int StimulusDisplayOn::Prepare() {
   g_pErr->DFI("StimulusDisplayOn::Prepare", 0L, 2);
   Display_SDL::ClearScreen(true);
-  g_pErr->Debug("got here1");  
   m_pTemplate->Redraw(1);
-  g_pErr->Debug("got here2");    
   g_pErr->DFO("StimulusDisplayOn::Prepare", 0L, 2);
 
   return 0;

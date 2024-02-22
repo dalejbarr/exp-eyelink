@@ -23,7 +23,7 @@ public:
   Watch(long id, long idNext) : m_id(id), m_idNext(idNext), m_bSignaled(0) {}
   virtual ~Watch();
   virtual int Cleanup();
-	virtual int Activate() { return 0; }
+  virtual int Activate() { return 0; }
   virtual int Prepare() { m_bSignaled = 0; return 0; }
   virtual int Signal() { m_bSignaled = 1; return 0; }
   inline long GetID() { return m_id; }

@@ -8,16 +8,16 @@
 
 class SocketListener {
 protected:
-	InputDevPtr m_pDev;
-	SDL_Thread * m_pThread;
+  InputDevPtr m_pDev;
+  SDL_Thread * m_pThread;
 public:
-	static bool m_bContinue;
-	SocketListener(InputDevPtr pDev);
-	int static mainThread(void * pVoid);
-	int Main();
-	int CheckForMissedMessages();
-	int Signal();
-	virtual ~SocketListener();
+  static bool m_bContinue;
+  SocketListener(InputDevPtr pDev);
+  int static mainThread(void * pVoid);
+  int Main();
+  int CheckForMissedMessages();
+  int Signal();
+  virtual ~SocketListener();
 };
 
 #endif

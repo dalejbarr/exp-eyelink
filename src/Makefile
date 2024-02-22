@@ -1,5 +1,5 @@
 OBJS = 	Experiment.o Template.o State.o \
-  EXPConfig.o \
+	EXPConfig.o \
 	ItemCell.o Trial.o MyDisplay.o Device.o Display_SDL.o \
 	Audio.o Audio_SDL.o \
 	InputDev.o Mouse_SDL.o HttpRestAPI.o \
@@ -14,7 +14,7 @@ OBJS = 	Experiment.o Template.o State.o \
 	EventPupilLabsMsg.o \
 	Watch.o WatchKey.o WatchMouse.o WatchDone.o \
 	WatchGamePadButton.o WatchGamePadMove.o \
-	WatchSocketMsg.o WatchRemain.o \
+	WatchSocketMsg.o WatchRemain.o WatchEyeLinkAOI.o \
 	AlsaSoundIn.o \
 	SoundInput.o RtAudio.o \
 	Socket.o SocketListener.o \
@@ -27,7 +27,8 @@ OBJS = 	Experiment.o Template.o State.o \
 	GamePad_SDL.o GPEvent.o ScrollTrackGP_SDL.o EventSTRecord.o \
 	xy.o \
 	EventLC1Display.o \
-	EventSwapAOI2.o
+	EventSwapAOI2.o \
+	EyeLinkMonitor.o
 
 W32L = win32/obj
 CC = g++
@@ -51,6 +52,7 @@ W32OBJS = \
 	$(W32L)/Watch.o $(W32L)/WatchKey.o $(W32L)/WatchMouse.o $(W32L)/WatchDone.o \
 	$(W32L)/WatchGamePadButton.o $(W32L).WatchGamePadMove.o \
 	$(W32L)/WatchSocketMsg.o $(W32L)/WatchRemain.o \
+	$(W32L)/WatchEyeLinkAOI.o \
 	$(W32L)/PASoundIn.o \
   $(W32L)/Socket.o $(W32L)/SocketListener.o \
 	$(W32L)/StartupInfo.o $(W32L)/pastestr.o \
@@ -62,10 +64,11 @@ W32OBJS = \
 	$(W32L)/GamePad_SDL.o $(W32L)/GPEvent.o $(W32L)/ScrollTrackGP_SDL.o $(W32L)/EventSTRecord.o \
 	$(W32L)/xy.o \
 	$(W32L)/EventLC1Display.o \
-	$(W32L)/EventSwapAOI2.o
+	$(W32L)/EventSwapAOI2.o \
+	$(W32L)/EyeLinkMonitor.o
 
 OPENCV_CFLAGS := $(shell pkg-config opencv4 --cflags)
-CFLAGS = -std=c++11 -c -I. 
+CFLAGS = -std=c++14 -c -I. 
 
 W32CF = -c -I. -I/home/daleb/src/boost -D WIN32 $(shell /opt/SDL-win32/bin/sdl-config --cflags)
 W32LF = $(shell /opt/SDL-win32/bin/sdl-config --libs) -lSDL_mixer -lSDL_ttf
@@ -101,10 +104,10 @@ pp3main.o : pp3main.cpp picture.h
 	$(CC) $(CFLAGS) $(ELINK_CFLAGS) $(SDL_CFLAGS) pp3main.cpp
 
 exp2 : $(OBJS) sblib.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
-	$(CC) $(RTAFLAGS) -o exp2 expshell2.o sblib.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound $(MYLINK) 
+	$(CC) $(RTAFLAGS) -o exp2 expshell2.o sblib.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(OPENCV_LIBS) $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound -lcurl $(MYLINK) -lX11 -std=c++14
 
 expdebug2 : sblib-debug.a expshell2.o ClockFn.o StimulusEyeLinkMsg-notrack.o
-	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(OPENCV_LIBS) $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound -lcurl $(MYLINK) -lX11 -std=c++11
+	$(CC) $(RTAFLAGS) -o expdebug2 expshell2.o sblib-debug.a ClockFn.o StimulusEyeLinkMsg-notrack.o $(OPENCV_LIBS) $(SDL_LDFLAGS) -ldl -lrt -lpthread -lasound -lcurl $(MYLINK) -lX11 -std=c++14
 
 install : exp2 expdebug2
 	cp exp2 ../bin/exp2; cp expdebug2 ../bin/expdebug2
