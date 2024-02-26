@@ -33,7 +33,8 @@ public:
 	virtual void Initialize();
 	virtual void Destroy();
   virtual void Prepare();
-  virtual void Start();
+  virtual void Start(); // start at the beginning of the trial
+  virtual void Record(); // perform the actual recording
   virtual void Stop();
   static int input(void * /*outputBuffer*/, 
 										 void *inputBuffer, 

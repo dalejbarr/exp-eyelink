@@ -7,11 +7,13 @@ CFLAGS  += -I$(INCLUDE)
 # LIBRARY  = -lpthread -lpulse-simple -lpulse
 LIBRARY  = -lpthread -lasound
 
-clean : 
-	rm *.o audioprobe
+audioprobe : audioprobe.cpp RtAudio.o
+	$(CC) $(CFLAGS) $(DEFS) -o audioprobe audioprobe.cpp RtAudio.o $(LIBRARY)
 
 RtAudio.o : RtAudio.cpp
 	$(CC) $(CFLAGS) $(DEFS) -c -o RtAudio.o RtAudio.cpp
 
-audioprobe : audioprobe.cpp RtAudio.o
-	$(CC) $(CFLAGS) $(DEFS) -o audioprobe audioprobe.cpp RtAudio.o $(LIBRARY)
+clean : 
+	rm -f *.o audioprobe
+
+

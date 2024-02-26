@@ -86,7 +86,7 @@ int EventRecord::Prepare() {
 
 int EventRecord::Action() {
   for (int i = 0; i < m_vpDev.size(); i++) {
-    m_vpDev[i]->Start();
+    m_vpDev[i]->Record();
   }
   return Event::Action();
 }

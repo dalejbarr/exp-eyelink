@@ -2,18 +2,18 @@
 #include "pastestr.hpp"
 
 SoundInput::SoundInput(unsigned long ulDev) : InputDev(ulDev) {
-	g_pErr->Debug("¬¬ INITIALIZING SoundInput ¬¬");
-	Initialize();
+  g_pErr->Debug("¬¬ INITIALIZING SoundInput ¬¬");
+  Initialize();
 }
 
 SoundInput::~SoundInput() {
-	g_pErr->Debug("¬¬ DESTROYING SoundInput ¬¬");
-	Destroy();
+  g_pErr->Debug("¬¬ DESTROYING SoundInput ¬¬");
+  Destroy();
 }
 
 // Interleaved buffers
 int SoundInput::input(void * /*outputBuffer*/, void *inputBuffer, unsigned int nBufferFrames,
-											double /*streamTime*/, RtAudioStreamStatus /*status*/, void *data) {
+		      double /*streamTime*/, RtAudioStreamStatus /*status*/, void *data) {
   InputData *iData = (InputData *) data;
 
   // Simply copy the data to our allocated buffer.
@@ -81,27 +81,27 @@ void SoundInput::Initialize() {
 
 void SoundInput::Destroy() {
   if (m_adc.isStreamOpen()) { 
-		m_adc.closeStream();
-	} else {}
+    m_adc.closeStream();
+  } else {}
   if (m_data.buffer) {
-		free( m_data.buffer );	
-	} else {}
+    free( m_data.buffer );	
+  } else {}
 }
 
 void SoundInput::Prepare() {
-	// TODO: store sound file name
-	g_pErr->DFI("SoundInput::Prepare", (long) 0, 1);
+  // TODO: store sound file name
+  g_pErr->DFI("SoundInput::Prepare", (long) 0, 1);
   InputDev::ParseFilename(m_sOutputFile.c_str());
   InputDev::Prepare();
 
-	g_pErr->Debug(pastestr::paste("sdsd", "", "nchannels ", (long) m_inputParams.nChannels, " ", (long) m_nChannels));
+  g_pErr->Debug(pastestr::paste("sdsd", "", "nchannels ", (long) m_inputParams.nChannels, " ", (long) m_nChannels));
 
   try {
     m_adc.openStream( NULL, &m_inputParams, SOUNDINPUT_FORMAT, 
-											m_framesPerSec, &m_nBufferFrames, &SoundInput::input, (void *)&m_data );
+		      m_framesPerSec, &m_nBufferFrames, &SoundInput::input, (void *)&m_data );
   }
   catch ( RtAudioError& e ) {
-		g_pErr->Report(e.getMessage());
+    g_pErr->Report(e.getMessage());
   }
 
   m_data.bufferBytes = m_nBufferFrames * m_nChannels * sizeof( MY_TYPE );
@@ -112,42 +112,52 @@ void SoundInput::Prepare() {
   m_totalBytes = m_data.totalFrames * m_nChannels * sizeof( MY_TYPE );
 
   // Allocate the entire data buffer
-	if (!m_data.buffer) {
-		m_data.buffer = (MY_TYPE*) malloc( m_totalBytes );
-	} else {}
+  if (!m_data.buffer) {
+    m_data.buffer = (MY_TYPE*) malloc( m_totalBytes );
+  } else {}
   if ( m_data.buffer == 0 ) {
-		g_pErr->Report("Memory allocation error ... quitting!");
+    g_pErr->Report("Memory allocation error ... quitting!");
   }	else {}
 	
-	g_pErr->DFO("SoundInput::Prepare", (long) 0, 1);
+  g_pErr->DFO("SoundInput::Prepare", (long) 0, 1);
 }
 
 void SoundInput::Start() {
+  g_pErr->DFI("SoundInput::Start", (long) m_idDev, 2);
+  m_bIsRecording = 0;
+  g_pErr->Debug("  .... waiting for event to trigger recording");
+  g_pErr->DFO("SoundInput::Start", (long) m_idDev, 2);
+}
+
+void SoundInput::Record() {
+  g_pErr->DFI("SoundInput::Record", (long) m_idDev, 2);
   try {
-	  m_adc.startStream();
+    m_adc.startStream();
+    m_bIsRecording = 1;
   }
   catch ( RtAudioError& e ) {
-		g_pErr->Report(e.getMessage());
+    g_pErr->Report(e.getMessage());
   }
+  g_pErr->DFO("SoundInput::Record", (long) m_idDev, 2);
 }
 
 void SoundInput::Stop() {
-	double db = m_adc.getStreamTime();
-	m_adc.abortStream();
-	double da = m_adc.getStreamTime();
-	std::cout << "\n\n\nSTREAM TIME: " << db << " " << da << "\n\n\n";
+  double db = m_adc.getStreamTime();
+  m_adc.abortStream();
+  double da = m_adc.getStreamTime();
+  std::cout << "\n\n\nSTREAM TIME: " << db << " " << da << "\n\n\n";
   unsigned long tbytes = m_totalBytes;
   unsigned long tframes = (unsigned long) m_framesPerSec * m_nMaxSecsToRecord;
 
-	if (db < ((double) m_nMaxSecsToRecord)) {  
-  	tframes = (unsigned long) (m_framesPerSec * db);
+  if (db < ((double) m_nMaxSecsToRecord)) {  
+    tframes = (unsigned long) (m_framesPerSec * db);
     tbytes = tframes * m_nChannels * sizeof( MY_TYPE );  
-		std::cout << "tbytes = " << tbytes << std::endl;
+    std::cout << "tbytes = " << tbytes << std::endl;
   } else {}
 
   if (m_adc.isStreamOpen()) { 
-		m_adc.closeStream();
-	} else {}
+    m_adc.closeStream();
+  } else {}
 
-	writeWAVData(m_sOutputFile.c_str(), m_data.buffer, tbytes, m_framesPerSec, m_nChannels);
+  writeWAVData(m_sOutputFile.c_str(), m_data.buffer, tbytes, m_framesPerSec, m_nChannels);
 }

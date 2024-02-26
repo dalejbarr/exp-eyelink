@@ -31,7 +31,8 @@ public:
   inline bool RecMode() {return m_bRecMode;};
   inline RespData GetRespData() {return m_respData;};
   virtual void Prepare();
-  virtual void Start();
+  virtual void Start(); // start at beginning of trial
+  virtual void Record(); // activate recording on event
   virtual void Stop();
   virtual void HandleEvent(SDL_Event * pEvt);
   virtual void SetOutputFile(const char * pFile);

@@ -35,6 +35,12 @@ void InputDev::Stop() {
   g_pErr->DFO("InputDev::Stop", (long) m_idDev, 2);
 }
 
+void InputDev::Record() {
+  g_pErr->DFI("InputDev::Record", (long) m_idDev, 2);
+  m_bIsRecording = 1;
+  g_pErr->DFO("InputDev::Record", (long) m_idDev, 2);
+}
+
 void InputDev::HandleEvent(SDL_Event * pEvt) {
 }
 
